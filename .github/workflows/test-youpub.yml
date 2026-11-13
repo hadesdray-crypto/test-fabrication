@@ -1,0 +1,38 @@
+name: Test YouPub
+on:
+  push:
+    branches: [test-youpub]
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { api: 28, profil: pixel_c }
+          - { api: 31, profil: pixel_5 }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          arch: x86_64
+          target: default
+          profile: ${{ matrix.profil }}
+          disable-animations: true
+          script: bash tester.sh ${{ matrix.api }}
+      - name: Résultats
+        if: always()
+        run: |
+          mkdir -p /tmp/out && cp *.png *.txt *.xml /tmp/out/ 2>/dev/null || true
+          cd /tmp/out && git init -q && git config user.name bot && git config user.email bot@users.noreply.github.com
+          git add -A && git commit -qm "Résultats ${{ matrix.api }}" || true
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:refs/heads/resultats-youpub-${{ matrix.api }}
