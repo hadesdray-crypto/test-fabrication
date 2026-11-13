@@ -1,7 +1,7 @@
 /* Jeux Live — test automatique lancé seulement par la fabrication (jamais par l'utilisateur). */
 (function () {
   function r(t) { try { Natif.rapport("AUTOTEST " + t); } catch (e) { console.log("AUTOTEST " + t); } }
-  var jeux = App._jeux(), i = 0, echecs = [], total = 0;
+  var jeux = App._jeux().concat(["montee-solo"]), i = 0, echecs = [], total = 0;
   var lus = 0;
   var origine = App.evenement;
   // Compte les vrais messages reçus du lecteur (test de lecture sur un live public)
@@ -11,7 +11,7 @@
   function suivant() {
     if (i >= jeux.length) return fin();
     var id = jeux[i++], avant;
-    try { App._demarrerJeu(id, false); } catch (x) { echecs.push(id + " lancement : " + x); return suivant(); }
+    try { if (id === "montee-solo") { App.mode(true); App._demarrerJeu("montee", false); App.mode(false); } else App._demarrerJeu(id, false); } catch (x) { echecs.push(id + " lancement : " + x); return suivant(); }
     avant = JL.stats();
     r("CAPTURE " + id);
     var n = 0, camps = ["BLEU", "ROUGE"];

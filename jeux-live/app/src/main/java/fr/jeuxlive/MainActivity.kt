@@ -52,7 +52,12 @@ class MainActivity : Activity() {
                 return true
             }
         }
+        // Les fichiers de l'appli sont servis comme une vraie adresse : images et jeu ont la même origine.
+        val chargeur = androidx.webkit.WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", androidx.webkit.WebViewAssetLoader.AssetsPathHandler(this)).build()
         jeu.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView, req: android.webkit.WebResourceRequest): android.webkit.WebResourceResponse? =
+                chargeur.shouldInterceptRequest(req.url)
             override fun onRenderProcessGone(view: WebView, detail: android.webkit.RenderProcessGoneDetail): Boolean {
                 Log.w(ETIQUETTE, "jeu : moteur de page arrêté, redémarrage de l'appli")
                 recreate()
@@ -66,7 +71,7 @@ class MainActivity : Activity() {
         }
         cadre.addView(jeu, FrameLayout.LayoutParams(-1, -1))
         setContentView(cadre)
-        jeu.loadUrl("file:///android_asset/web/index.html")
+        jeu.loadUrl("https://appassets.androidplatform.net/assets/web/index.html")
         demanderNotifications()
         Horaires.programmer(this)
         traiterIntention(intent)

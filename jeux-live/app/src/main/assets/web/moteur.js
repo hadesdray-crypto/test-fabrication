@@ -3,7 +3,7 @@ var JL = (function () {
   var L = 720, H = 1280; // surface logique (format portrait du live)
   var canvas, ctx, echelle = 1, decX = 0, decY = 0, haut = 0;
   var jeu = null, enMarche = false, dernier = 0, temps = 0;
-  var essai = false;
+  var essai = false, solo = false;
 
   // ---------- Paliers de cadeaux (valeur en pièces TikTok) ----------
   function palier(valeur) {
@@ -116,13 +116,14 @@ var JL = (function () {
     var j = joueur(ev.utilisateur);
     if (ev.type === "commentaire") {
       stats.commentaires++;
-      var camp = jeu.campDepuisTexte ? jeu.campDepuisTexte(String(ev.texte || "")) : null;
+      var camp = (!solo && jeu.campDepuisTexte) ? jeu.campDepuisTexte(String(ev.texte || "")) : null;
       if (camp && j.camp !== camp) { j.camp = camp; if (jeu.surCamp) jeu.surCamp(j, camp); }
       if (jeu.surCommentaire) jeu.surCommentaire(j, String(ev.texte || ""));
     } else if (ev.type === "cadeau") {
       var nb = Math.max(1, Math.min(ev.nombre || 1, 999)), val = Math.max(1, ev.valeur || 1);
       stats.cadeaux += nb; stats.pieces += nb * val; j.pieces += nb * val;
-      if (!j.camp && jeu.campParDefaut) j.camp = jeu.campParDefaut;
+      if (solo) j.camp = "bloque"; // chacun pour soi : tout le monde joue contre moi
+      else if (!j.camp && jeu.campParDefaut) j.camp = jeu.campParDefaut;
       var p = palier(val);
       var equipe = "";
       if (jeu.equipes) for (var q = 0; q < jeu.equipes.length; q++) if (jeu.equipes[q].cle === j.camp) equipe = " (" + jeu.equipes[q].nom + ")";
@@ -132,7 +133,7 @@ var JL = (function () {
     } else if (ev.type === "like") {
       var n = Math.max(1, Math.min(ev.nombre || 1, 500));
       stats.likes += n; j.likes += n;
-      var k = j.camp || jeu.campParDefaut || "tous";
+      var k = solo ? "aide" : (j.camp || jeu.campParDefaut || "tous"); // chacun pour soi : les likes m'aident
       likesEnAttente[k] = (likesEnAttente[k] || 0) + n;
     } else if (ev.type === "abonnement") {
       stats.abonnements++; annoncer("Merci " + j.nom + " pour l'abonnement !", "#7dd3fc", 2.5);
@@ -281,6 +282,9 @@ var JL = (function () {
     canvas = document.getElementById("scene");
     ctx = canvas.getContext("2d");
     essai = !!options.essai;
+    solo = !!options.solo && !j.toujoursEquipes;
+    if (solo) { j.legendeEquipes = j.legendeEquipes || j.legende; j.equipesSauvees = j.equipesSauvees || j.equipes; j.legende = j.legendeSolo || j.legende; j.equipes = null; }
+    else { if (j.legendeEquipes) j.legende = j.legendeEquipes; if (j.equipesSauvees) j.equipes = j.equipesSauvees; }
     sonActif = options.son !== false;
     jeu = j; joueurs = {}; annonces = []; particules = []; boums = []; file = []; temps = 0; dernier = 0; secousse = 0;
     stats = { cadeaux: 0, pieces: 0, likes: 0, commentaires: 0, abonnements: 0, partages: 0 };
@@ -317,11 +321,22 @@ var JL = (function () {
     return true;
   }
   /** Décor plein écran (recadré pour remplir) ; renvoie le rectangle où il est dessiné. */
-  function fond(c, n, decalY) {
+  var caches = {};
+  function fond(c, n) {
     var im = IMG[n]; if (!im) return null;
     var hz = H + haut, ech = Math.max(L / im.width, hz / im.height);
-    var w = im.width * ech, h = im.height * ech, x = (L - w) / 2, y = -haut + (hz - h) / 2 + (decalY || 0);
-    c.drawImage(im, x, y, w, h);
+    var w = im.width * ech, h = im.height * ech, x = (L - w) / 2, y = -haut + (hz - h) / 2;
+    // Décor redimensionné une seule fois à la taille de l'écran (bien plus rapide à chaque image)
+    var px = Math.max(1, Math.round(w * echelle)), py = Math.max(1, Math.round(h * echelle));
+    var k = caches[n];
+    if (!k || k.w !== px || k.h !== py) {
+      try {
+        var cv = document.createElement("canvas"); cv.width = px; cv.height = py;
+        cv.getContext("2d").drawImage(im, 0, 0, px, py);
+        k = caches[n] = { w: px, h: py, cv: cv };
+      } catch (e) { k = null; }
+    }
+    c.drawImage(k ? k.cv : im, x, y, w, h);
     return { x: x, y: y, w: w, h: h };
   }
 

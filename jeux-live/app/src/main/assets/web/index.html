@@ -59,7 +59,7 @@
   </div>
 
   <div class="carte">
-    <div class="etape"><div class="num">2</div><div style="flex:1"><b style="font-size:19px">Connecter la lecture à TikTok</b><br><span class="petit">Une seule fois. TikTok demande d'être connecté pour suivre un live. Tu peux utiliser ton compte ou un deuxième compte.</span></div></div>
+    <div class="etape"><div class="num">2</div><div style="flex:1"><b style="font-size:19px">Seulement si les cadeaux n'arrivent pas</b><br><span class="petit">Normalement, rien à faire ici. Si pendant ton live les cadeaux ne font rien dans le jeu, connecte la lecture avec un deuxième compte TikTok (pas celui qui fait le live).</span></div></div>
     <p id="infoConnexion" class="etat-att">Vérification…</p>
     <button class="bouton bleu" onclick="App.connecter()">Connecter la lecture à TikTok</button>
   </div>
@@ -67,6 +67,12 @@
   <div class="carte">
     <div class="etape"><div class="num">3</div><div><b style="font-size:19px">Choisis le jeu</b></div></div>
     <div id="listeJeux"></div>
+    <p style="font-size:18px;margin:14px 0 6px"><b>Comment jouent les spectateurs ?</b></p>
+    <div class="ligne">
+      <div class="interrupteur" id="modeEquipes" onclick="App.mode(false)">En équipes<br><span class="petit">bleus contre rouges</span></div>
+      <div class="interrupteur" id="modeSolo" onclick="App.mode(true)">Chacun pour soi<br><span class="petit">tous contre toi</span></div>
+    </div>
+    <p class="petit" id="infoMode"></p>
   </div>
 
   <button class="bouton vert grand" onclick="App.preparerLive()">4. Lancer le jeu pour mon live</button>
@@ -87,7 +93,7 @@
   <div class="carte">
     <h2>Avant le premier live (une seule fois)</h2>
     <div class="etape"><div class="num">1</div><p>Écris ton nom TikTok sur la page d'accueil (ce qui est après le @).</p></div>
-    <div class="etape"><div class="num">2</div><p>Touche « Connecter la lecture à TikTok ». Connecte-toi avec ton compte (ou un deuxième compte). Tape toi-même ton mot de passe : l'appli ne le lit pas. Puis touche le bouton vert « J'ai fini ».</p></div>
+    <div class="etape"><div class="num">2</div><p>Choisis « En équipes » ou « Chacun pour soi » sous la liste des jeux.</p></div>
     <div class="etape"><div class="num">3</div><p>Touche « Essayer sans live » pour voir les jeux avec de faux cadeaux. Rien n'est envoyé sur TikTok.</p></div>
     <div class="etape"><div class="num">4</div><p>Si tu veux des lives à heures fixes, va dans « Mes horaires de live ». Le téléphone sonnera à l'heure choisie.</p></div>
   </div>
@@ -107,6 +113,12 @@
     <p><b>La Course :</b> touche l'écran pour lancer une peau de banane sur l'équipe en tête.</p>
     <p><b>La Tour :</b> touche l'écran là où tu veux faire tomber un bloc.</p>
     <p class="petit">Les spectateurs voient le même écran : aucun bouton n'apparaît.</p>
+  </div>
+  <div class="carte">
+    <h2>En équipes ou chacun pour soi ?</h2>
+    <p><b>En équipes :</b> chaque spectateur écrit BLEU (il t'aide) ou ROUGE (il te fait perdre). Une barre montre le score des deux équipes. Ça crée de l'ambiance, mais ça peut aussi échauffer les esprits.</p>
+    <p><b>Chacun pour soi :</b> pas d'équipes. Les cadeaux jouent contre toi et les likes t'aident. C'est plus calme.</p>
+    <p class="petit">La Course des Équipes se joue toujours en équipes.</p>
   </div>
   <div class="carte">
     <h2>Les règles de TikTok à respecter</h2>

@@ -16,6 +16,13 @@ var App = (function () {
     { id: "tour", nom: "La Tour", desc: "Les uns construisent une tour, les autres la démolissent à la catapulte." }
   ];
   var jeuChoisi = stock("jeu") || "montee";
+  var solo = stock("solo") === "1";
+  function mode(s) { solo = !!s; stock("solo", solo ? "1" : "0"); dessinerMode(); }
+  function dessinerMode() {
+    $("modeEquipes").className = "interrupteur" + (solo ? "" : " oui");
+    $("modeSolo").className = "interrupteur" + (solo ? " oui" : "");
+    $("infoMode").textContent = solo ? "Pas d'équipes : les cadeaux jouent contre toi, les likes t'aident." : "Les spectateurs écrivent BLEU (ils t'aident) ou ROUGE (ils te font perdre).";
+  }
   var dansLeJeu = false, modeEssai = false;
   var journal = [];
 
@@ -62,7 +69,7 @@ var App = (function () {
     $("scene").style.display = "block";
     dansLeJeu = true;
     natif("pleinEcran", true);
-    JL.lancer(JEUX[jeuChoisi], { essai: modeEssai });
+    JL.lancer(JEUX[jeuChoisi], { essai: modeEssai, solo: solo });
     if (modeEssai) barreEssai(); else $("essaiBarre").style.display = "none";
   }
   function estConnecte() { var r = natif("estConnecte"); return r === true || r === "true"; }
@@ -71,13 +78,13 @@ var App = (function () {
     var el = $("infoConnexion");
     if (!dispo) { el.className = "petit"; el.textContent = "Disponible dans l'application installée."; }
     else if (ok) { el.className = "etat-ok"; el.textContent = "Lecture connectée à TikTok."; }
-    else { el.className = "etat-ko"; el.textContent = "Pas encore connectée."; }
+    else { el.className = "petit"; el.textContent = "Non connectée (normal, pas besoin pour commencer)."; }
     $("etatConnexion").textContent = dispo ? (ok ? "Lecture connectée à TikTok : oui" : "Lecture connectée à TikTok : non") : "";
   }
   function connecter() { natif("connexionTikTok"); }
   function preparerLive(forcer) {
     var p = pseudo();
-    if (N && !estConnecte() && forcer !== true) {
+    if (false && N && !estConnecte() && forcer !== true) {
       dialogue("Lecture pas connectée", "Pour que les cadeaux fassent quelque chose dans le jeu, connecte d'abord la lecture à TikTok (une seule fois).", [["Connecter maintenant", connecter, "bleu"], ["Lancer quand même", function () { preparerLive(true); }, "gris"]]);
       return;
     }
@@ -115,21 +122,20 @@ var App = (function () {
     else JL.recevoir({ type: type, utilisateur: u });
   }
   function barreEssai() {
-    var aide = "BLEU", bloque = "ROUGE";
-    var b = [
-      ["Rose (" + bloque + ")", function () { faux("cadeau", bloque, 1, 1); }],
-      ["Rose ×10 (" + bloque + ")", function () { faux("cadeau", bloque, 1, 10); }],
-      ["Moyen (" + bloque + ")", function () { faux("cadeau", bloque, 30, 1); }],
-      ["Gros (" + bloque + ")", function () { faux("cadeau", bloque, 500, 1); }],
-      ["Énorme (" + bloque + ")", function () { faux("cadeau", bloque, 1500, 1); }],
-      ["Rose (" + aide + ")", function () { faux("cadeau", aide, 1, 1); }],
-      ["Moyen (" + aide + ")", function () { faux("cadeau", aide, 30, 1); }],
-      ["Gros (" + aide + ")", function () { faux("cadeau", aide, 500, 1); }],
-      ["Énorme (" + aide + ")", function () { faux("cadeau", aide, 1500, 1); }],
-      ["50 likes", function () { faux("like", Math.random() < 0.5 ? aide : bloque, 0, 50); }],
-      ["Abonnement", function () { faux("abonnement"); }],
-      ["Quitter l'essai", quitterJeu]
-    ];
+    var enSolo = solo && jeuChoisi !== "course";
+    function lab(x, c) { return c ? x + " (" + c + ")" : x; }
+    var b = [];
+    var camps = enSolo ? [""] : ["ROUGE", "BLEU"];
+    camps.forEach(function (cp) {
+      b.push([lab("Rose", cp), function () { faux("cadeau", cp, 1, 1); }]);
+      b.push([lab("Rose ×10", cp), function () { faux("cadeau", cp, 1, 10); }]);
+      b.push([lab("Moyen", cp), function () { faux("cadeau", cp, 30, 1); }]);
+      b.push([lab("Gros", cp), function () { faux("cadeau", cp, 500, 1); }]);
+      b.push([lab("Énorme", cp), function () { faux("cadeau", cp, 1500, 1); }]);
+    });
+    b.push(["50 likes", function () { faux("like", enSolo ? "" : (Math.random() < 0.5 ? "BLEU" : "ROUGE"), 0, 50); }]);
+    b.push(["Abonnement", function () { faux("abonnement"); }]);
+    b.push(["Quitter l'essai", quitterJeu]);
     var c = $("essaiBarre"); c.innerHTML = "";
     b.forEach(function (x) { var el = document.createElement("button"); el.textContent = x[0]; el.onclick = x[1]; if (x[0] === "Quitter l'essai") el.style.background = "#b91c1c"; c.appendChild(el); });
     c.style.display = "flex";
@@ -253,6 +259,7 @@ var App = (function () {
   function demarrage() {
     $("pseudo").value = stock("pseudo") || "";
     dessinerListe();
+    dessinerMode();
     var v = natif("version"); $("version").textContent = v ? "Version " + v : "";
     majInfoHoraire();
     majConnexion();
@@ -265,7 +272,7 @@ var App = (function () {
     ouvrirTikTok: ouvrirTikTok, quitterJeu: quitterJeu, lancerEssai: lancerEssai, evenement: evenement, etatLecture: etatLecture,
     relancerLecture: relancerLecture, basculer: basculer, heure: heure, jour: jour, enregistrerHoraires: enregistrerHoraires,
     chercherMaj: chercherMaj, resultatMaj: resultatMaj, installerMaj: installerMaj, progresMaj: progresMaj, messageMaj: messageMaj,
-    connecter: connecter, majConnexion: majConnexion,
+    connecter: connecter, majConnexion: majConnexion, mode: mode,
     retour: retour, ouvertParHoraire: ouvertParHoraire, finHoraire: finHoraire, signaler: signaler,
     // pour les tests automatiques
     _jeux: function () { return LISTE.map(function (j) { return j.id; }); }, _demarrerJeu: function (id, essai) { jeuChoisi = id; demarrerJeu(essai); }

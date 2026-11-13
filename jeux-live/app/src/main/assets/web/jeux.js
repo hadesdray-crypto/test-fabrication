@@ -105,6 +105,7 @@ JEUX.montee = (function () {
 
   var jeu = {
     nom: "La Montée", couleurFond: "#0b1530", campParDefaut: "bloque", equipes: EQUIPES_AB,
+    legendeSolo: [["Chacun pour soi : tout le monde contre moi !", "#ffe27a"], ["Cadeaux : pierre · bombe · séisme · avalanche", "#fca5a5"], ["Vos likes me donnent des sauts géants", "#93c5fd"], ["Le meilleur soutien est affiché en haut", "#cbd5e1"]],
     legende: [
       ["Écris BLEU pour m'aider · ROUGE pour me faire tomber", "#ffe27a"],
       ["Rouges : pierre · bombe · séisme · avalanche", "#fca5a5"],
@@ -296,6 +297,7 @@ JEUX.colline = (function () {
   }
   var jeu = {
     nom: "Le Roi de la Colline", couleurFond: "#14213d", campParDefaut: "bloque", equipes: EQUIPES_AB,
+    legendeSolo: [["Chacun pour soi : faites tomber le roi !", "#ffe27a"], ["Cadeaux : boulet · gros boulet · salve · bombardement", "#fca5a5"], ["Vos likes soignent le roi", "#93c5fd"], ["Le meilleur soutien est affiché en haut", "#cbd5e1"]],
     legende: [
       ["Écris BLEU pour protéger le roi · ROUGE pour l'attaquer", "#ffe27a"],
       ["Rouges : boulet · gros boulet · salve · bombardement", "#fca5a5"],
@@ -413,7 +415,7 @@ JEUX.course = (function () {
   function equipeDe(j) { if (j.camp !== "rouge" && j.camp !== "bleu") { j.camp = eq.rouge.membres <= eq.bleu.membres ? "rouge" : "bleu"; eq[j.camp].membres++; } return j.camp; }
   function autre(e) { return e === "rouge" ? "bleu" : "rouge"; }
   var jeu = {
-    nom: "La Course des Équipes", couleurFond: "#052e16", equipes: [{ cle: "bleu", nom: "BLEUS", couleur: "#3b82f6" }, { cle: "rouge", nom: "ROUGES", couleur: "#ef4444" }],
+    nom: "La Course des Équipes", couleurFond: "#052e16", toujoursEquipes: true, equipes: [{ cle: "bleu", nom: "BLEUS", couleur: "#3b82f6" }, { cle: "rouge", nom: "ROUGES", couleur: "#ef4444" }],
     legende: [
       ["Écris BLEU ou ROUGE pour choisir ton équipe", "#ffe27a"],
       ["Chaque cadeau fait avancer ton équipe", "#fff"],
@@ -531,6 +533,7 @@ JEUX.tour = (function () {
   }
   var jeu = {
     nom: "La Tour", couleurFond: "#1c1917", campParDefaut: "bloque", equipes: EQUIPES_AB,
+    legendeSolo: [["Chacun pour soi : démolissez ma tour !", "#ffe27a"], ["Cadeaux : pierre · grosse pierre · tir groupé · séisme", "#fca5a5"], ["Vos likes ajoutent des blocs", "#93c5fd"], ["Le meilleur soutien est affiché en haut", "#cbd5e1"]],
     legende: [
       ["Écris BLEU pour construire · ROUGE pour démolir", "#ffe27a"],
       ["Bleus : 1, 3, 6 ou 15 blocs selon le cadeau", "#93c5fd"],
