@@ -29,7 +29,8 @@ cap multi-jauge
 # 3. ＋ Chaîne → catégorie Enfants
 adb shell am start -n fr.hadesdray.youpub/.ui.MultiScreenActivity
 sleep 25
-C=$(centre 'Chaîne'); echo "plus: $C" >> version-$API.txt
+adb shell input swipe $((X/3)) $((Y/2)) $((X/3)) $((Y/2)) 1500; sleep 2
+C=$(centre 'Changer de cha'); echo "changer: $C" >> version-$API.txt
 [ -n "$C" ] && adb shell input tap $C; sleep 3
 cap choix
 E=$(centre 'content-desc="Catégorie Enfants"'); echo "enfants: $E" >> version-$API.txt
