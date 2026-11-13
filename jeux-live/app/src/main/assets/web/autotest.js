@@ -18,9 +18,9 @@
     var minuterie = setInterval(function () {
       n++;
       var c = camps[n % 2], u = { nom: "Test" + (n % 6) + " " + c, id: "t" + (n % 6) };
-      if (n % 6 < 2) App.evenement(JSON.stringify({ type: "commentaire", texte: c, utilisateur: u }));
+      if (n % 6 < 2) App.evenement(JSON.stringify({ type: "commentaire", texte: "salut", utilisateur: u }));
       var v = [1, 1, 1, 5, 30, 99, 500, 1500][n % 8];
-      App.evenement(JSON.stringify({ type: "cadeau", nom: "Cadeau" + v, valeur: v, nombre: 1 + (n % 5), utilisateur: u }));
+      App.evenement(JSON.stringify({ type: "cadeau", nom: (n % 2 ? "Cœur " : "Rose ") + v, valeur: v, nombre: 1 + (n % 5), utilisateur: u }));
       App.evenement(JSON.stringify({ type: "like", nombre: 12, utilisateur: u }));
       if (n % 10 === 0) App.evenement(JSON.stringify({ type: "abonnement", utilisateur: u }));
       if (n % 13 === 0) App.evenement(JSON.stringify({ type: "partage", utilisateur: u }));

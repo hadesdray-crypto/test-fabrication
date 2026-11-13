@@ -110,30 +110,33 @@ var JL = (function () {
   // ---------- Réception des événements du live ----------
   var stats = { cadeaux: 0, pieces: 0, likes: 0, commentaires: 0, abonnements: 0, partages: 0 };
   var likesEnAttente = {};
+  var ptsEquipe = [0, 0], acteurs = [{}, {}];
+  var MOTS_AIDE = /c(œ|oe)ur|heart|love|amour|aime|bisou|kiss/i;
+  function cadeauAide(ev) { return MOTS_AIDE.test(String(ev.nom || "")); }
   function recevoir(ev) {
     if (typeof ev === "string") { try { ev = JSON.parse(ev); } catch (e) { return; } }
     if (!ev || !ev.type || !jeu) return;
     var j = joueur(ev.utilisateur);
     if (ev.type === "commentaire") {
       stats.commentaires++;
-      var camp = (!solo && jeu.campDepuisTexte) ? jeu.campDepuisTexte(String(ev.texte || "")) : null;
-      if (camp && j.camp !== camp) { j.camp = camp; if (jeu.surCamp) jeu.surCamp(j, camp); }
       if (jeu.surCommentaire) jeu.surCommentaire(j, String(ev.texte || ""));
     } else if (ev.type === "cadeau") {
       var nb = Math.max(1, Math.min(ev.nombre || 1, 999)), val = Math.max(1, ev.valeur || 1);
       stats.cadeaux += nb; stats.pieces += nb * val; j.pieces += nb * val;
-      if (solo) j.camp = "bloque"; // chacun pour soi : tout le monde joue contre moi
-      else if (!j.camp && jeu.campParDefaut) j.camp = jeu.campParDefaut;
+      // Personne ne choisit d'équipe : c'est le cadeau lui-même qui décide (cœur = aide, le reste = fait tomber)
+      var aide = !solo && cadeauAide(ev);
+      j.camp = jeu.equipes ? (aide ? jeu.equipes[0].cle : jeu.equipes[1].cle) : "bloque";
+      if (jeu.equipes) { var cote = aide ? 0 : 1; ptsEquipe[cote] += nb * val; acteurs[cote][cleDe(ev.utilisateur)] = 1; }
       var p = palier(val);
-      var equipe = "";
-      if (jeu.equipes) for (var q = 0; q < jeu.equipes.length; q++) if (jeu.equipes[q].cle === j.camp) equipe = " (" + jeu.equipes[q].nom + ")";
-      annoncer(j.nom + equipe + " : " + (ev.nom || "cadeau") + (nb > 1 ? " ×" + nb : ""), j.camp ? couleurCamp(j.camp) : ["#fff", "#ffe27a", "#ff9f43", "#ff5e7e", "#c084fc"][p], 2.4 + p * 0.4, p >= 3);
+      annoncer(j.nom + " : " + (ev.nom || "cadeau") + (nb > 1 ? " ×" + nb : "") + (jeu.equipes ? (aide ? " → aide" : " → attaque") : ""), jeu.equipes ? couleurCamp(j.camp) : ["#fff", "#ffe27a", "#ff9f43", "#ff5e7e", "#c084fc"][p], 2.4 + p * 0.4, p >= 3);
       var fois = p >= 3 ? Math.min(nb, 5) : Math.min(nb, 12);
-      for (var i = 0; i < fois; i++) (function (jj, pp, vv) { enFile(function () { jeu.surCadeau(jj, pp, vv); }); })(j, p, val);
+      var campAction = j.camp;
+      for (var i = 0; i < fois; i++) (function (jj, pp, vv, cc) { enFile(function () { var avant = jj.camp; jj.camp = cc; jeu.surCadeau(jj, pp, vv); jj.camp = avant; }); })(j, p, val, campAction);
     } else if (ev.type === "like") {
       var n = Math.max(1, Math.min(ev.nombre || 1, 500));
       stats.likes += n; j.likes += n;
-      var k = solo ? "aide" : (j.camp || jeu.campParDefaut || "tous"); // chacun pour soi : les likes m'aident
+      var k = "aide"; // les likes aident toujours
+      if (jeu.equipes) { ptsEquipe[0] += n * 0.05; acteurs[0][cleDe(ev.utilisateur)] = 1; }
       likesEnAttente[k] = (likesEnAttente[k] || 0) + n;
     } else if (ev.type === "abonnement") {
       stats.abonnements++; annoncer("Merci " + j.nom + " pour l'abonnement !", "#7dd3fc", 2.5);
@@ -179,8 +182,7 @@ var JL = (function () {
   }
   function dessinerEquipes(c) {
     if (!jeu.equipes) return;
-    var e = jeu.equipes, pts = [0, 0], nb = [0, 0];
-    for (var k in joueurs) { var j = joueurs[k]; for (var q = 0; q < 2; q++) if (j.camp === e[q].cle) { nb[q]++; pts[q] += j.pieces + j.likes * 0.05; } }
+    var e = jeu.equipes, pts = ptsEquipe, nb = [Object.keys(acteurs[0]).length, Object.keys(acteurs[1]).length];
     var total = pts[0] + pts[1], part = total > 0 ? pts[0] / total : 0.5;
     var x = 14, y = 142, w = L - 28, h = 50;
     cadreArrondi(c, x, y, w, h, 16, "rgba(0,0,0,0.55)");
@@ -190,8 +192,8 @@ var JL = (function () {
     c.fillStyle = "rgba(255,255,255,0.18)"; c.fillRect(x + 6, y + 6, w - 12, 10);
     c.restore();
     c.fillStyle = "#fff"; c.fillRect(x + 6 + (w - 12) * part - 2, y + 2, 4, h - 4);
-    texteContour(c, e[0].nom + " " + nb[0] + " · " + Math.round(pts[0]) + " pts", x + 16, y + h / 2, 22, "#fff", "left");
-    texteContour(c, Math.round(pts[1]) + " pts · " + nb[1] + " " + e[1].nom, x + w - 16, y + h / 2, 22, "#fff", "right");
+    texteContour(c, e[0].nom + " " + Math.round(pts[0]) + " pts", x + 16, y + h / 2, 22, "#fff", "left");
+    texteContour(c, Math.round(pts[1]) + " pts " + e[1].nom, x + w - 16, y + h / 2, 22, "#fff", "right");
   }
   function dessinerInterface(c) {
     dessinerEquipes(c);
@@ -286,7 +288,7 @@ var JL = (function () {
     if (solo) { j.legendeEquipes = j.legendeEquipes || j.legende; j.equipesSauvees = j.equipesSauvees || j.equipes; j.legende = j.legendeSolo || j.legende; j.equipes = null; }
     else { if (j.legendeEquipes) j.legende = j.legendeEquipes; if (j.equipesSauvees) j.equipes = j.equipesSauvees; }
     sonActif = options.son !== false;
-    jeu = j; joueurs = {}; annonces = []; particules = []; boums = []; file = []; temps = 0; dernier = 0; secousse = 0;
+    jeu = j; joueurs = {}; annonces = []; particules = []; boums = []; ptsEquipe = [0, 0]; acteurs = [{}, {}]; file = []; temps = 0; dernier = 0; secousse = 0;
     stats = { cadeaux: 0, pieces: 0, likes: 0, commentaires: 0, abonnements: 0, partages: 0 };
     ajuster();
     jeu.init(api);
@@ -343,7 +345,7 @@ var JL = (function () {
   var api = {
     L: L, H: H, annoncer: annoncer, eclat: eclat, secouer: secouer, son: son, palier: palier,
     texte: function (t, x, y, taille, couleur, align) { texteContour(ctx, t, x, y, taille, couleur, align); }, cadre: cadreArrondi, classement: classement, joueurs: function () { return joueurs; },
-    proprietaireActif: proprietaireActif, particules: dessinerParticules, remiseAZeroManche: remiseAZeroManche,
+    proprietaireActif: proprietaireActif, particules: dessinerParticules, remiseAZeroManche: function () { remiseAZeroManche(); ptsEquipe = [0, 0]; acteurs = [{}, {}]; },
     temps: function () { return temps; }, haut: function () { return haut; },
     charger: charger, img: img, image: dessinerImage, fond: fond, boum: boum
   };

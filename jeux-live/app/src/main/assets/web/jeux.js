@@ -107,14 +107,12 @@ JEUX.montee = (function () {
     nom: "La Montée", couleurFond: "#0b1530", campParDefaut: "bloque", equipes: EQUIPES_AB,
     legendeSolo: [["Chacun pour soi : tout le monde contre moi !", "#ffe27a"], ["Cadeaux : pierre · bombe · séisme · avalanche", "#fca5a5"], ["Vos likes me donnent des sauts géants", "#93c5fd"], ["Le meilleur soutien est affiché en haut", "#cbd5e1"]],
     legende: [
-      ["Écris BLEU pour m'aider · ROUGE pour me faire tomber", "#ffe27a"],
-      ["Rouges : pierre · bombe · séisme · avalanche", "#fca5a5"],
-      ["Bleus : bouclier · propulsion · drapeau · fusée", "#93c5fd"],
-      ["Likes des bleus : jauge de saut · des rouges : cailloux", "#cbd5e1"]
+      ["Cadeau avec un cœur : m'aide (BLEUS)", "#93c5fd"],
+      ["Autres cadeaux : me font tomber (ROUGES)", "#fca5a5"],
+      ["Bouclier · propulsion · drapeau · fusée / pierre · bombe · séisme", "#e2e8f0"],
+      ["Les likes m'aident à sauter plus haut", "#cbd5e1"]
     ],
-    campDepuisTexte: campAB,
     init: function (api) { J = api; record = 0; nouvelleManche(); },
-    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " rejoint les BLEUS !" : " rejoint les ROUGES !"), camp === "aide" ? "#93c5fd" : "#fca5a5", 2); },
     surCadeau: function (j, p, v) {
       var aide = j.camp === "aide";
       if (aide) {
@@ -131,7 +129,7 @@ JEUX.montee = (function () {
     },
     surLikes: function (camp, n) {
       if (camp === "aide") { jaugeAide += n; if (jaugeAide >= 60) { jaugeAide -= 60; heros.propulsion += 2; J.annoncer("Les likes me font sauter plus haut !", "#86efac", 1.8); } }
-      else { vent = Math.min(1, vent + n / 120); if (Math.random() < n / 40) objets.push({ type: "caillou", x: borne(heros.x + hasard(-200, 200), 30, 690), y: heros.y - 900, vy: 250, r: 12 }); }
+      
     },
     surAbonnement: function () { bouclier = Math.min(12, bouclier + 3); },
     surPartage: function () { heros.propulsion += 1; },
@@ -299,14 +297,12 @@ JEUX.colline = (function () {
     nom: "Le Roi de la Colline", couleurFond: "#14213d", campParDefaut: "bloque", equipes: EQUIPES_AB,
     legendeSolo: [["Chacun pour soi : faites tomber le roi !", "#ffe27a"], ["Cadeaux : boulet · gros boulet · salve · bombardement", "#fca5a5"], ["Vos likes soignent le roi", "#93c5fd"], ["Le meilleur soutien est affiché en haut", "#cbd5e1"]],
     legende: [
-      ["Écris BLEU pour protéger le roi · ROUGE pour l'attaquer", "#ffe27a"],
-      ["Rouges : boulet · gros boulet · salve · bombardement", "#fca5a5"],
-      ["Bleus : soin · bouclier · murs · statue d'or", "#93c5fd"],
-      ["Likes : petits boulets ou soins selon ton camp", "#cbd5e1"]
+      ["Cadeau avec un cœur : protège le roi (BLEUS)", "#93c5fd"],
+      ["Autres cadeaux : tirent sur le roi (ROUGES)", "#fca5a5"],
+      ["Soin · bouclier · murs · statue / boulets · salve · bombardement", "#e2e8f0"],
+      ["Les likes soignent le roi", "#cbd5e1"]
     ],
-    campDepuisTexte: campAB,
     init: function (api) { J = api; record = 0; reinit(); },
-    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " rejoint les BLEUS !" : " rejoint les ROUGES !"), camp === "aide" ? "#93c5fd" : "#fca5a5", 2); },
     surCadeau: function (j, p) {
       if (j.camp === "aide") {
         if (p === 1) { equilibre = Math.min(100, equilibre + 12); J.son("bonus"); }
@@ -412,19 +408,17 @@ JEUX.course = (function () {
     var js = J.joueurs(); for (var k in js) if (js[k].camp === "rouge" || js[k].camp === "bleu") eq[js[k].camp].membres++;
     debut = J.temps(); fin = 0; obstacles = []; manche = (manche || 0) + 1; J.remiseAZeroManche();
   }
-  function equipeDe(j) { if (j.camp !== "rouge" && j.camp !== "bleu") { j.camp = eq.rouge.membres <= eq.bleu.membres ? "rouge" : "bleu"; eq[j.camp].membres++; } return j.camp; }
+  function equipeDe(j) { return j.camp === "bleu" ? "bleu" : "rouge"; }
   function autre(e) { return e === "rouge" ? "bleu" : "rouge"; }
   var jeu = {
     nom: "La Course des Équipes", couleurFond: "#052e16", toujoursEquipes: true, equipes: [{ cle: "bleu", nom: "BLEUS", couleur: "#3b82f6" }, { cle: "rouge", nom: "ROUGES", couleur: "#ef4444" }],
     legende: [
-      ["Écris BLEU ou ROUGE pour choisir ton équipe", "#ffe27a"],
-      ["Chaque cadeau fait avancer ton équipe", "#fff"],
-      ["Moyen : turbo · Gros : turbo + flaque pour l'autre équipe", "#ffb4b4"],
-      ["Likes : petits pas pour ton équipe", "#cbd5e1"]
+      ["Cadeau avec un cœur : fait avancer les BLEUS", "#93c5fd"],
+      ["Autres cadeaux : font avancer les ROUGES", "#fca5a5"],
+      ["Moyen : turbo · Gros : turbo + flaque pour l'autre équipe", "#e2e8f0"],
+      ["Likes : petits pas pour les deux équipes", "#cbd5e1"]
     ],
-    campDepuisTexte: campEquipe,
     init: function (api) { J = api; manche = 0; reinit(); },
-    surCamp: function (j, camp) { eq.rouge.membres = 0; eq.bleu.membres = 0; var js = J.joueurs(); for (var k in js) if (eq[js[k].camp]) eq[js[k].camp].membres++; J.annoncer(j.nom + " rejoint l'équipe " + eq[camp].nom, eq[camp].couleur, 2); },
     surCadeau: function (j, p, v) {
       if (fin) return;
       var e = equipeDe(j), E = eq[e];
@@ -434,8 +428,8 @@ JEUX.course = (function () {
       J.son(p >= 3 ? "gros" : "bonus");
     },
     surLikes: function (camp, n) { if (fin) return; if (eq[camp]) eq[camp].pos += n * 0.35; else { eq.rouge.pos += n * 0.15; eq.bleu.pos += n * 0.15; } },
-    surAbonnement: function (j) { if (!fin) eq[equipeDe(j)].pos += 15; },
-    surPartage: function (j) { if (!fin) eq[equipeDe(j)].pos += 15; },
+    surAbonnement: function () { if (!fin) { eq.rouge.pos += 8; eq.bleu.pos += 8; } },
+    surPartage: function () { if (!fin) { eq.rouge.pos += 8; eq.bleu.pos += 8; } },
     surToucher: function (x) { // le propriétaire pose un obstacle surprise devant l'équipe en tête
       if (fin) return;
       var tete = eq.rouge.pos >= eq.bleu.pos ? "rouge" : "bleu"; eq[tete].frein = Math.min(6, eq[tete].frein + 2); J.annoncer("Peau de banane sur l'équipe " + eq[tete].nom + " !", "#fde047", 2); J.son("choc");
@@ -535,14 +529,12 @@ JEUX.tour = (function () {
     nom: "La Tour", couleurFond: "#1c1917", campParDefaut: "bloque", equipes: EQUIPES_AB,
     legendeSolo: [["Chacun pour soi : démolissez ma tour !", "#ffe27a"], ["Cadeaux : pierre · grosse pierre · tir groupé · séisme", "#fca5a5"], ["Vos likes ajoutent des blocs", "#93c5fd"], ["Le meilleur soutien est affiché en haut", "#cbd5e1"]],
     legende: [
-      ["Écris BLEU pour construire · ROUGE pour démolir", "#ffe27a"],
-      ["Bleus : 1, 3, 6 ou 15 blocs selon le cadeau", "#93c5fd"],
-      ["Rouges : pierre · grosse pierre · tir groupé · séisme", "#fca5a5"],
-      ["Likes des bleus : blocs · des rouges : secousses", "#cbd5e1"]
+      ["Cadeau avec un cœur : ajoute des blocs (BLEUS)", "#93c5fd"],
+      ["Autres cadeaux : démolissent la tour (ROUGES)", "#fca5a5"],
+      ["1, 3, 6 ou 15 blocs / pierre · tir groupé · séisme", "#e2e8f0"],
+      ["Les likes ajoutent des blocs", "#cbd5e1"]
     ],
-    campDepuisTexte: campAB,
     init: function (api) { J = api; record = 0; reinit(); },
-    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " rejoint les BLEUS !" : " rejoint les ROUGES !"), camp === "aide" ? "#93c5fd" : "#fca5a5", 2); },
     surCadeau: function (j, p) {
       if (j.camp === "aide") { var n = [0, 1, 3, 6, 15][p]; for (var i = 0; i < n; i++) lacherBloc(sommetX() + hasard(-25, 25)); J.son("bonus"); }
       else {

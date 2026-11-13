@@ -21,7 +21,7 @@ var App = (function () {
   function dessinerMode() {
     $("modeEquipes").className = "interrupteur" + (solo ? "" : " oui");
     $("modeSolo").className = "interrupteur" + (solo ? " oui" : "");
-    $("infoMode").textContent = solo ? "Pas d'équipes : les cadeaux jouent contre toi, les likes t'aident." : "Les spectateurs écrivent BLEU (ils t'aident) ou ROUGE (ils te font perdre).";
+    $("infoMode").textContent = solo ? "Sans équipes : tous les cadeaux jouent contre toi, les likes t'aident." : "Avec équipes : un cadeau avec un cœur t'aide (point pour les BLEUS), les autres te font tomber (point pour les ROUGES). Personne n'a rien à choisir.";
   }
   var dansLeJeu = false, modeEssai = false;
   var journal = [];
@@ -112,28 +112,27 @@ var App = (function () {
 
   // ---------- Mode essai : faux cadeaux (jamais envoyés sur TikTok) ----------
   var fauxNoms = ["Léa", "Tom", "Inès", "Hugo", "Sarah", "Nolan", "Jade", "Yanis"];
-  function faux(type, camp, valeur, nombre, texte) {
-    var n = fauxNoms[Math.floor(Math.random() * fauxNoms.length)] + (camp ? " (" + camp + ")" : "");
+  function faux(type, aide, valeur, nombre) {
+    var n = fauxNoms[Math.floor(Math.random() * fauxNoms.length)];
     var u = { nom: n, pseudo: n, id: n };
-    if (camp) JL.recevoir({ type: "commentaire", texte: camp, utilisateur: u });
-    if (type === "cadeau") JL.recevoir({ type: "cadeau", nom: valeur >= 1000 ? "Lion" : (valeur >= 100 ? "Univers" : (valeur >= 10 ? "Chapeau" : "Rose")), valeur: valeur, nombre: nombre || 1, utilisateur: u });
-    else if (type === "like") JL.recevoir({ type: "like", nombre: nombre, utilisateur: u });
-    else if (type === "commentaire") JL.recevoir({ type: "commentaire", texte: texte, utilisateur: u });
+    if (type === "cadeau") {
+      var nom = aide ? (valeur >= 1000 ? "Cœur géant" : (valeur >= 100 ? "Cœurs" : (valeur >= 10 ? "Cœur avec les doigts" : "Cœur"))) : (valeur >= 1000 ? "Lion" : (valeur >= 100 ? "Univers" : (valeur >= 10 ? "Chapeau" : "Rose")));
+      JL.recevoir({ type: "cadeau", nom: nom, valeur: valeur, nombre: nombre || 1, utilisateur: u });
+    } else if (type === "like") JL.recevoir({ type: "like", nombre: nombre, utilisateur: u });
     else JL.recevoir({ type: type, utilisateur: u });
   }
   function barreEssai() {
-    var enSolo = solo && jeuChoisi !== "course";
-    function lab(x, c) { return c ? x + " (" + c + ")" : x; }
+    var avecAide = !solo || jeuChoisi === "course";
     var b = [];
-    var camps = enSolo ? [""] : ["ROUGE", "BLEU"];
-    camps.forEach(function (cp) {
-      b.push([lab("Rose", cp), function () { faux("cadeau", cp, 1, 1); }]);
-      b.push([lab("Rose ×10", cp), function () { faux("cadeau", cp, 1, 10); }]);
-      b.push([lab("Moyen", cp), function () { faux("cadeau", cp, 30, 1); }]);
-      b.push([lab("Gros", cp), function () { faux("cadeau", cp, 500, 1); }]);
-      b.push([lab("Énorme", cp), function () { faux("cadeau", cp, 1500, 1); }]);
+    [[false, "Rose", "Chapeau", "Univers", "Lion"], [true, "Cœur", "Cœur moyen", "Cœur gros", "Cœur énorme"]].forEach(function (g) {
+      if (g[0] && !avecAide) return;
+      b.push([g[1], function () { faux("cadeau", g[0], 1, 1); }]);
+      b.push([g[1] + " ×10", function () { faux("cadeau", g[0], 1, 10); }]);
+      b.push([g[2], function () { faux("cadeau", g[0], 30, 1); }]);
+      b.push([g[3], function () { faux("cadeau", g[0], 500, 1); }]);
+      b.push([g[4], function () { faux("cadeau", g[0], 1500, 1); }]);
     });
-    b.push(["50 likes", function () { faux("like", enSolo ? "" : (Math.random() < 0.5 ? "BLEU" : "ROUGE"), 0, 50); }]);
+    b.push(["50 likes", function () { faux("like", false, 0, 50); }]);
     b.push(["Abonnement", function () { faux("abonnement"); }]);
     b.push(["Quitter l'essai", quitterJeu]);
     var c = $("essaiBarre"); c.innerHTML = "";
