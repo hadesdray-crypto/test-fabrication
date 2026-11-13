@@ -1,12 +1,9 @@
 {
- "code": 14,
- "nom": "1.0.14",
- "sha256": "b2b0295ac3a3288b272f63990c3cc201e0f8d5501d6fe862a4e9b765929dfa6d",
+ "code": 15,
+ "nom": "1.0.15",
+ "sha256": "3e3290400379b865be6027d8e6ab5447dae4a9f7ebd4dcf30589a96d67a3e9c8",
  "changes": [
-  "Équipes libres : personne ne choisit, c'est le cadeau qui décide",
-  "Cadeau avec un cœur : t'aide et marque pour les BLEUS ; les autres cadeaux : te font tomber et marquent pour les ROUGES",
-  "Les likes t'aident toujours",
-  "Option « Sans équipes » : tous les cadeaux contre toi"
+  "Écran « Vérifier que les cadeaux arrivent » : résumé du dernier live gardé même après avoir quitté le jeu (nombre de messages lus, lecture reliée ou non)"
  ],
- "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0.14/Jeux-Live.apk"
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0.15/Jeux-Live.apk"
 }
