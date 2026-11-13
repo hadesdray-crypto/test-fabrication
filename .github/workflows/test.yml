@@ -1,0 +1,10 @@
+name: Test de fabrication
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  essai:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: echo "La fabrication gratuite fonctionne"
