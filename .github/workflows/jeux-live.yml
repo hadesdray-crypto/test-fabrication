@@ -108,5 +108,6 @@ jobs:
                "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0." + n + "/Jeux-Live.apk"}
           json.dump(v, open("jeux-live/version.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
           PY
-          git -c user.name="Fabrication" -c user.email="noreply@github.com" commit -qam "Jeux Live 1.0.$N publiée"
+          git add jeux-live/version.json
+          git -c user.name="Fabrication" -c user.email="noreply@github.com" commit -qm "Jeux Live 1.0.$N publiée"
           git push

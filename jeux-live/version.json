@@ -1,0 +1,11 @@
+{
+ "code": 11,
+ "nom": "1.0.11",
+ "sha256": "4afc96af2cc579ea838a326bda21d2f30d1c2c0cf7f892ce7036b7695b740c5c",
+ "changes": [
+  "Première version : 4 jeux (La Montée, Le Roi de la Colline, La Course des Équipes, La Tour)",
+  "Lecture des cadeaux, likes et commentaires de ton live",
+  "Horaires de live, mode d'emploi, essai avec faux cadeaux"
+ ],
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0.11/Jeux-Live.apk"
+}
