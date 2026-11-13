@@ -83,7 +83,7 @@
     var WSEcoute = function (url, protocoles) {
       var ws = protocoles === undefined ? new WSOrigine(url) : new WSOrigine(url, protocoles);
       try {
-        if (String(url).indexOf("webcast") !== -1 || String(url).indexOf("im/push") !== -1) {
+        if (true) {
           etat("connexion aux messages ouverte");
           ws.addEventListener("message", function (e) { if (typeof e.data !== "string") octetsDe(e.data, surTrame); });
           ws.addEventListener("close", function () { etat("connexion aux messages fermée"); });
