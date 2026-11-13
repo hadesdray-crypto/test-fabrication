@@ -25,6 +25,14 @@ var App = (function () {
   }
   var dansLeJeu = false, modeEssai = false;
   var journal = [];
+  try { journal = JSON.parse(stock("journal") || "[]"); } catch (e) { journal = []; }
+  function resumeLive() {
+    var debut = stock("dl_debut");
+    if (!debut) return "Aucun live lancé depuis l'appli pour l'instant.";
+    var d = new Date(parseInt(debut, 10)), h = ("0" + d.getHours()).slice(-2) + "h" + ("0" + d.getMinutes()).slice(-2);
+    var n = parseInt(stock("dl_n") || "0", 10), ok = stock("dl_ok") === "1";
+    return "Dernier live (lancé le " + d.toLocaleDateString("fr-FR") + " à " + h + ") : " + n + " message" + (n > 1 ? "s" : "") + " lu" + (n > 1 ? "s" : "") + " (cadeaux, likes, commentaires). Lecture reliée au live : " + (ok ? "oui" : "non") + ".";
+  }
 
   function ecran(nom) {
     var e = document.querySelectorAll(".ecran");
@@ -34,7 +42,7 @@ var App = (function () {
     if (nom === "horaires") afficherHoraires();
     if (nom === "maj") $("majVersion").textContent = "Version installée : " + (natif("version") || "essai");
     if (nom === "accueil") { majInfoHoraire(); majConnexion(); }
-    if (nom === "etat") majConnexion();
+    if (nom === "etat") { majConnexion(); afficherResume(); afficherJournal(); }
   }
 
   function dessinerListe() {
@@ -90,6 +98,8 @@ var App = (function () {
     }
     if (!p) { dialogue("Il manque ton nom TikTok", "Écris ton nom TikTok tout en haut (ce qui est après le @ sur ton profil), puis recommence.", [["Compris", function () { $("pseudo").focus(); }, "vert"]]); return; }
     stock("pseudo", p);
+    stock("dl_debut", String(Date.now())); stock("dl_n", "0"); stock("dl_ok", "0");
+    journal = []; stock("journal", "[]");
     natif("demarrerLecture", p);
     demarrerJeu(false);
     $("voile").style.display = "block";
@@ -152,6 +162,9 @@ var App = (function () {
       : ev.type === "partage" ? "Partage : " + u
       : ev.type === "arrivee" ? "Arrivée : " + u : ev.type;
     journal.unshift(t); if (journal.length > 40) journal.pop();
+    stock("journal", JSON.stringify(journal));
+    if (!modeEssai) stock("dl_n", String(parseInt(stock("dl_n") || "0", 10) + 1));
+    afficherResume();
     var h = ""; for (var i = 0; i < Math.min(25, journal.length); i++) h += "<div>" + echapper(journal[i]) + "</div>";
     $("journal").innerHTML = h;
   }
@@ -159,11 +172,16 @@ var App = (function () {
   function etatLecture(json) {
     var e; try { e = typeof json === "string" ? JSON.parse(json) : json; } catch (x) { return; }
     var el = $("etatLecture");
-    if (e.niveau === "ok") { el.className = "etat-ok"; el.textContent = "ça marche, les messages du live arrivent"; }
+    if (e.niveau === "ok") { el.className = "etat-ok"; el.textContent = "ça marche, les messages du live arrivent"; if (stock("dl_debut")) { stock("dl_ok", "1"); afficherResume(); } }
     else if (e.niveau === "ko") { el.className = "etat-ko"; el.textContent = e.titre || "problème"; }
     else { el.className = "etat-att"; el.textContent = e.titre || "en attente"; }
     $("etatDetail").textContent = e.detail || "";
   }
+  function afficherJournal() {
+    var h = ""; for (var i = 0; i < Math.min(25, journal.length); i++) h += "<div>" + echapper(journal[i]) + "</div>";
+    $("journal").innerHTML = h || "<div>Rien pour l'instant.</div>";
+  }
+  function afficherResume() { var el = $("resumeLive"); if (el) el.textContent = resumeLive(); }
   function relancerLecture() {
     var p = pseudo() || stock("pseudo");
     if (!p) { dialogue("Il manque ton nom TikTok", "Écris ton nom TikTok sur la page d'accueil."); return; }
