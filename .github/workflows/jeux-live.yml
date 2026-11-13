@@ -10,7 +10,21 @@ permissions:
   contents: write
 
 jobs:
-  essai:
+  lecture-reelle:
+    name: Essai de lecture sur de vrais lives
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - run: echo "preparation"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Navigateur
+        run: npm i --no-save playwright@1.49.1 && npx playwright install --with-deps chromium > /dev/null
+      - name: Lecture
+        env:
+          DUREE: "75"
+          CIBLES: "https://www.tiktok.com/live https://www.tiktok.com/live/gaming"
+        run: node jeux-live/essais/lecture-reelle.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: captures-lecture, path: "capture-*.png", if-no-files-found: ignore }
