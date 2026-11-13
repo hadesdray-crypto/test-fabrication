@@ -1,0 +1,16 @@
+name: Jeux Live
+
+on:
+  push:
+    branches: [main]
+    paths: ["jeux-live/**", ".github/workflows/jeux-live.yml"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  essai:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "preparation"
