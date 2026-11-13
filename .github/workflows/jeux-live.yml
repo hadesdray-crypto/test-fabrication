@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: jeux-live
+  cancel-in-progress: true
+
 jobs:
   lecture-reelle:
     name: Essai de lecture sur de vrais lives
@@ -29,6 +33,95 @@ jobs:
           DUREE: "75"
           CIBLES: "https://www.tiktok.com/@tv_asahi_news/live https://www.tiktok.com/@ntvnews24/live"
         run: node jeux-live/essais/lecture-reelle.mjs
+
+  fabrication:
+    name: Fabrication de l'APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { gradle-version: "8.14.3" }
+      - name: Fabriquer
+        working-directory: jeux-live
+        env:
+          NUMERO_VERSION: ${{ github.run_number }}
+        run: gradle assembleRelease lintRelease --no-daemon --console=plain
+      - name: Ranger l'APK
+        run: cp jeux-live/app/build/outputs/apk/release/app-release.apk Jeux-Live.apk && ls -la Jeux-Live.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: apk, path: Jeux-Live.apk }
+
+  appareils:
+    name: Téléphone virtuel ${{ matrix.nom }}
+    needs: fabrication
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { nom: "android10-pixel3", api: 29, cible: default, profil: "pixel_3" }
+          - { nom: "android12-pixel5", api: 31, cible: google_apis, profil: "pixel_5" }
+          - { nom: "android14-pixel7pro", api: 34, cible: google_apis, profil: "pixel_7_pro" }
+          - { nom: "android15-petit", api: 35, cible: google_apis, profil: "Nexus 5X" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: apk }
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: ${{ matrix.cible }}
+          arch: x86_64
+          profile: ${{ matrix.profil }}
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash jeux-live/outils/tester-emulateur.sh ${{ matrix.nom }} Jeux-Live.apk
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: captures-lecture, path: "capture*.png", if-no-files-found: ignore }
+        with: { name: "captures-${{ matrix.nom }}", path: captures }
+
+  publication:
+    name: Publication et rapport
+    needs: [fabrication, appareils]
+    if: always() && needs.fabrication.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: tout }
+      - name: Captures dans la branche jeux-live-captures
+        run: |
+          mkdir -p /tmp/cap && cp -r tout/captures-*/* /tmp/cap/ 2>/dev/null || true
+          find /tmp/cap -name 'logcat-complet.txt' -delete
+          cd /tmp/cap && git init -q && git checkout -q -b jeux-live-captures && git add -A
+          git -c user.name="Fabrication" -c user.email="noreply@github.com" commit -qm "Captures ${{ github.run_number }}" || true
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" jeux-live-captures
+      - name: Publier l'APK si tous les tests sont bons
+        if: needs.appareils.result == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          N=${{ github.run_number }}
+          cp tout/apk/Jeux-Live.apk Jeux-Live.apk
+          gh release create "jeux-live-1.0.$N" Jeux-Live.apk --repo "${{ github.repository }}" --title "Jeux Live 1.0.$N" --notes "Application Jeux Live. Installer Jeux-Live.apk."
+          SHA=$(sha256sum Jeux-Live.apk | cut -d' ' -f1)
+          python3 - "$N" "$SHA" <<'PY'
+          import json, sys
+          n, sha = sys.argv[1], sys.argv[2]
+          ch = json.load(open("jeux-live/changements.json", encoding="utf-8"))
+          v = {"code": int(n), "nom": "1.0." + n, "sha256": sha, "changes": ch,
+               "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0." + n + "/Jeux-Live.apk"}
+          json.dump(v, open("jeux-live/version.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          PY
+          git -c user.name="Fabrication" -c user.email="noreply@github.com" commit -qam "Jeux Live 1.0.$N publiée"
+          git push
