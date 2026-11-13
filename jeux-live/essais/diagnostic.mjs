@@ -36,7 +36,7 @@ async function visite(url, ms) {
 }
 const comptes = (process.env.COMPTES || "tv_asahi_news").split(" ");
 console.log("DIAG_NAVIGATEUR " + navigateur.version());
-for (const c of comptes) { await visite("https://www.tiktok.com/@" + c + "/live", 45000); await page.screenshot({ path: "capture-" + c + ".png" }); const tx = await page.evaluate(() => document.body.innerText.replace(/\\s+/g, " ").slice(0, 1500)); console.log("DIAG_TEXTE_LIVE " + tx); }
+for (const c of comptes) { await visite("https://www.tiktok.com/@" + c + "/live", 45000); await page.screenshot({ path: "capture-" + c + ".png" }); const tx = await page.evaluate(() => document.body.innerText.replace(/\s+/g, " ").slice(0, 1500)); console.log("DIAG_TEXTE_LIVE " + tx); }
 await visite("https://www.tiktok.com/live", 5000);
 const liens = await page.$$eval("a[href*='/live']", as => as.map(a => a.href).filter(h => /\/@[^/]+\/live/.test(h)));
 console.log("DIAG_LIENS " + JSON.stringify([...new Set(liens)].slice(0, 5)));
