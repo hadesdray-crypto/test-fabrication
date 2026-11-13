@@ -18,20 +18,13 @@ adb shell input tap $((X/3)) $((Y/2)); sleep 1.2
 cap multi-barre
 sleep 4
 cap multi-barre-disparue
-adb shell am force-stop fr.hadesdray.youpub
-# 2. Direct : cadre du haut
-adb shell am start -n fr.hadesdray.youpub/.ui.MainActivity --es chip live
-sleep 70
-cap direct
-P=$(centre 'id/heroPlayer'); echo "cadre: $P" >> version-$API.txt
-[ -n "$P" ] && adb shell input tap $P; sleep 1
-cap direct-commandes
-N=$(centre 'id/exo_next'); echo "suivant: $N" >> version-$API.txt
-adb shell uiautomator dump /sdcard/u.xml >/dev/null 2>&1; adb shell cat /sdcard/u.xml > ui-direct-$API.xml
-T1=$(adb shell cat /sdcard/u.xml | grep -o 'heroTitle"[^>]*' | head -1); echo "avant: $T1" >> version-$API.txt
-[ -n "$N" ] && adb shell input tap $N
-sleep 25
-cap direct-apres-suivant
-adb shell uiautomator dump /sdcard/u2.xml >/dev/null 2>&1; adb shell cat /sdcard/u2.xml > ui-apres-$API.xml
+F=$(centre "content-desc=\"Format de l'image\""); echo "format: $F" >> version-$API.txt
+[ -n "$F" ] && adb shell input tap $F; sleep 1.5
+cap multi-format2
+F=$(centre "content-desc=\"Format de l'image\""); [ -n "$F" ] && adb shell input tap $F; sleep 1.5
+cap multi-format3
+G=$(centre 'content-desc="Niveau du son"'); echo "jauge: $G" >> version-$API.txt
+if [ -n "$G" ]; then set -- $G; adb shell input tap $1 $(( $2 + 40 )); fi; sleep 0.8
+cap multi-jauge
 adb logcat -d | grep -E "FATAL|AndroidRuntime|fr.hadesdray" | head -200 > logcat-$API.txt
 exit 0
