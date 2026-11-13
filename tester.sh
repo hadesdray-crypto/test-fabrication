@@ -26,5 +26,16 @@ cap multi-format3
 G=$(centre 'content-desc="Niveau du son"'); echo "jauge: $G" >> version-$API.txt
 if [ -n "$G" ]; then set -- $G; adb shell input tap $1 $(( $2 + 40 )); fi; sleep 0.8
 cap multi-jauge
+# 3. ＋ Chaîne → catégorie Enfants
+adb shell am start -n fr.hadesdray.youpub/.ui.MultiScreenActivity
+sleep 25
+C=$(centre 'Chaîne'); echo "plus: $C" >> version-$API.txt
+[ -n "$C" ] && adb shell input tap $C; sleep 3
+cap choix
+E=$(centre 'content-desc="Catégorie Enfants"'); echo "enfants: $E" >> version-$API.txt
+[ -n "$E" ] && adb shell input tap $E; sleep 60
+cap enfants
+CA=$(centre 'content-desc="Catégorie Canada"'); [ -n "$CA" ] && adb shell input tap $CA; sleep 50
+cap canada
 adb logcat -d | grep -E "FATAL|AndroidRuntime|fr.hadesdray" | head -200 > logcat-$API.txt
 exit 0
