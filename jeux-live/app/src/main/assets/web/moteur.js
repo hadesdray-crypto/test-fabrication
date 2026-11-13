@@ -189,9 +189,21 @@ var JL = (function () {
   // ---------- Boucle ----------
   var erreurs = 0, images = 0;
   function erreur(e) { erreurs++; try { console.log("JLERR " + (e && e.stack ? e.stack : e)); } catch (x) { } }
+  var derniereImage = 0;
   function boucle(t) {
     if (!enMarche) return;
     requestAnimationFrame(boucle);
+    image(t);
+  }
+  // Secours : si l'affichage du téléphone ne rythme pas les images, on avance quand même le jeu.
+  setInterval(function () {
+    if (!enMarche) return;
+    var n = (window.performance && performance.now) ? performance.now() : Date.now();
+    if (n - derniereImage > 250) image(n);
+  }, 100);
+  function image(t) {
+    derniereImage = t;
+    if (dernier && t < dernier) dernier = t;
     var dt = dernier ? Math.min(0.05, (t - dernier) / 1000) : 0.016;
     dernier = t; temps += dt; images++;
     try {

@@ -4,6 +4,11 @@ set -u
 NOM="$1"; APK="$2"; SORTIE="captures/$NOM"; mkdir -p "$SORTIE"
 adb wait-for-device
 adb shell settings put global window_animation_scale 0 || true
+adb shell svc power stayon true || true
+adb shell input keyevent KEYCODE_WAKEUP || true
+adb shell wm dismiss-keyguard || true
+adb shell input keyevent 82 || true
+sleep 2
 adb install -r -g "$APK" || { echo "ECHEC installation"; exit 1; }
 adb logcat -c
 adb shell am start -n fr.jeuxlive/.MainActivity --ez autotest true --es compte_test "${COMPTE_TEST:-tv_asahi_news}"

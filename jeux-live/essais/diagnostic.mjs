@@ -19,7 +19,7 @@ const diag = `
     }); return ws; };
   window.WebSocket.prototype = W.prototype;
 })();`;
-const navigateur = await chromium.launch();
+const navigateur = await chromium.launch({ channel: process.env.CANAL || undefined });
 const ctx = await navigateur.newContext({ userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36", locale: "fr-FR", viewport: { width: 1280, height: 800 } });
 await ctx.addInitScript(lib + "\n;" + diag);
 const page = await ctx.newPage();
@@ -27,6 +27,7 @@ page.on("console", m => { const t = m.text(); if (t.startsWith("DIAG")) console.
 page.on("request", r => { const u = r.url(); if (/webcast|im\/fetch|room|live\/.*api|api\/live/.test(u) && !/\.(js|css|png|jpe?g|webp|woff2?)(\?|$)/.test(u)) console.log("DIAG_REQ " + r.method() + " " + u.slice(0, 150)); });
 page.on("response", async r => { const u = r.url(); if (/im\/fetch/.test(u)) { try { const b = await r.body(); console.log("DIAG_FETCH_REP taille=" + b.length + " statut=" + r.status()); } catch (e) {} } });
 page.on("worker", w => console.log("DIAG_WORKER " + w.url().slice(0, 120)));
+page.on("websocket", w => { let n = 0; console.log("DIAG_CDP_WS " + w.url().slice(0, 80)); w.on("framereceived", f => { n++; if (n <= 15 || n % 50 === 0) console.log("DIAG_CDP_TRAME " + w.url().slice(6, 40) + " n=" + n + " taille=" + (f.payload ? f.payload.length : 0)); }); });
 async function visite(url, ms) {
   console.log("=== " + url);
   try { await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 }); } catch (e) { console.log("chargement: " + e.message.slice(0, 80)); }
@@ -34,7 +35,8 @@ async function visite(url, ms) {
   console.log("adresse finale: " + page.url() + " | titre: " + (await page.title()).slice(0, 70));
 }
 const comptes = (process.env.COMPTES || "tv_asahi_news").split(" ");
-for (const c of comptes) { await visite("https://www.tiktok.com/@" + c + "/live", 40000); await page.screenshot({ path: "capture-" + c + ".png" }); }
+console.log("DIAG_NAVIGATEUR " + navigateur.version());
+for (const c of comptes) { await visite("https://www.tiktok.com/@" + c + "/live", 45000); await page.screenshot({ path: "capture-" + c + ".png" }); const tx = await page.evaluate(() => document.body.innerText.replace(/\\s+/g, " ").slice(0, 1500)); console.log("DIAG_TEXTE_LIVE " + tx); }
 await visite("https://www.tiktok.com/live", 5000);
 const liens = await page.$$eval("a[href*='/live']", as => as.map(a => a.href).filter(h => /\/@[^/]+\/live/.test(h)));
 console.log("DIAG_LIENS " + JSON.stringify([...new Set(liens)].slice(0, 5)));

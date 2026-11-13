@@ -24,10 +24,18 @@ jobs:
         with: { node-version: "22" }
       - name: Navigateur
         run: npm i --no-save playwright@1.49.1 && npx playwright install --with-deps chromium > /dev/null
-      - name: Diagnostic
+      - name: Diagnostic (Chrome complet)
         env:
-          COMPTES: "tv_asahi_news ntvnews24 tbsnewsdig"
+          COMPTES: "tv_asahi_news tbsnewsdig"
+          CANAL: chrome
         run: node jeux-live/essais/diagnostic.mjs
+      - name: Captures du diagnostic dans la branche jeux-live-diag
+        if: always()
+        run: |
+          mkdir -p /tmp/d && cp capture*.png /tmp/d/ 2>/dev/null || true
+          cd /tmp/d && git init -q && git checkout -q -b jeux-live-diag && git add -A
+          git -c user.name="Fabrication" -c user.email="noreply@github.com" commit -qm "Diagnostic" || true
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" jeux-live-diag
       - name: Lecture
         env:
           DUREE: "75"
