@@ -82,9 +82,8 @@ class MainActivity : Activity() {
         if (i?.getBooleanExtra("autotest", false) == true) {
             i.removeExtra("autotest")
             val script = assets.open("web/autotest.js").bufferedReader().use { it.readText() }
-            appelerJs(script)
-            val compte = i.getStringExtra("compte_test")
-            if (!compte.isNullOrBlank()) lecteur.demarrer(compte)
+            val compte = i.getStringExtra("compte_test") ?: ""
+            appelerJs("window.__compteTest=${JSONObject.quote(compte)};\n$script")
         }
     }
 
@@ -149,13 +148,12 @@ class MainActivity : Activity() {
         if (oui) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            // On cache seulement la barre du haut (heure, batterie) : pas de fenêtre « plein écran » d'Android sur le live,
+            // et les boutons du téléphone (dont « retour ») restent utilisables.
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
     }
 

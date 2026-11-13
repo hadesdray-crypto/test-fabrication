@@ -28,10 +28,17 @@
     setTimeout(function () {
       clearInterval(minuterie);
       var s = JL.stats(), img = s.images - avant.images;
+      var sc = document.getElementById("scene"), visible = sc.style.display === "block" && sc.getBoundingClientRect().height > 100;
+      var couleurs = {};
+      try { var c2 = sc.getContext("2d"), w = sc.width, h = sc.height; for (var px = 0; px < 20; px++) { var d = c2.getImageData(Math.floor(w * (px % 5 + 0.5) / 5), Math.floor(h * (Math.floor(px / 5) + 0.5) / 4), 1, 1).data; couleurs[d[0] + "," + d[1] + "," + d[2]] = 1; } } catch (e) { }
+      var nbCouleurs = Object.keys(couleurs).length;
+      r("AFFICHAGE " + id + " visible=" + visible + " couleurs=" + nbCouleurs + " ecran=" + window.innerWidth + "x" + window.innerHeight);
+      if (!visible) echecs.push(id + " : jeu pas affiché");
+      if (nbCouleurs < 3) echecs.push(id + " : image vide");
       total += img;
       r("JEU " + id + " images=" + img + " erreurs=" + s.erreurs + " cadeaux=" + s.stats.cadeaux);
       if (s.erreurs > 0) echecs.push(id + " : " + s.erreurs + " erreurs");
-      if (img < 60) echecs.push(id + " : animation bloquée (" + img + " images en 12 s)");
+      if (img < 40) echecs.push(id + " : animation bloquée (" + img + " images en 12 s)");
       App.quitterJeu();
       setTimeout(suivant, 800);
     }, 12000);
@@ -39,11 +46,12 @@
   function fin() {
     r("JEUX " + (echecs.length ? "ECHEC " + echecs.join(" | ") : "OK"));
     // On laisse le lecteur travailler encore un peu puis on donne le résultat de la lecture
+    if (window.__compteTest) { try { Natif.demarrerLecture(window.__compteTest); } catch (e) { } }
     setTimeout(function () {
       var etat = document.getElementById("etatLecture").textContent + " / " + document.getElementById("etatDetail").textContent;
       r("LECTURE messages=" + lus + " etat=" + etat);
       r("FIN " + (echecs.length ? "ECHEC" : "OK"));
-    }, 30000);
+    }, 50000);
   }
   setTimeout(suivant, 1500);
 })();

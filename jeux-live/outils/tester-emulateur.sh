@@ -14,11 +14,11 @@ adb logcat -c
 adb shell am start -n fr.jeuxlive/.MainActivity --ez autotest true --es compte_test "${COMPTE_TEST:-tv_asahi_news}"
 sleep 4; adb exec-out screencap -p > "$SORTIE/0-accueil.png"
 FIN=""; n=0
-for s in $(seq 1 110); do
+for s in $(seq 1 130); do
   sleep 2
   adb logcat -d -s JEUXLIVE:I > "$SORTIE/journal.txt"
   for c in $(grep -o 'AUTOTEST CAPTURE [a-z]*' "$SORTIE/journal.txt" | awk '{print $3}'); do
-    if [ ! -f "$SORTIE/1-$c.png" ]; then sleep 6; adb exec-out screencap -p > "$SORTIE/1-$c.png"; fi
+    if [ ! -f "$SORTIE/1-$c.png" ]; then sleep 5; adb exec-out screencap -p > "$SORTIE/1-$c.png"; adb shell dumpsys window | grep -m1 mCurrentFocus; fi
   done
   if grep -q 'AUTOTEST FIN' "$SORTIE/journal.txt"; then FIN=$(grep -o 'AUTOTEST FIN [A-Z]*' "$SORTIE/journal.txt" | tail -1); break; fi
 done
