@@ -1,0 +1,25 @@
+--------- beginning of main
+11-13 19:32:06.781  3532  3872 I JEUXLIVE: AUTOTEST DEBUT jeux=ascension,montee,colline,course,tour,montee-solo
+11-13 19:32:08.402  3532  3872 I JEUXLIVE: AUTOTEST CAPTURE ascension
+11-13 19:32:21.352  3532  3872 I JEUXLIVE: AUTOTEST AFFICHAGE ascension visible=true couleurs=9 ecran=412x827
+11-13 19:32:21.352  3532  3872 I JEUXLIVE: AUTOTEST JEU ascension images=64 erreurs=0 cadeaux=212
+11-13 19:32:22.233  3532  3872 I JEUXLIVE: AUTOTEST CAPTURE montee
+11-13 19:32:34.906  3532  3872 I JEUXLIVE: AUTOTEST AFFICHAGE montee visible=true couleurs=20 ecran=412x827
+11-13 19:32:34.909  3532  3872 I JEUXLIVE: AUTOTEST JEU montee images=77 erreurs=0 cadeaux=345
+11-13 19:32:35.732  3532  3872 I JEUXLIVE: AUTOTEST CAPTURE colline
+11-13 19:32:48.297  3532  3872 I JEUXLIVE: AUTOTEST AFFICHAGE colline visible=true couleurs=16 ecran=412x827
+11-13 19:32:48.297  3532  3872 I JEUXLIVE: AUTOTEST JEU colline images=75 erreurs=0 cadeaux=425
+11-13 19:32:49.122  3532  3872 I JEUXLIVE: AUTOTEST CAPTURE course
+11-13 19:33:01.400  3532  3872 I JEUXLIVE: AUTOTEST AFFICHAGE course visible=true couleurs=18 ecran=412x827
+11-13 19:33:01.403  3532  3872 I JEUXLIVE: AUTOTEST JEU course images=85 erreurs=0 cadeaux=429
+11-13 19:33:02.224  3532  3872 I JEUXLIVE: AUTOTEST CAPTURE tour
+11-13 19:33:14.483  3532  3872 I JEUXLIVE: AUTOTEST AFFICHAGE tour visible=true couleurs=18 ecran=412x827
+11-13 19:33:14.484  3532  3872 I JEUXLIVE: AUTOTEST JEU tour images=82 erreurs=0 cadeaux=375
+11-13 19:33:15.402  3532  3872 I JEUXLIVE: AUTOTEST CAPTURE montee-solo
+11-13 19:33:27.878  3532  3872 I JEUXLIVE: AUTOTEST AFFICHAGE montee-solo visible=true couleurs=20 ecran=412x827
+11-13 19:33:27.878  3532  3872 I JEUXLIVE: AUTOTEST JEU montee-solo images=79 erreurs=0 cadeaux=389
+11-13 19:33:28.716  3532  3872 I JEUXLIVE: AUTOTEST JEUX OK
+11-13 19:34:18.717  3532  3872 I JEUXLIVE: AUTOTEST LECTURE messages=36 etat=ça marche, les messages du live arrivent / 34 messages lus depuis le début (cadeaux, likes, commentaires, arrivées).
+11-13 19:34:18.717  3532  3872 I JEUXLIVE: 
+11-13 19:34:18.717  3532  3872 I JEUXLIVE: Détails pour Claude : connexions {"webcast-ws.us.tiktok.com":35,"im-ws.tiktok.com":1} · types {"im_enter_room_resp":1,"msg":29,"vide":1,"hb":3} · messages {"WebcastChatMessage":6,"WebcastMemberMessage":27,"WebcastLikeMessage":1} · erreurs 2
+11-13 19:34:18.718  3532  3872 I JEUXLIVE: AUTOTEST FIN OK

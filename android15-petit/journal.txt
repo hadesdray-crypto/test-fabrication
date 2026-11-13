@@ -1,0 +1,25 @@
+--------- beginning of main
+11-13 19:32:15.196  2775  3096 I JEUXLIVE: AUTOTEST DEBUT jeux=ascension,montee,colline,course,tour,montee-solo
+11-13 19:32:16.836  2775  3096 I JEUXLIVE: AUTOTEST CAPTURE ascension
+11-13 19:32:29.788  2775  3096 I JEUXLIVE: AUTOTEST AFFICHAGE ascension visible=true couleurs=13 ecran=412x732
+11-13 19:32:29.788  2775  3096 I JEUXLIVE: AUTOTEST JEU ascension images=57 erreurs=0 cadeaux=315
+11-13 19:32:30.615  2775  3096 I JEUXLIVE: AUTOTEST CAPTURE montee
+11-13 19:32:42.984  2775  3096 I JEUXLIVE: AUTOTEST AFFICHAGE montee visible=true couleurs=19 ecran=412x732
+11-13 19:32:42.985  2775  3096 I JEUXLIVE: AUTOTEST JEU montee images=97 erreurs=0 cadeaux=425
+11-13 19:32:43.798  2775  3096 I JEUXLIVE: AUTOTEST CAPTURE colline
+11-13 19:32:56.118  2775  3096 I JEUXLIVE: AUTOTEST AFFICHAGE colline visible=true couleurs=14 ecran=412x732
+11-13 19:32:56.120  2775  3096 I JEUXLIVE: AUTOTEST JEU colline images=90 erreurs=0 cadeaux=440
+11-13 19:32:56.933  2775  3096 I JEUXLIVE: AUTOTEST CAPTURE course
+11-13 19:33:09.208  2775  3096 I JEUXLIVE: AUTOTEST AFFICHAGE course visible=true couleurs=18 ecran=412x732
+11-13 19:33:09.208  2775  3096 I JEUXLIVE: AUTOTEST JEU course images=116 erreurs=0 cadeaux=422
+11-13 19:33:10.023  2775  3096 I JEUXLIVE: AUTOTEST CAPTURE tour
+11-13 19:33:22.269  2775  3096 I JEUXLIVE: AUTOTEST AFFICHAGE tour visible=true couleurs=19 ecran=412x732
+11-13 19:33:22.270  2775  3096 I JEUXLIVE: AUTOTEST JEU tour images=105 erreurs=0 cadeaux=449
+11-13 19:33:23.095  2775  3096 I JEUXLIVE: AUTOTEST CAPTURE montee-solo
+11-13 19:33:35.404  2775  3096 I JEUXLIVE: AUTOTEST AFFICHAGE montee-solo visible=true couleurs=20 ecran=412x732
+11-13 19:33:35.405  2775  3096 I JEUXLIVE: AUTOTEST JEU montee-solo images=119 erreurs=0 cadeaux=450
+11-13 19:33:36.230  2775  3096 I JEUXLIVE: AUTOTEST JEUX OK
+11-13 19:34:26.232  2775  3096 I JEUXLIVE: AUTOTEST LECTURE messages=43 etat=ça marche, les messages du live arrivent / 40 messages lus depuis le début (cadeaux, likes, commentaires, arrivées).
+11-13 19:34:26.232  2775  3096 I JEUXLIVE: 
+11-13 19:34:26.232  2775  3096 I JEUXLIVE: Détails pour Claude : connexions {"webcast-ws.us.tiktok.com":44,"im-ws.tiktok.com":1} · types {"im_enter_room_resp":1,"msg":37,"vide":1,"hb":3} · messages {"WebcastChatMessage":6,"WebcastMemberMessage":33,"WebcastLikeMessage":1} · erreurs 3
+11-13 19:34:26.232  2775  3096 I JEUXLIVE: AUTOTEST FIN OK
