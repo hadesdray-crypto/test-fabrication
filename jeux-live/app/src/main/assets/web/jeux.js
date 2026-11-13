@@ -161,9 +161,9 @@ JEUX.montee = (function () {
     dessiner: function (c, t) {
       // Ciel qui change avec l'altitude
       var prog = borne(-heros.y / (NB_SOMMET * ESPACE), 0, 1);
-      var g = c.createLinearGradient(0, 0, 0, J.H);
+      var g = c.createLinearGradient(0, -J.haut(), 0, J.H);
       g.addColorStop(0, prog > 0.6 ? "#0b1030" : "#1e3a8a"); g.addColorStop(1, prog > 0.6 ? "#3b2a6b" : "#60a5fa");
-      c.fillStyle = g; c.fillRect(0, 0, J.L, J.H);
+      c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
       // Montagnes au loin
       c.fillStyle = "rgba(15,23,42,0.5)";
       c.beginPath(); c.moveTo(0, J.H); for (var mx = 0; mx <= J.L; mx += 90) c.lineTo(mx, 900 + Math.sin(mx * 0.02 + 1) * 120 - (camera * 0.05 % 200)); c.lineTo(J.L, J.H); c.fill();
@@ -195,7 +195,6 @@ JEUX.montee = (function () {
       c.fillStyle = "#a16207"; c.fillRect(-26, -60, 10, 30); // sac
       c.restore();
       if (heros.etourdi > 0) J.texte("★ ★", hx, hy - 110, 24, "#ffe27a");
-      J.particules(c, -camera + camera); // particules déjà en coordonnées écran
       c.restore();
       J.particules(c, 0);
       // Barre du haut
@@ -303,8 +302,8 @@ JEUX.colline = (function () {
       }
     },
     dessiner: function (c, t) {
-      var g = c.createLinearGradient(0, 0, 0, J.H); g.addColorStop(0, "#fb923c"); g.addColorStop(0.5, "#7c3aed"); g.addColorStop(1, "#1e1b4b");
-      c.fillStyle = g; c.fillRect(0, 0, J.L, J.H);
+      var g = c.createLinearGradient(0, -J.haut(), 0, J.H); g.addColorStop(0, "#fb923c"); g.addColorStop(0.5, "#7c3aed"); g.addColorStop(1, "#1e1b4b");
+      c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
       // Colline
       c.fillStyle = "#3f6212"; c.beginPath(); c.moveTo(0, J.H); for (var x = 0; x <= J.L; x += 10) c.lineTo(x, sol(x)); c.lineTo(J.L, J.H); c.fill();
       c.fillStyle = "#65a30d"; c.fillRect(290, SOMMET_Y - 4, 140, 8);
@@ -390,7 +389,7 @@ JEUX.course = (function () {
       if (fin) { if (t - fin > 8) reinit(); return; }
       for (var k in eq) {
         var E = eq[k], v = 4; // trot de base : la course ne s'arrête jamais
-        if (E.turbo > 0) { v += 45; E.turbo -= dt; if (Math.random() < 0.5) J.eclat(k === "rouge" ? 230 : 490, 1020 - E.pos / ARRIVEE * 780 + 40, "#fb923c", 2, 100); }
+        if (E.turbo > 0) { v += 45; E.turbo -= dt; if (Math.random() < 0.5) J.eclat(k === "rouge" ? 230 : 490, 1010 - borne(E.pos / ARRIVEE, 0, 1) * 770 + 10, "#fb923c", 2, 100); }
         if (E.frein > 0) { v *= 0.2; E.frein -= dt; }
         E.pos += v * dt;
       }
@@ -405,24 +404,24 @@ JEUX.course = (function () {
       }
     },
     dessiner: function (c, t) {
-      c.fillStyle = "#14532d"; c.fillRect(0, 0, J.L, J.H);
+      c.fillStyle = "#14532d"; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
       // Pistes
       var couloirs = [["rouge", 230], ["bleu", 490]];
       for (var i = 0; i < 2; i++) {
-        var x = couloirs[i][1]; c.fillStyle = "#b45309"; c.fillRect(x - 100, 200, 200, 880);
-        c.strokeStyle = "rgba(255,255,255,0.5)"; c.lineWidth = 3; for (var y = 240; y < 1080; y += 80) { c.beginPath(); c.moveTo(x - 100, y + ((t * 60) % 80) * 0); c.lineTo(x + 100, y); c.stroke(); }
+        var x = couloirs[i][1]; c.fillStyle = "#b45309"; c.fillRect(x - 100, 200, 200, 830);
+        c.strokeStyle = "rgba(255,255,255,0.5)"; c.lineWidth = 3; for (var y = 280; y < 1030; y += 80) { c.beginPath(); c.moveTo(x - 100, y); c.lineTo(x + 100, y); c.stroke(); }
       }
       // Ligne d'arrivée en damier
       for (var d = 0; d < 26; d++) { c.fillStyle = d % 2 ? "#fff" : "#111"; c.fillRect(130 + d * 18, 220, 18, 18); c.fillStyle = d % 2 ? "#111" : "#fff"; c.fillRect(130 + d * 18, 238, 18, 18); }
       for (var j = 0; j < 2; j++) {
-        var k = couloirs[j][0], E = eq[k], cx = couloirs[j][1], cy = 1020 - borne(E.pos / ARRIVEE, 0, 1) * 780;
+        var k = couloirs[j][0], E = eq[k], cx = couloirs[j][1], cy = 1010 - borne(E.pos / ARRIVEE, 0, 1) * 770;
         if (E.frein > 0) { c.fillStyle = "rgba(96,165,250,0.6)"; c.beginPath(); c.ellipse(cx, cy + 10, 70, 18, 0, 0, 7); c.fill(); }
         var pas = Math.sin(t * (E.turbo > 0 ? 25 : 9)) * 10;
         c.fillStyle = E.couleur; c.fillRect(cx - 20, cy - 70, 40, 46);
         c.fillStyle = "#fcd34d"; c.beginPath(); c.arc(cx, cy - 86, 18, 0, 7); c.fill();
         c.fillStyle = "#1f2937"; c.fillRect(cx - 16, cy - 24, 12, 24 + pas); c.fillRect(cx + 4, cy - 24, 12, 24 - pas);
         J.texte(Math.min(100, Math.round(E.pos / ARRIVEE * 100)) + " %", cx, cy - 130, 26, "#fff");
-        J.texte(E.nom + " (" + E.membres + ")", cx, 1120, 26, E.couleur);
+        J.texte("Équipe " + E.nom + " : " + E.membres, cx, 1058, 24, E.couleur);
       }
       J.particules(c, 0);
       J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.5)");
@@ -511,7 +510,7 @@ JEUX.tour = (function () {
     },
     dessiner: function (c, t) {
       var decal = hauteurEcran();
-      var g = c.createLinearGradient(0, 0, 0, J.H); g.addColorStop(0, "#0f172a"); g.addColorStop(1, "#334155"); c.fillStyle = g; c.fillRect(0, 0, J.L, J.H);
+      var g = c.createLinearGradient(0, -J.haut(), 0, J.H); g.addColorStop(0, "#0f172a"); g.addColorStop(1, "#334155"); c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
       c.fillStyle = "#3f3f46"; c.fillRect(0, BASE_Y + decal, J.L, 300);
       // Catapulte (côté gauche, au sol) — c'est elle qui lance les pierres
       c.fillStyle = "#78350f"; c.fillRect(20, 1000, 90, 22); c.save(); c.translate(65, 1000); c.rotate(-0.9 + (pierres.length ? 0.5 : 0)); c.fillRect(-6, -90, 12, 90); c.restore();

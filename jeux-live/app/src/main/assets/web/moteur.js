@@ -1,7 +1,7 @@
 /* Jeux Live — moteur commun : affichage, événements du live, camps, classement, annonces, sons. */
 var JL = (function () {
   var L = 720, H = 1280; // surface logique (format portrait du live)
-  var canvas, ctx, echelle = 1, decX = 0, decY = 0;
+  var canvas, ctx, echelle = 1, decX = 0, decY = 0, haut = 0;
   var jeu = null, enMarche = false, dernier = 0, temps = 0;
   var essai = false;
 
@@ -204,7 +204,7 @@ var JL = (function () {
       ctx.fillStyle = jeu.couleurFond || "#101828"; ctx.fillRect(0, 0, canvas.width, canvas.height);
       var sx = secousse ? (Math.random() - 0.5) * secousse : 0, sy = secousse ? (Math.random() - 0.5) * secousse : 0;
       ctx.setTransform(echelle, 0, 0, echelle, decX + sx * echelle, decY + sy * echelle);
-      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, L, H); ctx.clip();
+      ctx.save(); ctx.beginPath(); ctx.rect(0, -haut, L, H + haut); ctx.clip();
       jeu.dessiner(ctx, temps);
       dessinerInterface(ctx);
       ctx.restore();
@@ -217,7 +217,8 @@ var JL = (function () {
     canvas.width = Math.round(w * r); canvas.height = Math.round(h * r);
     canvas.style.width = w + "px"; canvas.style.height = h + "px";
     echelle = Math.min(canvas.width / L, canvas.height / H);
-    decX = (canvas.width - L * echelle) / 2; decY = (canvas.height - H * echelle) / 2;
+    decX = (canvas.width - L * echelle) / 2; decY = canvas.height - H * echelle; // collé en bas : le décor du jeu remplit le haut de l'écran
+    haut = decY / echelle;
   }
 
   function lancer(j, options) {
@@ -236,9 +237,9 @@ var JL = (function () {
 
   var api = {
     L: L, H: H, annoncer: annoncer, eclat: eclat, secouer: secouer, son: son, palier: palier,
-    texte: texteContour, cadre: cadreArrondi, classement: classement, joueurs: function () { return joueurs; },
+    texte: function (t, x, y, taille, couleur, align) { texteContour(ctx, t, x, y, taille, couleur, align); }, cadre: cadreArrondi, classement: classement, joueurs: function () { return joueurs; },
     proprietaireActif: proprietaireActif, particules: dessinerParticules, remiseAZeroManche: remiseAZeroManche,
-    temps: function () { return temps; }
+    temps: function () { return temps; }, haut: function () { return haut; }
   };
 
   window.addEventListener("resize", ajuster);

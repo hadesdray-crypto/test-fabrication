@@ -21,11 +21,13 @@ jobs:
       - name: Navigateur
         run: npm i --no-save playwright@1.49.1 && npx playwright install --with-deps chromium > /dev/null
       - name: Diagnostic
+        env:
+          COMPTES: "tv_asahi_news ntvnews24 tbsnewsdig"
         run: node jeux-live/essais/diagnostic.mjs
       - name: Lecture
         env:
           DUREE: "75"
-          CIBLES: "https://www.tiktok.com/live https://www.tiktok.com/live/gaming"
+          CIBLES: "https://www.tiktok.com/@tv_asahi_news/live https://www.tiktok.com/@ntvnews24/live"
         run: node jeux-live/essais/lecture-reelle.mjs
       - uses: actions/upload-artifact@v4
         if: always()

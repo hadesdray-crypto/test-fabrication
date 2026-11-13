@@ -33,7 +33,9 @@ async function visite(url, ms) {
   await page.waitForTimeout(ms);
   console.log("adresse finale: " + page.url() + " | titre: " + (await page.title()).slice(0, 70));
 }
-await visite("https://www.tiktok.com/live", 25000);
+const comptes = (process.env.COMPTES || "tv_asahi_news").split(" ");
+for (const c of comptes) { await visite("https://www.tiktok.com/@" + c + "/live", 40000); await page.screenshot({ path: "capture-" + c + ".png" }); }
+await visite("https://www.tiktok.com/live", 5000);
 const liens = await page.$$eval("a[href*='/live']", as => as.map(a => a.href).filter(h => /\/@[^/]+\/live/.test(h)));
 console.log("DIAG_LIENS " + JSON.stringify([...new Set(liens)].slice(0, 5)));
 const cible = liens.find(h => /\/@[^/]+\/live/.test(h));

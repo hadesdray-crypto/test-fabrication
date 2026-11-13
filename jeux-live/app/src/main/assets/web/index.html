@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Jeux Live</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: #0b1020; color: #fff; font-family: sans-serif; overflow: hidden; }
+  #scene { position: fixed; inset: 0; display: none; touch-action: none; background: #000; }
+  .ecran { position: fixed; inset: 0; overflow-y: auto; padding: 18px 16px 40px; display: none; -webkit-overflow-scrolling: touch; }
+  .ecran.actif { display: block; }
+  h1 { font-size: 30px; margin: 6px 0 4px; color: #ffe27a; }
+  h2 { font-size: 23px; margin: 18px 0 10px; color: #ffe27a; }
+  p, li { font-size: 18px; line-height: 1.45; }
+  .petit { font-size: 15px; color: #cbd5e1; }
+  .carte { background: #18213d; border-radius: 16px; padding: 14px; margin: 12px 0; }
+  .bouton { display: block; width: 100%; border: 0; border-radius: 16px; padding: 18px 14px; margin: 10px 0; font-size: 21px; font-weight: bold; color: #fff; background: #334155; text-align: center; }
+  .bouton:active { transform: scale(0.98); }
+  .vert { background: #16a34a; } .orange { background: #ea580c; } .bleu { background: #2563eb; } .violet { background: #7c3aed; } .gris { background: #475569; }
+  .grand { font-size: 26px; padding: 24px 14px; }
+  input[type=text], input[type=time] { width: 100%; font-size: 22px; padding: 14px; border-radius: 12px; border: 2px solid #475569; background: #0f172a; color: #fff; }
+  .choix { display: block; border: 3px solid #334155; border-radius: 16px; padding: 12px 14px; margin: 10px 0; background: #18213d; }
+  .choix.oui { border-color: #22c55e; background: #14532d; }
+  .choix b { font-size: 21px; display: block; color: #fff; }
+  .choix span { font-size: 16px; color: #cbd5e1; }
+  .etape { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0; }
+  .num { flex: 0 0 34px; height: 34px; border-radius: 17px; background: #ffe27a; color: #000; font-weight: bold; font-size: 19px; text-align: center; line-height: 34px; }
+  .jours { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .jour { flex: 1 0 36px; text-align: center; padding: 10px 0; border-radius: 10px; background: #334155; font-weight: bold; font-size: 17px; }
+  .jour.oui { background: #16a34a; }
+  .ligne { display: flex; gap: 10px; align-items: center; }
+  .ligne > * { flex: 1; min-width: 0; }
+  .interrupteur { padding: 12px; border-radius: 12px; background: #334155; text-align: center; font-weight: bold; font-size: 18px; }
+  .interrupteur.oui { background: #16a34a; }
+  #signaler { position: fixed; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 15px; background: #334155; color: #cbd5e1; border: 0; font-size: 16px; z-index: 5; }
+  #voile { position: fixed; inset: 0; background: rgba(5,8,20,0.96); display: none; z-index: 20; padding: 22px 18px; overflow-y: auto; }
+  #essaiBarre { position: fixed; left: 0; right: 0; top: 0; display: none; flex-wrap: wrap; gap: 6px; padding: 6px; background: rgba(0,0,0,0.7); z-index: 10; }
+  #essaiBarre button { flex: 1 0 22%; border: 0; border-radius: 8px; padding: 6px 2px; font-size: 12px; opacity: 0.85; font-weight: bold; color: #fff; background: #475569; }
+  #dialogue { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; z-index: 30; align-items: center; justify-content: center; padding: 20px; }
+  #dialogue .carte { max-width: 480px; width: 100%; max-height: 90%; overflow-y: auto; }
+  .etat-ok { color: #4ade80; font-weight: bold; } .etat-ko { color: #f87171; font-weight: bold; } .etat-att { color: #fbbf24; font-weight: bold; }
+  #journal div { font-size: 15px; padding: 4px 0; border-bottom: 1px solid #263152; }
+  .barre { height: 14px; background: #334155; border-radius: 7px; overflow: hidden; } .barre i { display: block; height: 100%; width: 0; background: #22c55e; }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<button id="signaler" onclick="App.signaler()" aria-label="Signaler une erreur">?</button>
+
+<!-- ============ ACCUEIL ============ -->
+<div class="ecran actif" id="e-accueil">
+  <h1>Jeux Live</h1>
+  <p class="petit">Les spectateurs de ton live TikTok jouent avec leurs cadeaux, leurs likes et leurs commentaires.</p>
+
+  <div class="carte">
+    <div class="etape"><div class="num">1</div><div style="flex:1"><b style="font-size:19px">Ton nom TikTok</b><br><span class="petit">Ce qui est écrit après le @ sur ton profil.</span></div></div>
+    <input type="text" id="pseudo" placeholder="exemple : monnom" autocomplete="off" autocapitalize="none" spellcheck="false" oninput="App.memoriserPseudo()">
+  </div>
+
+  <div class="carte">
+    <div class="etape"><div class="num">2</div><div><b style="font-size:19px">Choisis le jeu</b></div></div>
+    <div id="listeJeux"></div>
+  </div>
+
+  <button class="bouton vert grand" onclick="App.preparerLive()">3. Lancer le jeu pour mon live</button>
+
+  <button class="bouton bleu" onclick="App.ecran('aide')">Mode d'emploi (si tu es perdu)</button>
+  <button class="bouton violet" onclick="App.lancerEssai()">Essayer sans live (faux cadeaux)</button>
+  <button class="bouton gris" onclick="App.ecran('horaires')">Mes horaires de live</button>
+  <button class="bouton gris" onclick="App.ecran('etat')">Vérifier que les cadeaux arrivent</button>
+  <button class="bouton gris" onclick="App.ecran('maj')">Mise à jour de l'application</button>
+  <p class="petit" id="infoHoraire"></p>
+  <p class="petit" id="version"></p>
+</div>
+
+<!-- ============ MODE D'EMPLOI ============ -->
+<div class="ecran" id="e-aide">
+  <button class="bouton gris" onclick="App.ecran('accueil')">Retour</button>
+  <h1>Mode d'emploi</h1>
+  <div class="carte">
+    <h2>Avant le premier live (une seule fois)</h2>
+    <div class="etape"><div class="num">1</div><p>Écris ton nom TikTok sur la page d'accueil (ce qui est après le @).</p></div>
+    <div class="etape"><div class="num">2</div><p>Touche « Essayer sans live » pour voir les jeux avec de faux cadeaux. Rien n'est envoyé sur TikTok.</p></div>
+    <div class="etape"><div class="num">3</div><p>Si tu veux des lives à heures fixes, va dans « Mes horaires de live ». Le téléphone sonnera à l'heure choisie.</p></div>
+  </div>
+  <div class="carte">
+    <h2>Pour faire un live</h2>
+    <div class="etape"><div class="num">1</div><p>Branche le téléphone sur le chargeur et mets-le en Wi-Fi.</p></div>
+    <div class="etape"><div class="num">2</div><p>Dans cette appli, choisis un jeu puis touche « Lancer le jeu pour mon live ».</p></div>
+    <div class="etape"><div class="num">3</div><p>Touche « Ouvrir TikTok ». Dans TikTok : touche <b>+</b> en bas, puis <b>LIVE</b>, puis <b>Jeu mobile</b>, puis <b>Démarrer le LIVE</b>. Accepte le partage de l'écran.</p></div>
+    <div class="etape"><div class="num">4</div><p>Reviens dans cette appli et touche « C'est fait, afficher le jeu ». Les spectateurs voient le jeu.</p></div>
+    <div class="etape"><div class="num">5</div><p>Le jeu tourne tout seul. Reste près du téléphone : tu peux parler aux gens si tu veux.</p></div>
+    <div class="etape"><div class="num">6</div><p>Pour arrêter : coupe le live dans TikTok, puis touche la flèche retour du téléphone dans cette appli.</p></div>
+  </div>
+  <div class="carte">
+    <h2>Toi, tu peux jouer aussi</h2>
+    <p><b>La Montée :</b> touche à gauche ou à droite de l'écran pour sauter de ce côté.</p>
+    <p><b>Le Roi de la Colline :</b> touche l'écran pour faire sauter le roi et éviter un boulet.</p>
+    <p><b>La Course :</b> touche l'écran pour lancer une peau de banane sur l'équipe en tête.</p>
+    <p><b>La Tour :</b> touche l'écran là où tu veux faire tomber un bloc.</p>
+    <p class="petit">Les spectateurs voient le même écran : aucun bouton n'apparaît.</p>
+  </div>
+  <div class="carte">
+    <h2>Les règles de TikTok à respecter</h2>
+    <p>Reste présent pendant le live. TikTok coupe les lives où personne n'est là.</p>
+    <p>Ne demande pas des cadeaux en boucle. Le jeu montre seulement ce que fait chaque cadeau.</p>
+    <p>Ne mets pas de musique que tu n'as pas le droit d'utiliser.</p>
+  </div>
+  <div class="carte">
+    <h2>Si les cadeaux ne font rien</h2>
+    <p>Va dans « Vérifier que les cadeaux arrivent ». Si c'est écrit en rouge, vérifie ton nom TikTok et Internet, puis relance le jeu.</p>
+    <p>Si ça ne marche toujours pas, regarde « Mise à jour de l'application » : une correction peut être disponible.</p>
+  </div>
+  <div class="carte">
+    <h2>Toucher l'argent</h2>
+    <p>Les cadeaux deviennent des « diamants » sur ton compte TikTok. Dans TikTok : Profil, puis le menu en haut à droite, puis <b>Solde</b>, pour voir et retirer ton argent.</p>
+  </div>
+</div>
+
+<!-- ============ HORAIRES ============ -->
+<div class="ecran" id="e-horaires">
+  <button class="bouton gris" onclick="App.ecran('accueil')">Retour</button>
+  <h1>Mes horaires de live</h1>
+  <p class="petit">À l'heure du début, le téléphone sonne et ouvre le jeu. Tu n'as plus qu'à démarrer le live dans TikTok (2 touches). À l'heure de fin, il te prévient de couper le live.</p>
+  <div id="creneaux"></div>
+  <button class="bouton vert" onclick="App.enregistrerHoraires()">Enregistrer mes horaires</button>
+  <p id="horairesMsg" class="petit"></p>
+</div>
+
+<!-- ============ ÉTAT DE LA LECTURE ============ -->
+<div class="ecran" id="e-etat">
+  <button class="bouton gris" onclick="App.ecran('accueil')">Retour</button>
+  <h1>Les cadeaux arrivent-ils ?</h1>
+  <div class="carte">
+    <p>Lecture du live : <span id="etatLecture" class="etat-att">pas encore lancée</span></p>
+    <p class="petit" id="etatDetail"></p>
+  </div>
+  <p class="petit">Ici s'affichent les derniers cadeaux, likes et commentaires lus sur ton live :</p>
+  <div class="carte" id="journal"><div>Rien pour l'instant.</div></div>
+  <button class="bouton bleu" onclick="App.relancerLecture()">Relancer la lecture du live</button>
+</div>
+
+<!-- ============ MISE À JOUR ============ -->
+<div class="ecran" id="e-maj">
+  <button class="bouton gris" onclick="App.ecran('accueil')">Retour</button>
+  <h1>Mise à jour</h1>
+  <div class="carte"><p id="majVersion"></p><p id="majEtat" class="petit">Touche « Chercher une mise à jour ».</p><div class="barre" id="majBarre" style="display:none"><i id="majProgres"></i></div></div>
+  <button class="bouton vert" onclick="App.chercherMaj()">Chercher une mise à jour</button>
+  <div id="majListe"></div>
+</div>
+
+<!-- ============ VOILE « DÉMARRE TON LIVE » ============ -->
+<div id="voile">
+  <h1>Démarre ton live</h1>
+  <div class="carte">
+    <div class="etape"><div class="num">1</div><p>Touche « Ouvrir TikTok ».</p></div>
+    <div class="etape"><div class="num">2</div><p>Dans TikTok : <b>+</b> en bas, puis <b>LIVE</b>, puis <b>Jeu mobile</b>, puis <b>Démarrer le LIVE</b>. Accepte le partage de l'écran.</p></div>
+    <div class="etape"><div class="num">3</div><p>Reviens ici et touche « C'est fait, afficher le jeu ».</p></div>
+  </div>
+  <button class="bouton orange grand" onclick="App.ouvrirTikTok()">Ouvrir TikTok</button>
+  <button class="bouton vert grand" onclick="App.afficherJeu()">C'est fait, afficher le jeu</button>
+  <button class="bouton gris" onclick="App.quitterJeu()">Annuler</button>
+</div>
+
+<div id="essaiBarre"></div>
+
+<div id="dialogue"><div class="carte"><h2 id="dTitre"></h2><p id="dTexte"></p><div id="dBoutons"></div></div></div>
+
+<script src="moteur.js"></script>
+<script src="jeux.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
