@@ -14,7 +14,7 @@
     try { App._demarrerJeu(id, false); } catch (x) { echecs.push(id + " lancement : " + x); return suivant(); }
     avant = JL.stats();
     r("CAPTURE " + id);
-    var n = 0, camps = id === "course" ? ["1", "2"] : ["A", "B"];
+    var n = 0, camps = ["BLEU", "ROUGE"];
     var minuterie = setInterval(function () {
       n++;
       var c = camps[n % 2], u = { nom: "Test" + (n % 6) + " " + c, id: "t" + (n % 6) };

@@ -115,7 +115,7 @@ var App = (function () {
     else JL.recevoir({ type: type, utilisateur: u });
   }
   function barreEssai() {
-    var aide = jeuChoisi === "course" ? "1" : "A", bloque = jeuChoisi === "course" ? "2" : "B";
+    var aide = "BLEU", bloque = "ROUGE";
     var b = [
       ["Rose (" + bloque + ")", function () { faux("cadeau", bloque, 1, 1); }],
       ["Rose ×10 (" + bloque + ")", function () { faux("cadeau", bloque, 1, 10); }],

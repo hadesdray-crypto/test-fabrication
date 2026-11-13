@@ -63,6 +63,22 @@ var JL = (function () {
     c.globalAlpha = 1;
   }
 
+  // ---------- Explosions (image d'explosion si disponible) ----------
+  var boums = [];
+  function boum(x, y, taille) { boums.push({ x: x, y: y, t: temps, taille: taille || 120 }); if (boums.length > 20) boums.shift(); }
+  function dessinerBoums(c) {
+    for (var i = boums.length - 1; i >= 0; i--) {
+      var b = boums[i], age = temps - b.t;
+      if (age > 0.45) { boums.splice(i, 1); continue; }
+      var k = 0.5 + age / 0.45 * 0.8, a = 1 - age / 0.45;
+      if (!dessinerImage(c, "explosion.png", b.x, b.y, b.taille * k, { centre: true, alpha: a })) {
+        var g = c.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.taille * k / 2);
+        g.addColorStop(0, "rgba(255,255,200," + a + ")"); g.addColorStop(0.4, "rgba(255,170,40," + a + ")"); g.addColorStop(1, "rgba(255,80,0,0)");
+        c.fillStyle = g; c.beginPath(); c.arc(b.x, b.y, b.taille * k / 2, 0, 7); c.fill();
+      }
+    }
+  }
+
   // ---------- Secousse de l'écran ----------
   var secousse = 0;
   function secouer(f) { secousse = Math.max(secousse, f); }
@@ -108,7 +124,9 @@ var JL = (function () {
       stats.cadeaux += nb; stats.pieces += nb * val; j.pieces += nb * val;
       if (!j.camp && jeu.campParDefaut) j.camp = jeu.campParDefaut;
       var p = palier(val);
-      annoncer(j.nom + " : " + (ev.nom || "cadeau") + (nb > 1 ? " ×" + nb : ""), ["#fff", "#ffe27a", "#ff9f43", "#ff5e7e", "#c084fc"][p], 2.4 + p * 0.4, p >= 3);
+      var equipe = "";
+      if (jeu.equipes) for (var q = 0; q < jeu.equipes.length; q++) if (jeu.equipes[q].cle === j.camp) equipe = " (" + jeu.equipes[q].nom + ")";
+      annoncer(j.nom + equipe + " : " + (ev.nom || "cadeau") + (nb > 1 ? " ×" + nb : ""), j.camp ? couleurCamp(j.camp) : ["#fff", "#ffe27a", "#ff9f43", "#ff5e7e", "#c084fc"][p], 2.4 + p * 0.4, p >= 3);
       var fois = p >= 3 ? Math.min(nb, 5) : Math.min(nb, 12);
       for (var i = 0; i < fois; i++) (function (jj, pp, vv) { enFile(function () { jeu.surCadeau(jj, pp, vv); }); })(j, p, val);
     } else if (ev.type === "like") {
@@ -154,15 +172,36 @@ var JL = (function () {
     c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r);
     c.quadraticCurveTo(x, y, x + r, y); c.closePath(); c.fillStyle = fond; c.fill();
   }
+  function couleurCamp(camp) {
+    if (jeu && jeu.equipes) for (var i = 0; i < jeu.equipes.length; i++) if (jeu.equipes[i].cle === camp) return jeu.equipes[i].couleur;
+    return "#fff";
+  }
+  function dessinerEquipes(c) {
+    if (!jeu.equipes) return;
+    var e = jeu.equipes, pts = [0, 0], nb = [0, 0];
+    for (var k in joueurs) { var j = joueurs[k]; for (var q = 0; q < 2; q++) if (j.camp === e[q].cle) { nb[q]++; pts[q] += j.pieces + j.likes * 0.05; } }
+    var total = pts[0] + pts[1], part = total > 0 ? pts[0] / total : 0.5;
+    var x = 14, y = 142, w = L - 28, h = 50;
+    cadreArrondi(c, x, y, w, h, 16, "rgba(0,0,0,0.55)");
+    c.save(); c.beginPath(); c.rect(x + 6, y + 6, w - 12, h - 12); c.clip();
+    c.fillStyle = e[0].couleur; c.fillRect(x + 6, y + 6, (w - 12) * part, h - 12);
+    c.fillStyle = e[1].couleur; c.fillRect(x + 6 + (w - 12) * part, y + 6, (w - 12) * (1 - part), h - 12);
+    c.fillStyle = "rgba(255,255,255,0.18)"; c.fillRect(x + 6, y + 6, w - 12, 10);
+    c.restore();
+    c.fillStyle = "#fff"; c.fillRect(x + 6 + (w - 12) * part - 2, y + 2, 4, h - 4);
+    texteContour(c, e[0].nom + " " + nb[0] + " · " + Math.round(pts[0]) + " pts", x + 16, y + h / 2, 22, "#fff", "left");
+    texteContour(c, Math.round(pts[1]) + " pts · " + nb[1] + " " + e[1].nom, x + w - 16, y + h / 2, 22, "#fff", "right");
+  }
   function dessinerInterface(c) {
-    // Classement
+    dessinerEquipes(c);
+    // Classement (le nom a la couleur de son équipe)
     var top = classement(3);
     if (top.length) {
-      cadreArrondi(c, L - 250, 150, 236, 34 + top.length * 34, 14, "rgba(0,0,0,0.45)");
-      texteContour(c, "Meilleurs soutiens", L - 132, 168, 20, "#ffe27a");
+      cadreArrondi(c, L - 250, 204, 236, 34 + top.length * 34, 14, "rgba(0,0,0,0.5)");
+      texteContour(c, "Meilleurs soutiens", L - 132, 222, 20, "#ffe27a");
       for (var i = 0; i < top.length; i++) {
         var nom = top[i].nom.length > 13 ? top[i].nom.slice(0, 12) + "…" : top[i].nom;
-        texteContour(c, (i + 1) + ". " + nom, L - 238, 202 + i * 34, 21, i === 0 ? "#ffd34d" : "#fff", "left");
+        texteContour(c, (i + 1) + ". " + nom, L - 238, 256 + i * 34, 21, couleurCamp(top[i].camp), "left");
       }
     }
     // Annonces
@@ -220,6 +259,7 @@ var JL = (function () {
       ctx.setTransform(echelle, 0, 0, echelle, decX + sx * echelle, decY + sy * echelle);
       ctx.save(); ctx.beginPath(); ctx.rect(0, -haut, L, H + haut); ctx.clip();
       jeu.dessiner(ctx, temps);
+      dessinerBoums(ctx);
       dessinerInterface(ctx);
       ctx.restore();
     } catch (e) { erreur(e); }
@@ -242,7 +282,7 @@ var JL = (function () {
     ctx = canvas.getContext("2d");
     essai = !!options.essai;
     sonActif = options.son !== false;
-    jeu = j; joueurs = {}; annonces = []; particules = []; file = []; temps = 0; dernier = 0; secousse = 0;
+    jeu = j; joueurs = {}; annonces = []; particules = []; boums = []; file = []; temps = 0; dernier = 0; secousse = 0;
     stats = { cadeaux: 0, pieces: 0, likes: 0, commentaires: 0, abonnements: 0, partages: 0 };
     ajuster();
     jeu.init(api);
@@ -250,11 +290,47 @@ var JL = (function () {
   }
   function arreter() { enMarche = false; jeu = null; }
 
+  // ---------- Images (personnages, objets, décors) ----------
+  var IMG = {};
+  function charger(noms) {
+    noms.forEach(function (n) {
+      if (IMG[n] !== undefined) return;
+      IMG[n] = null;
+      var im = new Image();
+      im.onload = function () { IMG[n] = im; };
+      im.onerror = function () { IMG[n] = false; };
+      im.src = "img/" + n;
+    });
+  }
+  function img(n) { return IMG[n] || null; }
+  /** Dessine une image : ancre en bas au centre (ou au centre), hauteur voulue, miroir et rotation possibles. */
+  function dessinerImage(c, n, x, y, h, o) {
+    var im = IMG[n]; if (!im) return false;
+    o = o || {};
+    var w = h * im.width / im.height;
+    c.save(); c.translate(x, y);
+    if (o.rot) { c.translate(0, o.centre ? 0 : -h / 2); c.rotate(o.rot); c.translate(0, o.centre ? 0 : h / 2); }
+    if (o.miroir) c.scale(-1, 1);
+    if (o.alpha !== undefined) c.globalAlpha = o.alpha;
+    c.drawImage(im, -w / 2, o.centre ? -h / 2 : -h, w, h);
+    c.restore();
+    return true;
+  }
+  /** Décor plein écran (recadré pour remplir) ; renvoie le rectangle où il est dessiné. */
+  function fond(c, n, decalY) {
+    var im = IMG[n]; if (!im) return null;
+    var hz = H + haut, ech = Math.max(L / im.width, hz / im.height);
+    var w = im.width * ech, h = im.height * ech, x = (L - w) / 2, y = -haut + (hz - h) / 2 + (decalY || 0);
+    c.drawImage(im, x, y, w, h);
+    return { x: x, y: y, w: w, h: h };
+  }
+
   var api = {
     L: L, H: H, annoncer: annoncer, eclat: eclat, secouer: secouer, son: son, palier: palier,
     texte: function (t, x, y, taille, couleur, align) { texteContour(ctx, t, x, y, taille, couleur, align); }, cadre: cadreArrondi, classement: classement, joueurs: function () { return joueurs; },
     proprietaireActif: proprietaireActif, particules: dessinerParticules, remiseAZeroManche: remiseAZeroManche,
-    temps: function () { return temps; }, haut: function () { return haut; }
+    temps: function () { return temps; }, haut: function () { return haut; },
+    charger: charger, img: img, image: dessinerImage, fond: fond, boum: boum
   };
 
   window.addEventListener("resize", ajuster);

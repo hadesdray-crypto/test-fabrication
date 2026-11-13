@@ -1,12 +1,63 @@
 /* Jeux Live — les 4 jeux. Tous tournent seuls ; le propriétaire peut toucher l'écran pour agir (rien de visible en plus pour les spectateurs). */
 var JEUX = {};
 
-function campAB(texte) {
+/* Les deux équipes, les mêmes dans tous les jeux : les BLEUS m'aident, les ROUGES me font perdre. */
+var EQUIPES_AB = [{ cle: "aide", nom: "BLEUS", couleur: "#3b82f6" }, { cle: "bloque", nom: "ROUGES", couleur: "#ef4444" }];
+function motEquipe(texte) {
   var t = texte.trim().toLowerCase();
-  if (/^(a|aide|aider|j'aide|je t'aide|team a)\b/.test(t) || t === "a") return "aide";
-  if (/^(b|bloque|bloquer|je bloque|je te bloque|team b)\b/.test(t) || t === "b") return "bloque";
-  return null;
+  if (/^(1|bleu|bleus|bleue|bleues|team bleu|équipe bleue|equipe bleue|a|aide|j'aide)(\s|$|!|\.)/.test(t)) return 1;
+  if (/^(2|rouge|rouges|team rouge|équipe rouge|equipe rouge|b|bloque|je bloque)(\s|$|!|\.)/.test(t)) return 2;
+  return 0;
 }
+function campAB(texte) { var e = motEquipe(texte); return e === 1 ? "aide" : (e === 2 ? "bloque" : null); }
+/* ---------- Images et dessins communs (une image manquante = dessin de remplacement) ---------- */
+JL.api.charger(["grimpeur-debout.png", "grimpeur-saut.png", "grimpeur-chute.png", "grimpeur-joie.png",
+  "roi-debout.png", "roi-saut.png", "roi-chute.png", "roi-statue.png", "rouge-1.png", "rouge-2.png", "bleu-1.png", "bleu-2.png",
+  "ouvrier.png", "catapulte.png", "canon-droite.png", "canon-gauche.png",
+  "fond-montee.jpg", "fond-colline.jpg", "fond-course.jpg", "fond-tour.jpg",
+  "pierre.png", "gros-rocher.png", "bombe.png", "boulet.png", "rebord.png", "rebord-or.png", "bouclier.png", "drapeau.png",
+  "bloc-rouge.png", "bloc-bleu.png", "bloc-vert.png", "bloc-jaune.png", "fusee.png", "banane.png", "flaque.png", "explosion.png"]);
+var A = JL.api;
+function boule(c, x, y, r, claire, sombre) {
+  var g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r);
+  g.addColorStop(0, claire); g.addColorStop(1, sombre);
+  c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+  c.lineWidth = Math.max(2, r / 8); c.strokeStyle = "#1c1917"; c.stroke();
+}
+function rocher(c, x, y, r, rot, gros) {
+  if (A.image(c, gros ? "gros-rocher.png" : "pierre.png", x, y, r * 2.2, { centre: true, rot: rot })) return;
+  boule(c, x, y, r, gros ? "#a8a29e" : "#d6d3d1", gros ? "#44403c" : "#57534e");
+}
+function bombe(c, x, y, r, t) {
+  if (A.image(c, "bombe.png", x, y, r * 2.6, { centre: true, rot: Math.sin(t * 6) * 0.2 })) return;
+  boule(c, x, y, r, "#4b5563", "#0b0f19");
+  c.strokeStyle = "#a16207"; c.lineWidth = 4; c.beginPath(); c.moveTo(x, y - r); c.quadraticCurveTo(x + 8, y - r - 12, x + 4, y - r - 18); c.stroke();
+  c.fillStyle = (t * 10 % 2 < 1) ? "#fde047" : "#f97316"; c.beginPath(); c.arc(x + 4, y - r - 20, 6, 0, 7); c.fill();
+}
+function boulet(c, x, y, r) { if (!A.image(c, "boulet.png", x, y, r * 2.2, { centre: true })) boule(c, x, y, r, "#6b7280", "#111827"); }
+function bulle(c, x, y, r, t) {
+  if (A.image(c, "bouclier.png", x, y, r * 2.2, { centre: true, alpha: 0.55 + 0.15 * Math.sin(t * 6) })) return;
+  var g = c.createRadialGradient(x, y, r * 0.6, x, y, r);
+  g.addColorStop(0, "rgba(125,211,252,0.05)"); g.addColorStop(1, "rgba(125,211,252,0.55)");
+  c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+  c.strokeStyle = "rgba(186,230,253,0.9)"; c.lineWidth = 4; c.stroke();
+}
+function rebord(c, x, y, l, or, sol) {
+  var im = A.img(or ? "rebord-or.png" : "rebord.png");
+  if (im && !sol) { var h = l * im.height / im.width; c.drawImage(im, x - l / 2, y - h * 0.18, l, h); return; }
+  var g = c.createLinearGradient(0, y - 8, 0, y + 40);
+  g.addColorStop(0, or ? "#fde68a" : (sol ? "#65a30d" : "#a8a29e")); g.addColorStop(1, or ? "#b45309" : (sol ? "#365314" : "#44403c"));
+  c.fillStyle = g; c.beginPath(); c.moveTo(x - l / 2, y - 6); c.lineTo(x + l / 2, y - 6); c.lineTo(x + l / 2 - 14, y + 26); c.lineTo(x + l * 0.15, y + 42); c.lineTo(x - l / 2 + 14, y + 28); c.closePath(); c.fill();
+  c.lineWidth = 4; c.strokeStyle = "#1c1917"; c.stroke();
+  c.fillStyle = or ? "#facc15" : "#4d7c0f"; c.fillRect(x - l / 2 + 2, y - 8, l - 4, 7);
+}
+function drapeauVert(c, x, y) {
+  if (A.image(c, "drapeau.png", x, y, 90)) return;
+  c.fillStyle = "#78350f"; c.fillRect(x - 3, y - 80, 6, 80);
+  c.fillStyle = "#22c55e"; c.beginPath(); c.moveTo(x + 3, y - 80); c.lineTo(x + 50, y - 66); c.lineTo(x + 3, y - 52); c.fill();
+  c.strokeStyle = "#14532d"; c.lineWidth = 3; c.stroke();
+}
+
 function hasard(a, b) { return a + Math.random() * (b - a); }
 function borne(v, a, b) { return v < a ? a : (v > b ? b : v); }
 
@@ -53,16 +104,16 @@ JEUX.montee = (function () {
   }
 
   var jeu = {
-    nom: "La Montée", couleurFond: "#0b1530", campParDefaut: "bloque",
+    nom: "La Montée", couleurFond: "#0b1530", campParDefaut: "bloque", equipes: EQUIPES_AB,
     legende: [
-      ["Commente A pour m'aider · B pour me bloquer", "#ffe27a"],
-      ["Petit cadeau : pierre · Moyen : bombe · Gros : séisme", "#ffb4b4"],
-      ["Aideurs : bouclier · propulsion · drapeau · fusée", "#b4f5c6"],
-      ["Likes : les aideurs remplissent la jauge de saut", "#cbd5e1"]
+      ["Écris BLEU pour m'aider · ROUGE pour me faire tomber", "#ffe27a"],
+      ["Rouges : pierre · bombe · séisme · avalanche", "#fca5a5"],
+      ["Bleus : bouclier · propulsion · drapeau · fusée", "#93c5fd"],
+      ["Likes des bleus : jauge de saut · des rouges : cailloux", "#cbd5e1"]
     ],
     campDepuisTexte: campAB,
     init: function (api) { J = api; record = 0; nouvelleManche(); },
-    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " m'aide !" : " veut me bloquer !"), camp === "aide" ? "#86efac" : "#fca5a5", 2); },
+    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " rejoint les BLEUS !" : " rejoint les ROUGES !"), camp === "aide" ? "#93c5fd" : "#fca5a5", 2); },
     surCadeau: function (j, p, v) {
       var aide = j.camp === "aide";
       if (aide) {
@@ -74,7 +125,7 @@ JEUX.montee = (function () {
         if (p === 1) lacherPierre(false);
         else if (p === 2) { objets.push({ type: "bombe", x: borne(heros.x + hasard(-60, 60), 40, 680), y: heros.y - 900, vy: 300, r: 30 }); }
         else if (p === 3) { J.annoncer("SÉISME !", "#ff9f43", 2.5, true); frapper(1.8); for (var k = 0; k < 4; k++) lacherPierre(true); }
-        else { J.annoncer("AVALANCHE !", "#ff5e7e", 3, true); drapeau = 0; for (var a = 0; a < 10; a++) lacherPierre(true); frapper(3); }
+        else { J.annoncer("AVALANCHE DES ROUGES !", "#ff5e7e", 3, true); drapeau = 0; for (var a = 0; a < 10; a++) lacherPierre(true); frapper(3); }
       }
     },
     surLikes: function (camp, n) {
@@ -140,7 +191,7 @@ JEUX.montee = (function () {
         ob.vy += 900 * dt; ob.y += ob.vy * dt;
         var dx = ob.x - heros.x, dy = ob.y - (heros.y - 40);
         if (dx * dx + dy * dy < (ob.r + 30) * (ob.r + 30)) {
-          if (ob.type === "bombe") { J.eclat(ob.x, ob.y - camera, "#ff9f43", 30, 420); J.son("gros"); frapper(1.4); }
+          if (ob.type === "bombe") { J.eclat(ob.x, ob.y - camera, "#ff9f43", 30, 420); J.boum(ob.x, ob.y - camera, 260); J.son("gros"); frapper(1.4); }
           else frapper(ob.type === "caillou" ? 0.6 : (ob.gros ? 1.4 : 1));
           objets.splice(o, 1); continue;
         }
@@ -154,55 +205,55 @@ JEUX.montee = (function () {
         mancheFinie = t;
         var duree = Math.round(t - departManche);
         J.annoncer("SOMMET ATTEINT en " + Math.floor(duree / 60) + " min " + (duree % 60) + " s !", "#ffd34d", 6, true);
-        J.annoncer("Les aideurs gagnent cette manche !", "#86efac", 6);
+        J.annoncer("Les BLEUS gagnent cette manche !", "#93c5fd", 6);
         J.son("victoire"); for (var f = 0; f < 6; f++) J.eclat(hasard(100, 620), hasard(300, 700), ["#ffd34d", "#86efac", "#7dd3fc"][f % 3], 30, 500);
       }
     },
     dessiner: function (c, t) {
-      // Ciel qui change avec l'altitude
       var prog = borne(-heros.y / (NB_SOMMET * ESPACE), 0, 1);
-      var g = c.createLinearGradient(0, -J.haut(), 0, J.H);
-      g.addColorStop(0, prog > 0.6 ? "#0b1030" : "#1e3a8a"); g.addColorStop(1, prog > 0.6 ? "#3b2a6b" : "#60a5fa");
-      c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
-      // Montagnes au loin
-      c.fillStyle = "rgba(15,23,42,0.5)";
-      c.beginPath(); c.moveTo(0, J.H); for (var mx = 0; mx <= J.L; mx += 90) c.lineTo(mx, 900 + Math.sin(mx * 0.02 + 1) * 120 - (camera * 0.05 % 200)); c.lineTo(J.L, J.H); c.fill();
+      if (!J.fond(c, "fond-montee.jpg")) {
+        var g = c.createLinearGradient(0, -J.haut(), 0, J.H);
+        g.addColorStop(0, "#1e3a8a"); g.addColorStop(1, "#60a5fa");
+        c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
+      }
+      // Plus on monte, plus le ciel s'assombrit (nuit au sommet)
+      if (prog > 0.25) { c.fillStyle = "rgba(8,10,40," + Math.min(0.55, (prog - 0.25) * 0.75) + ")"; c.fillRect(0, -J.haut(), J.L, J.H + J.haut()); }
       c.save(); c.translate(0, -camera);
-      // Plateformes (rochers)
       for (var i = 0; i < plates.length; i++) {
         var p = plates[i];
-        if (p.y - camera < -60 || p.y - camera > J.H + 60) continue;
-        c.fillStyle = p.i === NB_SOMMET ? "#ffd34d" : (p.i === 0 ? "#3f6212" : "#78716c");
-        c.beginPath(); c.moveTo(p.x - p.l / 2, p.y); c.lineTo(p.x + p.l / 2, p.y); c.lineTo(p.x + p.l / 2 - 18, p.y + 34); c.lineTo(p.x - p.l / 2 + 18, p.y + 34); c.closePath(); c.fill();
-        c.fillStyle = p.i === 0 ? "#65a30d" : "#a8a29e"; c.fillRect(p.x - p.l / 2, p.y - 6, p.l, 8);
-        if (p.i === drapeau && drapeau > 0) { c.fillStyle = "#fff"; c.fillRect(p.x + 20, p.y - 70, 5, 70); c.fillStyle = "#22c55e"; c.beginPath(); c.moveTo(p.x + 25, p.y - 70); c.lineTo(p.x + 70, p.y - 58); c.lineTo(p.x + 25, p.y - 46); c.fill(); }
-        if (p.i % 12 === 0 && p.i > 0) J.texte(Math.round(p.i * 8.3) + " m", 40, p.y - 20, 20, "#e2e8f0", "left");
+        if (p.y - camera < -J.haut() - 80 || p.y - camera > J.H + 80) continue;
+        rebord(c, p.x, p.y, p.l, p.i === NB_SOMMET, p.i === 0);
+        if (p.i === drapeau && drapeau > 0) drapeauVert(c, p.x + 30, p.y - 4);
+        if (p.i % 12 === 0 && p.i > 0) J.texte(Math.round(p.i * 8.3) + " m", 40, p.y - 20, 22, "#fef3c7", "left");
       }
-      // Objets
       for (var o = 0; o < objets.length; o++) {
         var ob = objets[o];
-        if (ob.type === "bombe") { c.fillStyle = "#111827"; c.beginPath(); c.arc(ob.x, ob.y, ob.r, 0, 7); c.fill(); c.fillStyle = (t * 8 % 2 < 1) ? "#f97316" : "#fde047"; c.fillRect(ob.x - 3, ob.y - ob.r - 14, 6, 14); }
-        else { c.fillStyle = ob.type === "caillou" ? "#a8a29e" : "#57534e"; c.beginPath(); c.arc(ob.x, ob.y, ob.r, 0, 7); c.fill(); c.fillStyle = "rgba(255,255,255,0.15)"; c.beginPath(); c.arc(ob.x - ob.r / 3, ob.y - ob.r / 3, ob.r / 3, 0, 7); c.fill(); }
+        if (ob.type === "bombe") bombe(c, ob.x, ob.y, ob.r, t);
+        else rocher(c, ob.x, ob.y, ob.r, t * 3 + o, ob.gros);
       }
       // Grimpeur
-      var hx = heros.x, hy = heros.y;
-      if (bouclier > 0) { c.strokeStyle = "rgba(125,211,252," + (0.5 + 0.3 * Math.sin(t * 8)) + ")"; c.lineWidth = 6; c.beginPath(); c.arc(hx, hy - 42, 52, 0, 7); c.stroke(); }
-      c.save(); c.translate(hx, hy); if (heros.etourdi > 0 && !heros.sol) c.rotate(t * 10);
-      c.fillStyle = "#ef4444"; c.fillRect(-18, -62, 36, 40); // corps
-      c.fillStyle = "#fcd34d"; c.beginPath(); c.arc(0, -76, 17, 0, 7); c.fill(); // tête
-      c.fillStyle = "#1f2937"; c.fillRect(heros.regard > 0 ? 4 : -10, -80, 6, 6);
-      c.fillStyle = "#1e3a8a"; var jb = heros.sol ? 0 : 8; c.fillRect(-16, -22, 12, 22 - jb); c.fillRect(4, -22, 12, 22 + jb - 8);
-      c.fillStyle = "#a16207"; c.fillRect(-26, -60, 10, 30); // sac
-      c.restore();
-      if (heros.etourdi > 0) J.texte("★ ★", hx, hy - 110, 24, "#ffe27a");
+      var hx = heros.x, hy = heros.y, nomImg;
+      if (mancheFinie) nomImg = "grimpeur-joie.png";
+      else if (heros.etourdi > 0 && !heros.sol) nomImg = "grimpeur-chute.png";
+      else if (heros.sol) nomImg = "grimpeur-debout.png";
+      else nomImg = "grimpeur-saut.png";
+      if (heros.propulsion > 0) { if (!A.image(c, "fusee.png", hx - 30, hy - 40, 110, { centre: true, rot: -Math.PI / 4 })) { c.fillStyle = "#fb923c"; c.beginPath(); c.moveTo(hx - 14, hy); c.lineTo(hx + 14, hy); c.lineTo(hx, hy + 60 + Math.random() * 20); c.fill(); } }
+      var ok = A.image(c, nomImg, hx, hy + 6, 150, { miroir: heros.regard < 0 && nomImg !== "grimpeur-debout.png", rot: nomImg === "grimpeur-chute.png" ? Math.sin(t * 8) * 0.6 : 0 });
+      if (!ok) {
+        c.save(); c.translate(hx, hy); if (heros.etourdi > 0 && !heros.sol) c.rotate(t * 10);
+        c.fillStyle = "#ef4444"; c.fillRect(-18, -62, 36, 40); c.fillStyle = "#fcd34d"; c.beginPath(); c.arc(0, -76, 17, 0, 7); c.fill();
+        c.fillStyle = "#1e3a8a"; c.fillRect(-16, -22, 12, 22); c.fillRect(4, -22, 12, 22); c.restore();
+      }
+      if (bouclier > 0) bulle(c, hx, hy - 70, 85, t);
       c.restore();
       J.particules(c, 0);
       // Barre du haut
-      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.5)");
+      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.55)");
       J.texte("LA MONTÉE", 34, 46, 30, "#ffe27a", "left");
       J.texte(metres() + " m / 1000 m", J.L - 34, 46, 32, "#fff", "right");
       c.fillStyle = "rgba(255,255,255,0.15)"; c.fillRect(34, 76, J.L - 68, 18);
-      c.fillStyle = "#22c55e"; c.fillRect(34, 76, (J.L - 68) * borne(metres() / 1000, 0, 1), 18);
+      var gb = c.createLinearGradient(34, 0, J.L - 34, 0); gb.addColorStop(0, "#22c55e"); gb.addColorStop(1, "#facc15");
+      c.fillStyle = gb; c.fillRect(34, 76, (J.L - 68) * borne(metres() / 1000, 0, 1), 18);
       J.texte("Record : " + record + " m", 34, 114, 22, "#cbd5e1", "left");
       J.texte(bouclier > 0 ? "Bouclier " + Math.ceil(bouclier) + " s" : "", J.L - 34, 114, 22, "#7dd3fc", "right");
     }
@@ -226,7 +277,7 @@ JEUX.colline = (function () {
     return d < 70 ? SOMMET_Y : Math.min(1040, SOMMET_Y + (d - 70) * 1.35);
   }
   function tirer(cote, gros) {
-    var cn = canons[cote < 0 ? 0 : 1]; cn.recul = 1;
+    var cn = canons[cote < 0 ? 0 : 1]; cn.recul = 1; J.boum(cn.x + (cn.cote < 0 ? 60 : -60), cn.y - 40, 70);
     var tx = roi.x, ty = roi.y - 40, dx = tx - cn.x, temps = gros ? 1.25 : 1.05;
     var vx = dx / temps, vy = (ty - (cn.y - 40) - 0.5 * 900 * temps * temps) / temps;
     boulets.push({ x: cn.x + cn.cote * -30, y: cn.y - 40, vx: vx, vy: vy, r: gros ? 28 : 17, force: gros ? 34 : 14, cote: cote });
@@ -236,24 +287,24 @@ JEUX.colline = (function () {
     if (statue > 0) { J.eclat(roi.x, roi.y - 40, "#ffd34d", 10, 200); return; }
     if (bouclier > 0) { bouclier = Math.max(0, bouclier - 3); J.eclat(roi.x, roi.y - 40, "#7dd3fc", 10, 200); return; }
     if (roi.saut > 0) return; // esquivé
-    equilibre -= force; J.secouer(force / 3); J.eclat(roi.x, roi.y - 40, "#fde68a", 12, 260);
+    equilibre -= force; J.secouer(force / 3); J.eclat(roi.x, roi.y - 40, "#fde68a", 12, 260); J.boum(roi.x, roi.y - 70, force > 20 ? 200 : 130);
     if (equilibre <= 0 && roi.etat === "sommet") {
       roi.etat = "chute"; roi.vx = -cote * 420; roi.vy = -500; tombe++;
       var tenu = Math.round(J.temps() - depuis); if (tenu > record) record = tenu;
-      J.annoncer("LE ROI EST TOMBÉ ! (" + tenu + " s au sommet)", "#ff5e7e", 3.5, true); J.son("gros");
+      J.annoncer("LE ROI EST TOMBÉ ! Point pour les ROUGES (" + tenu + " s)", "#ff5e7e", 3.5, true); J.son("gros");
     }
   }
   var jeu = {
-    nom: "Le Roi de la Colline", couleurFond: "#14213d", campParDefaut: "bloque",
+    nom: "Le Roi de la Colline", couleurFond: "#14213d", campParDefaut: "bloque", equipes: EQUIPES_AB,
     legende: [
-      ["Commente A pour protéger le roi · B pour le faire tomber", "#ffe27a"],
-      ["Bloqueurs : boulet · gros boulet · salve · bombardement", "#ffb4b4"],
-      ["Aideurs : soin · bouclier · mur · statue d'or", "#b4f5c6"],
+      ["Écris BLEU pour protéger le roi · ROUGE pour l'attaquer", "#ffe27a"],
+      ["Rouges : boulet · gros boulet · salve · bombardement", "#fca5a5"],
+      ["Bleus : soin · bouclier · murs · statue d'or", "#93c5fd"],
       ["Likes : petits boulets ou soins selon ton camp", "#cbd5e1"]
     ],
     campDepuisTexte: campAB,
     init: function (api) { J = api; record = 0; reinit(); },
-    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " protège le roi !" : " attaque le roi !"), camp === "aide" ? "#86efac" : "#fca5a5", 2); },
+    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " rejoint les BLEUS !" : " rejoint les ROUGES !"), camp === "aide" ? "#93c5fd" : "#fca5a5", 2); },
     surCadeau: function (j, p) {
       if (j.camp === "aide") {
         if (p === 1) { equilibre = Math.min(100, equilibre + 12); J.son("bonus"); }
@@ -302,33 +353,40 @@ JEUX.colline = (function () {
       }
     },
     dessiner: function (c, t) {
-      var g = c.createLinearGradient(0, -J.haut(), 0, J.H); g.addColorStop(0, "#fb923c"); g.addColorStop(0.5, "#7c3aed"); g.addColorStop(1, "#1e1b4b");
-      c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
-      // Colline
-      c.fillStyle = "#3f6212"; c.beginPath(); c.moveTo(0, J.H); for (var x = 0; x <= J.L; x += 10) c.lineTo(x, sol(x)); c.lineTo(J.L, J.H); c.fill();
-      c.fillStyle = "#65a30d"; c.fillRect(290, SOMMET_Y - 4, 140, 8);
-      // Murs
-      if (mur.g > 0) { c.fillStyle = "#a8a29e"; c.fillRect(220, 520, 30, 150); }
-      if (mur.d > 0) { c.fillStyle = "#a8a29e"; c.fillRect(470, 520, 30, 150); }
+      if (!J.fond(c, "fond-colline.jpg")) {
+        var g = c.createLinearGradient(0, -J.haut(), 0, J.H); g.addColorStop(0, "#fb923c"); g.addColorStop(0.5, "#7c3aed"); g.addColorStop(1, "#1e1b4b");
+        c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
+      }
+      // Colline (dégradé, contour, herbe)
+      c.beginPath(); c.moveTo(-10, J.H + 10); for (var x = -10; x <= J.L + 10; x += 10) c.lineTo(x, sol(x)); c.lineTo(J.L + 10, J.H + 10); c.closePath();
+      var gc = c.createLinearGradient(0, SOMMET_Y, 0, J.H); gc.addColorStop(0, "#65a30d"); gc.addColorStop(1, "#1a2e05");
+      c.fillStyle = gc; c.fill(); c.lineWidth = 6; c.strokeStyle = "#14280a"; c.stroke();
+      c.strokeStyle = "#84cc16"; c.lineWidth = 6; c.beginPath(); for (var x2 = 0; x2 <= J.L; x2 += 10) { if (x2 === 0) c.moveTo(x2, sol(x2) + 6); else c.lineTo(x2, sol(x2) + 6); } c.stroke();
+      for (var h = 0; h < 18; h++) { var hx0 = 40 + h * 38, hy0 = sol(hx0) + 30 + (h * 37 % 60); c.fillStyle = "rgba(20,40,5,0.5)"; c.fillRect(hx0, hy0, 4, 10); c.fillRect(hx0 + 6, hy0 + 3, 4, 8); }
+      // Murs de pierre (aideurs)
+      function dessinerMur(xm) { c.fillStyle = "#78716c"; c.fillRect(xm, 520, 34, 150); c.strokeStyle = "#1c1917"; c.lineWidth = 3; c.strokeRect(xm, 520, 34, 150); c.strokeStyle = "rgba(0,0,0,0.4)"; for (var yb = 545; yb < 670; yb += 25) { c.beginPath(); c.moveTo(xm, yb); c.lineTo(xm + 34, yb); c.stroke(); } }
+      if (mur.g > 0) dessinerMur(216); if (mur.d > 0) dessinerMur(470);
       // Canons
       for (var k = 0; k < 2; k++) {
-        var cn = canons[k]; c.save(); c.translate(cn.x, cn.y); c.fillStyle = "#292524"; c.beginPath(); c.arc(0, 0, 30, 0, 7); c.fill();
-        c.rotate(cn.cote < 0 ? -0.8 : -2.34); c.fillStyle = "#44403c"; c.fillRect(-10 - cn.recul * 10, -14, 70, 28); c.restore();
+        var cn = canons[k], rec = cn.recul * 14 * (cn.cote < 0 ? -1 : 1);
+        if (!A.image(c, cn.cote < 0 ? "canon-droite.png" : "canon-gauche.png", cn.x + rec + (cn.cote < 0 ? 20 : -20), cn.y + 40, 120)) {
+          c.save(); c.translate(cn.x, cn.y); c.fillStyle = "#292524"; c.beginPath(); c.arc(0, 0, 30, 0, 7); c.fill();
+          c.rotate(cn.cote < 0 ? -0.8 : -2.34); c.fillStyle = "#44403c"; c.fillRect(-10 - cn.recul * 10, -14, 70, 28); c.restore();
+        }
       }
-      // Boulets
-      for (var i = 0; i < boulets.length; i++) { var b = boulets[i]; c.fillStyle = "#1c1917"; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 7); c.fill(); c.fillStyle = "rgba(255,255,255,0.2)"; c.beginPath(); c.arc(b.x - b.r / 3, b.y - b.r / 3, b.r / 3, 0, 7); c.fill(); }
+      for (var i = 0; i < boulets.length; i++) boulet(c, boulets[i].x, boulets[i].y, boulets[i].r);
       // Roi
       var rx = roi.x, ry = roi.y - (roi.saut > 0 ? Math.sin((0.7 - roi.saut) / 0.7 * Math.PI) * 110 : 0);
-      c.save(); c.translate(rx, ry); if (roi.etat === "chute") c.rotate(t * 9); else c.rotate((100 - equilibre) / 100 * 0.35 * Math.sin(t * 6));
-      c.fillStyle = statue > 0 ? "#facc15" : "#7c3aed"; c.fillRect(-22, -70, 44, 50);
-      c.fillStyle = statue > 0 ? "#fde047" : "#fcd34d"; c.beginPath(); c.arc(0, -86, 19, 0, 7); c.fill();
-      c.fillStyle = "#facc15"; c.beginPath(); c.moveTo(-18, -100); c.lineTo(-18, -118); c.lineTo(-8, -106); c.lineTo(0, -122); c.lineTo(8, -106); c.lineTo(18, -118); c.lineTo(18, -100); c.fill();
-      c.fillStyle = "#1e3a8a"; c.fillRect(-18, -20, 14, 20); c.fillRect(4, -20, 14, 20);
-      c.restore();
-      if (bouclier > 0) { c.strokeStyle = "rgba(125,211,252,0.7)"; c.lineWidth = 6; c.beginPath(); c.arc(rx, ry - 55, 60, 0, 7); c.stroke(); }
+      var nom = statue > 0 ? "roi-statue.png" : (roi.etat === "chute" ? "roi-chute.png" : (roi.saut > 0 ? "roi-saut.png" : "roi-debout.png"));
+      var penche = roi.etat === "chute" ? t * 7 : (100 - equilibre) / 100 * 0.35 * Math.sin(t * 6);
+      if (!A.image(c, nom, rx, ry + 4, 175, { rot: penche })) {
+        c.save(); c.translate(rx, ry); c.rotate(penche);
+        c.fillStyle = statue > 0 ? "#facc15" : "#7c3aed"; c.fillRect(-22, -70, 44, 50);
+        c.fillStyle = "#fcd34d"; c.beginPath(); c.arc(0, -86, 19, 0, 7); c.fill(); c.restore();
+      }
+      if (bouclier > 0) bulle(c, rx, ry - 85, 100, t);
       J.particules(c, 0);
-      // Barre du haut
-      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.5)");
+      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.55)");
       J.texte("ROI DE LA COLLINE", 34, 46, 28, "#ffe27a", "left");
       var tenu = roi.etat === "sommet" ? Math.round(t - depuis) : 0;
       J.texte(tenu + " s au sommet", J.L - 34, 46, 28, "#fff", "right");
@@ -346,12 +404,7 @@ JEUX.colline = (function () {
    ============================================================ */
 JEUX.course = (function () {
   var J, eq, debut, fin, obstacles, manche, ARRIVEE = 1000, DUREE = 240;
-  function campEquipe(texte) {
-    var t = texte.trim().toLowerCase();
-    if (/^(1|un|rouge|team 1|équipe 1|equipe 1)\b/.test(t)) return "rouge";
-    if (/^(2|deux|bleu|bleue|team 2|équipe 2|equipe 2)\b/.test(t)) return "bleu";
-    return null;
-  }
+  function campEquipe(texte) { var e = motEquipe(texte); return e === 1 ? "bleu" : (e === 2 ? "rouge" : null); }
   function reinit() {
     eq = { rouge: { pos: 0, membres: 0, frein: 0, turbo: 0, couleur: "#ef4444", nom: "ROUGE" }, bleu: { pos: 0, membres: 0, frein: 0, turbo: 0, couleur: "#3b82f6", nom: "BLEUE" } };
     var js = J.joueurs(); for (var k in js) if (js[k].camp === "rouge" || js[k].camp === "bleu") eq[js[k].camp].membres++;
@@ -360,9 +413,9 @@ JEUX.course = (function () {
   function equipeDe(j) { if (j.camp !== "rouge" && j.camp !== "bleu") { j.camp = eq.rouge.membres <= eq.bleu.membres ? "rouge" : "bleu"; eq[j.camp].membres++; } return j.camp; }
   function autre(e) { return e === "rouge" ? "bleu" : "rouge"; }
   var jeu = {
-    nom: "La Course des Équipes", couleurFond: "#052e16",
+    nom: "La Course des Équipes", couleurFond: "#052e16", equipes: [{ cle: "bleu", nom: "BLEUS", couleur: "#3b82f6" }, { cle: "rouge", nom: "ROUGES", couleur: "#ef4444" }],
     legende: [
-      ["Commente 1 pour l'équipe ROUGE · 2 pour la BLEUE", "#ffe27a"],
+      ["Écris BLEU ou ROUGE pour choisir ton équipe", "#ffe27a"],
       ["Chaque cadeau fait avancer ton équipe", "#fff"],
       ["Moyen : turbo · Gros : turbo + flaque pour l'autre équipe", "#ffb4b4"],
       ["Likes : petits pas pour ton équipe", "#cbd5e1"]
@@ -404,27 +457,37 @@ JEUX.course = (function () {
       }
     },
     dessiner: function (c, t) {
-      c.fillStyle = "#14532d"; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
-      // Pistes
-      var couloirs = [["rouge", 230], ["bleu", 490]];
-      for (var i = 0; i < 2; i++) {
-        var x = couloirs[i][1]; c.fillStyle = "#b45309"; c.fillRect(x - 100, 200, 200, 830);
-        c.strokeStyle = "rgba(255,255,255,0.5)"; c.lineWidth = 3; for (var y = 280; y < 1030; y += 80) { c.beginPath(); c.moveTo(x - 100, y); c.lineTo(x + 100, y); c.stroke(); }
-      }
-      // Ligne d'arrivée en damier
-      for (var d = 0; d < 26; d++) { c.fillStyle = d % 2 ? "#fff" : "#111"; c.fillRect(130 + d * 18, 220, 18, 18); c.fillStyle = d % 2 ? "#111" : "#fff"; c.fillRect(130 + d * 18, 238, 18, 18); }
+      var r = J.fond(c, "fond-course.jpg");
+      var couloirs = [["bleu", 0.27], ["rouge", 0.73]];
+      // Piste en perspective, calée sur la piste du décor (haut étroit, bas large)
+      function nyDe(p) { return 0.86 - borne(p, 0, 1) * 0.5; }
+      function piste(ny) { var k = (ny - 0.32) / 0.68; return { g: 0.33 + (0.166 - 0.33) * k, d: 0.67 + (0.83 - 0.67) * k, s: 0.5 + 0.5 * k }; }
+      function pt(nx, ny) { return r ? { x: r.x + nx * r.w, y: r.y + ny * r.h } : { x: 140 + nx * 440, y: -J.haut() + ny * (J.H + J.haut()) }; }
+      if (!r) { c.fillStyle = "#14532d"; c.fillRect(0, -J.haut(), J.L, J.H + J.haut()); }
+      var a1 = piste(0.36), a2 = piste(0.86);
+      // Ligne du milieu
+      c.strokeStyle = "rgba(255,255,255,0.55)"; c.lineWidth = 4; c.setLineDash([18, 14]);
+      var m1 = pt((a1.g + a1.d) / 2, 0.36), m2 = pt((a2.g + a2.d) / 2, 0.86); c.beginPath(); c.moveTo(m1.x, m1.y); c.lineTo(m2.x, m2.y); c.stroke(); c.setLineDash([]);
+      // Ligne d'arrivée en damier et ligne de départ
+      var fg = pt(a1.g, 0.36), fd = pt(a1.d, 0.36), n = 16, cw = (fd.x - fg.x) / n;
+      for (var d = 0; d < n; d++) { c.fillStyle = d % 2 ? "#fff" : "#111"; c.fillRect(fg.x + d * cw, fg.y - 12, cw, 12); c.fillStyle = d % 2 ? "#111" : "#fff"; c.fillRect(fg.x + d * cw, fg.y, cw, 12); }
+      J.texte("ARRIVÉE", (fg.x + fd.x) / 2, fg.y - 34, 30, "#ffe27a");
+      var dg = pt(a2.g, 0.86), dd = pt(a2.d, 0.86); c.fillStyle = "rgba(255,255,255,0.8)"; c.fillRect(dg.x, dg.y, dd.x - dg.x, 6);
+      // Coureurs (le plus loin est dessiné en premier)
+      var ordre = eq.rouge.pos > eq.bleu.pos ? [0, 1] : [1, 0];
       for (var j = 0; j < 2; j++) {
-        var k = couloirs[j][0], E = eq[k], cx = couloirs[j][1], cy = 1010 - borne(E.pos / ARRIVEE, 0, 1) * 770;
-        if (E.frein > 0) { c.fillStyle = "rgba(96,165,250,0.6)"; c.beginPath(); c.ellipse(cx, cy + 10, 70, 18, 0, 0, 7); c.fill(); }
-        var pas = Math.sin(t * (E.turbo > 0 ? 25 : 9)) * 10;
-        c.fillStyle = E.couleur; c.fillRect(cx - 20, cy - 70, 40, 46);
-        c.fillStyle = "#fcd34d"; c.beginPath(); c.arc(cx, cy - 86, 18, 0, 7); c.fill();
-        c.fillStyle = "#1f2937"; c.fillRect(cx - 16, cy - 24, 12, 24 + pas); c.fillRect(cx + 4, cy - 24, 12, 24 - pas);
-        J.texte(Math.min(100, Math.round(E.pos / ARRIVEE * 100)) + " %", cx, cy - 130, 26, "#fff");
-        J.texte("Équipe " + E.nom + " : " + E.membres, cx, 1058, 24, E.couleur);
+        var k2 = couloirs[ordre[j]][0], E = eq[k2], ny = nyDe(E.pos / ARRIVEE), pi = piste(ny);
+        var p = pt(pi.g + (pi.d - pi.g) * couloirs[ordre[j]][1], ny), taille = 190 * pi.s;
+        if (E.frein > 0 && !A.image(c, "flaque.png", p.x, p.y + 4, 50 * pi.s, { centre: true })) { c.fillStyle = "rgba(96,165,250,0.6)"; c.beginPath(); c.ellipse(p.x, p.y + 4, 70 * pi.s, 16 * pi.s, 0, 0, 7); c.fill(); }
+        c.fillStyle = "rgba(0,0,0,0.3)"; c.beginPath(); c.ellipse(p.x, p.y, 45 * pi.s, 10 * pi.s, 0, 0, 7); c.fill();
+        if (E.turbo > 0) A.image(c, "fusee.png", p.x - 30 * pi.s, p.y - taille * 0.45, 100 * pi.s, { centre: true, rot: -Math.PI / 4 });
+        var vite = E.turbo > 0 ? 0.07 : 0.16, img = k2 + "-" + (Math.floor(t / vite) % 2 + 1) + ".png";
+        if (!A.image(c, img, p.x, p.y + 4, taille, { rot: -0.25 })) { c.fillStyle = E.couleur; c.fillRect(p.x - 20 * pi.s, p.y - 90 * pi.s, 40 * pi.s, 50 * pi.s); }
+        J.texte(Math.min(100, Math.round(E.pos / ARRIVEE * 100)) + " %", p.x, p.y - taille - 14, 26, "#fff");
       }
+      
       J.particules(c, 0);
-      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.5)");
+      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.55)");
       J.texte("COURSE DES ÉQUIPES", 34, 46, 28, "#ffe27a", "left");
       var reste = fin ? 0 : Math.max(0, Math.round(DUREE - (t - debut)));
       J.texte(Math.floor(reste / 60) + ":" + ("0" + reste % 60).slice(-2), J.L - 34, 46, 32, "#fff", "right");
@@ -441,8 +504,18 @@ JEUX.tour = (function () {
   var J, blocs, chute, pierres, record, objectif, ouvrier, termine, BASE_Y = 1060, HB = 34;
   function reinit() { blocs = []; chute = []; pierres = []; objectif = 60; ouvrier = { x: 360, dir: 1, attente: 2 }; termine = 0; }
   function sommetX() { return blocs.length ? blocs[blocs.length - 1].x : 360; }
-  function lacherBloc(x, couleur) {
-    chute.push({ x: x, y: -40, vy: 0, l: 120, c: couleur || ["#f59e0b", "#22c55e", "#3b82f6", "#ec4899", "#a855f7"][Math.floor(Math.random() * 5)] });
+  var COULEURS = [["#ef4444", "bloc-rouge.png"], ["#3b82f6", "bloc-bleu.png"], ["#22c55e", "bloc-vert.png"], ["#f59e0b", "bloc-jaune.png"]];
+  function lacherBloc(x) {
+    var k = COULEURS[Math.floor(Math.random() * COULEURS.length)];
+    chute.push({ x: x, y: -J.haut() - 40, vy: 0, l: 120, c: k[0], img: k[1] });
+  }
+  function bloc(c, b, x, y) {
+    var im = A.img(b.img);
+    if (im) { c.drawImage(im, x - b.l / 2, y - 2, b.l, HB + 2); return; }
+    var g = c.createLinearGradient(0, y, 0, y + HB); g.addColorStop(0, b.c); g.addColorStop(1, "rgba(0,0,0,0.35)");
+    c.fillStyle = b.c; c.fillRect(x - b.l / 2, y, b.l, HB - 2); c.fillStyle = g; c.fillRect(x - b.l / 2, y, b.l, HB - 2);
+    c.fillStyle = "rgba(255,255,255,0.25)"; c.fillRect(x - b.l / 2, y, b.l, 5);
+    c.strokeStyle = "#1c1917"; c.lineWidth = 3; c.strokeRect(x - b.l / 2, y, b.l, HB - 2);
   }
   function hauteurEcran() { return Math.max(0, blocs.length * HB - 650); }
   function lancerPierre(gros) {
@@ -454,18 +527,19 @@ JEUX.tour = (function () {
     var parti = blocs.splice(Math.max(0, rang), nb);
     for (var i = 0; i < parti.length; i++) J.eclat(parti[i].x, BASE_Y - (rang + i) * HB + hauteurEcran(), parti[i].c, 10, 300);
     J.secouer(6 + nb);
+    if (parti.length) J.boum(parti[0].x, BASE_Y - rang * HB + hauteurEcran(), 120 + nb * 20);
   }
   var jeu = {
-    nom: "La Tour", couleurFond: "#1c1917", campParDefaut: "bloque",
+    nom: "La Tour", couleurFond: "#1c1917", campParDefaut: "bloque", equipes: EQUIPES_AB,
     legende: [
-      ["Commente A pour construire · B pour démolir", "#ffe27a"],
-      ["Aideurs : 1, 3, 6 ou 15 blocs selon le cadeau", "#b4f5c6"],
-      ["Bloqueurs : pierre · grosse pierre · tir groupé · séisme", "#ffb4b4"],
-      ["Likes : les aideurs ajoutent des blocs, les bloqueurs secouent", "#cbd5e1"]
+      ["Écris BLEU pour construire · ROUGE pour démolir", "#ffe27a"],
+      ["Bleus : 1, 3, 6 ou 15 blocs selon le cadeau", "#93c5fd"],
+      ["Rouges : pierre · grosse pierre · tir groupé · séisme", "#fca5a5"],
+      ["Likes des bleus : blocs · des rouges : secousses", "#cbd5e1"]
     ],
     campDepuisTexte: campAB,
     init: function (api) { J = api; record = 0; reinit(); },
-    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " construit !" : " démolit !"), camp === "aide" ? "#86efac" : "#fca5a5", 2); },
+    surCamp: function (j, camp) { J.annoncer(j.nom + (camp === "aide" ? " rejoint les BLEUS !" : " rejoint les ROUGES !"), camp === "aide" ? "#93c5fd" : "#fca5a5", 2); },
     surCadeau: function (j, p) {
       if (j.camp === "aide") { var n = [0, 1, 3, 6, 15][p]; for (var i = 0; i < n; i++) lacherBloc(sommetX() + hasard(-25, 25)); J.son("bonus"); }
       else {
@@ -484,7 +558,7 @@ JEUX.tour = (function () {
     maj: function (dt, t) {
       if (termine) { if (t - termine > 7) reinit(); return; }
       // L'ouvrier pose un bloc tout seul de temps en temps (rythme lent)
-      if (!J.proprietaireActif()) { ouvrier.attente -= dt; if (ouvrier.attente <= 0) { lacherBloc(sommetX() + hasard(-30, 30), "#94a3b8"); ouvrier.attente = hasard(5, 8); } }
+      if (!J.proprietaireActif()) { ouvrier.attente -= dt; if (ouvrier.attente <= 0) { lacherBloc(sommetX() + hasard(-30, 30)); ouvrier.attente = hasard(5, 8); } }
       var decal = hauteurEcran();
       for (var i = chute.length - 1; i >= 0; i--) {
         var b = chute[i]; b.vy += 1500 * dt; b.y += b.vy * dt;
@@ -504,25 +578,37 @@ JEUX.tour = (function () {
       }
       if (blocs.length > record) record = blocs.length;
       if (blocs.length >= objectif) {
-        termine = t; J.annoncer("TOUR TERMINÉE : " + objectif + " étages !", "#ffd34d", 6, true); J.annoncer("Les bâtisseurs gagnent la manche !", "#86efac", 6); J.son("victoire");
+        termine = t; J.annoncer("TOUR TERMINÉE : " + objectif + " étages !", "#ffd34d", 6, true); J.annoncer("Les BLEUS gagnent la manche !", "#93c5fd", 6); J.son("victoire");
         for (var f = 0; f < 6; f++) J.eclat(hasard(100, 620), hasard(250, 650), "#ffd34d", 30, 500);
       }
     },
     dessiner: function (c, t) {
       var decal = hauteurEcran();
-      var g = c.createLinearGradient(0, -J.haut(), 0, J.H); g.addColorStop(0, "#0f172a"); g.addColorStop(1, "#334155"); c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
-      c.fillStyle = "#3f3f46"; c.fillRect(0, BASE_Y + decal, J.L, 300);
-      // Catapulte (côté gauche, au sol) — c'est elle qui lance les pierres
-      c.fillStyle = "#78350f"; c.fillRect(20, 1000, 90, 22); c.save(); c.translate(65, 1000); c.rotate(-0.9 + (pierres.length ? 0.5 : 0)); c.fillRect(-6, -90, 12, 90); c.restore();
+      if (!J.fond(c, "fond-tour.jpg")) {
+        var g = c.createLinearGradient(0, -J.haut(), 0, J.H); g.addColorStop(0, "#1e1b4b"); g.addColorStop(0.6, "#7c2d12"); g.addColorStop(1, "#292524");
+        c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
+        for (var e = 0; e < 30; e++) { c.fillStyle = "rgba(255,255,255," + (0.3 + 0.3 * Math.sin(t * 2 + e)) + ")"; c.fillRect((e * 97) % J.L, -J.haut() + (e * 53) % 500, 3, 3); }
+      }
+      // Sol pavé
+      var gs = c.createLinearGradient(0, BASE_Y + decal, 0, BASE_Y + decal + 220); gs.addColorStop(0, "#57534e"); gs.addColorStop(1, "#1c1917");
+      c.fillStyle = gs; c.fillRect(0, BASE_Y + decal, J.L, 400); c.fillStyle = "#78716c"; c.fillRect(0, BASE_Y + decal, J.L, 8);
+      // Catapulte des démolisseurs
+      if (!A.image(c, "catapulte.png", 95, BASE_Y + decal + 6, 120, { miroir: false })) {
+        c.fillStyle = "#78350f"; c.fillRect(20, BASE_Y + decal - 60, 90, 22); c.save(); c.translate(65, BASE_Y + decal - 60); c.rotate(-0.9 + (pierres.length ? 0.5 : 0)); c.fillRect(-6, -90, 12, 90); c.restore();
+      }
+      // Ouvrier qui fait les allers-retours au pied de la tour
+      var ox = 600 + Math.sin(t * 0.8) * 40;
+      A.image(c, "ouvrier.png", ox, BASE_Y + decal + 4, 130, { miroir: Math.cos(t * 0.8) < 0 });
+      // Blocs
       for (var i = 0; i < blocs.length; i++) {
         var b = blocs[i], y = BASE_Y - (i + 1) * HB + decal;
-        if (y < -HB || y > J.H) continue;
-        c.fillStyle = b.c; c.fillRect(b.x - b.l / 2, y, b.l, HB - 2); c.fillStyle = "rgba(255,255,255,0.18)"; c.fillRect(b.x - b.l / 2, y, b.l, 6);
+        if (y < -J.haut() - HB || y > J.H) continue;
+        bloc(c, b, b.x, y);
       }
-      for (var k = 0; k < chute.length; k++) { var ch = chute[k]; c.fillStyle = ch.c; c.fillRect(ch.x - ch.l / 2, ch.y, ch.l, HB - 2); }
-      for (var p = 0; p < pierres.length; p++) { var s = pierres[p]; c.fillStyle = "#57534e"; c.beginPath(); c.arc(s.x, s.y, s.r, 0, 7); c.fill(); }
+      for (var k = 0; k < chute.length; k++) bloc(c, chute[k], chute[k].x, chute[k].y);
+      for (var p = 0; p < pierres.length; p++) rocher(c, pierres[p].x, pierres[p].y, pierres[p].r, t * 5 + p, pierres[p].gros);
       J.particules(c, 0);
-      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.5)");
+      J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.55)");
       J.texte("LA TOUR", 34, 46, 30, "#ffe27a", "left");
       J.texte(blocs.length + " / " + objectif + " étages", J.L - 34, 46, 30, "#fff", "right");
       c.fillStyle = "rgba(255,255,255,0.15)"; c.fillRect(34, 76, J.L - 68, 18);
