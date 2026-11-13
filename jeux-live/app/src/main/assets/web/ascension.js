@@ -16,16 +16,19 @@ JEUX.ascension = (function () {
   var J, plates, heros, camera, objets, record, plancher, bouclier, jaugeAide, aspiration, victoires, departManche, sauvegardeA;
   var ESPACE = 130, NIVEAUX = 1000;
   var MONDES = [
-    { nom: "OCÉAN", debut: 0, plates: ["asc-poisson.png", "asc-pieuvre.png", "asc-algues.png", "asc-tortue.png"], bouge: [1, 0, 0, 1], couleur: "#38bdf8",
-      chute: ["asc-ancre.png", "asc-meduse.png"], gros: "COURANT GLACÉ !", enorme: "TEMPÊTE SOUS-MARINE !" },
-    { nom: "CIEL", debut: 250, plates: ["asc-mouette.png", "asc-montgolfiere.png", "asc-cerf-volant.png", "asc-avion.png"], bouge: [1, 1, 1, 1], couleur: "#7dd3fc",
+    { nom: "LA NAPPE PHRÉATIQUE", debut: 0, plates: ["asc-poisson.png", "asc-pieuvre.png", "asc-algues.png", "asc-tortue.png"], bouge: [1, 0, 0, 1], couleur: "#38bdf8",
+      chute: ["asc-ancre.png", "asc-meduse.png"], gros: "COURANT GLACÉ !", enorme: "TEMPÊTE SOUTERRAINE !" },
+    { nom: "LE CONDUIT DU VOLCAN", debut: 200, plates: ["basalte"], bouge: [0], couleur: "#fb923c",
+      chute: ["asc-meteorite.png", "asc-meteorite.png"], gros: "JET DE LAVE !", enorme: "COULÉE DE LAVE !" },
+    { nom: "LA MONTAGNE", debut: 260, plates: ["rebord.png"], bouge: [0], couleur: "#86efac",
+      chute: ["pierre.png", "gros-rocher.png"], gros: "ÉBOULEMENT !", enorme: "AVALANCHE !" },
+    { nom: "LE CIEL", debut: 500, plates: ["asc-mouette.png", "asc-montgolfiere.png", "asc-cerf-volant.png", "asc-avion.png", "asc-nuage.png", "asc-nuage-or.png", "asc-dirigeable.png", "asc-aigle.png"], bouge: [1, 1, 1, 1, 0, 0, 1, 1], couleur: "#7dd3fc",
       chute: ["asc-grelon.png", "asc-eclair.png"], gros: "ORAGE !", enorme: "TORNADE !" },
-    { nom: "NUAGES", debut: 500, plates: ["asc-nuage.png", "asc-nuage-or.png", "asc-dirigeable.png", "asc-aigle.png"], bouge: [0, 0, 1, 1], couleur: "#e0e7ff",
-      chute: ["asc-grelon.png", "asc-eclair.png"], gros: "ORAGE !", enorme: "FOUDRE GÉANTE !" },
-    { nom: "ESPACE", debut: 750, plates: ["asc-asteroide.png", "asc-satellite.png", "asc-planete.png", "asc-soucoupe.png"], bouge: [0, 1, 0, 1], couleur: "#c4b5fd",
+    { nom: "L'ESPACE", debut: 750, plates: ["asc-asteroide.png", "asc-satellite.png", "asc-planete.png", "asc-soucoupe.png"], bouge: [0, 1, 0, 1], couleur: "#c4b5fd",
       chute: ["asc-meteorite.png", "asc-debris.png"], gros: "PLUIE DE MÉTÉORITES !", enorme: "SUPERNOVA !" }
   ];
-  function mondeDe(niveau) { return niveau >= 750 ? 3 : (niveau >= 500 ? 2 : (niveau >= 250 ? 1 : 0)); }
+  function mondeDe(n) { return n >= 750 ? 4 : (n >= 500 ? 3 : (n >= 260 ? 2 : (n >= 200 ? 1 : 0))); }
+  var zoomDebut = -99, alertes = {};
 
   // Tirage pseudo-aléatoire fixe : le parcours est toujours le même, d'un live à l'autre.
   var graine = 1;
@@ -36,7 +39,7 @@ JEUX.ascension = (function () {
     var x = 360;
     for (var i = 0; i <= NIVEAUX; i++) {
       if (i > 0) x = borne(x + (alea() * 2 - 1) * 220, 120, 600);
-      var m = MONDES[mondeDe(i)], k = Math.floor(alea() * 4);
+      var mi = mondeDe(i), m = MONDES[i >= 185 && i < 200 ? 1 : mi], k = Math.floor(alea() * m.plates.length);
       plates.push({ i: i, bx: i === 0 ? 360 : x, x: x, y: -i * ESPACE, l: i === 0 ? 700 : 150 + alea() * 50,
         img: m.plates[k], bouge: i > 0 && m.bouge[k] ? (20 + alea() * 50) : 0, phase: alea() * 6.28, vitesse: 0.4 + alea() * 0.6 });
     }
@@ -56,7 +59,7 @@ JEUX.ascension = (function () {
     camera = heros.y - 820;
   }
   function nouvelleAventure() {
-    plancher = 0; objets = []; bouclier = 0; jaugeAide = 0; aspiration = 0;
+    alertes = {}; plancher = 0; objets = []; bouclier = 0; jaugeAide = 0; aspiration = 0;
     placerSur(0); departManche = J.temps(); sauver();
   }
 
@@ -79,8 +82,9 @@ JEUX.ascension = (function () {
   }
 
   // Couleur du fond selon l'altitude
-  var TEINTES = [[0, [6, 26, 56], [8, 70, 120]], [240, [10, 90, 150], [40, 150, 210]], [260, [70, 170, 235], [150, 215, 245]],
-    [500, [60, 130, 220], [140, 190, 240]], [700, [40, 50, 130], [90, 80, 170]], [780, [8, 6, 30], [25, 15, 60]], [1000, [2, 2, 12], [20, 5, 40]]];
+  var TEINTES = [[0, [4, 20, 40], [6, 40, 70]], [150, [6, 50, 90], [10, 70, 110]], [168, [80, 30, 45], [120, 40, 40]], [185, [120, 30, 10], [200, 70, 10]],
+    [200, [50, 8, 4], [150, 35, 0]], [259, [90, 20, 5], [210, 80, 10]], [263, [251, 146, 60], [254, 215, 170]], [320, [59, 130, 246], [186, 230, 253]],
+    [499, [70, 150, 240], [190, 225, 250]], [700, [40, 50, 130], [90, 80, 170]], [780, [8, 6, 30], [25, 15, 60]], [1000, [2, 2, 12], [20, 5, 40]]];
   function teinte(niv, haut) {
     for (var i = 0; i < TEINTES.length - 1; i++) {
       var a = TEINTES[i], b = TEINTES[i + 1];
@@ -92,7 +96,40 @@ JEUX.ascension = (function () {
   var deco = [];
   for (var d = 0; d < 60; d++) deco.push({ x: Math.random() * 720, y: Math.random() * 1600, v: 0.2 + Math.random() * 0.8, t: 2 + Math.random() * 6 });
 
+  function largeurParoi(y) { return 60 + 30 * Math.sin(y / 170) + 18 * Math.sin(y / 53); }
+  function dessinerParois(c, t, yHaut, yBas) {
+    var fin = -260 * ESPACE;
+    var y0 = Math.max(yHaut, fin), y1 = Math.min(yBas, 300);
+    if (y0 >= y1) return;
+    for (var cote = 0; cote < 2; cote++) {
+      c.beginPath();
+      var x0 = cote ? J.L : 0; c.moveTo(x0, y0);
+      for (var y = y0; y <= y1; y += 30) { var w = largeurParoi(y + cote * 400), x = cote ? J.L - w : w; c.lineTo(x, y); }
+      c.lineTo(x0, y1); c.closePath();
+      var niv = -((y0 + y1) / 2) / ESPACE, chaud = borne((niv - 150) / 60, 0, 1);
+      c.fillStyle = chaud > 0.5 ? "#1c1210" : "#1e293b"; c.fill();
+      c.lineWidth = 6; c.strokeStyle = chaud > 0.3 ? "rgba(251,113,40," + (0.5 + 0.4 * Math.sin(t * 2)) + ")" : "#0f172a"; c.stroke();
+    }
+    // Bord du cratère au niveau 260
+    if (fin > yHaut && fin < yBas) {
+      c.fillStyle = "#292524";
+      c.beginPath(); c.moveTo(0, fin + 40); c.lineTo(110, fin - 30); c.lineTo(170, fin + 10); c.lineTo(170, fin + 60); c.lineTo(0, fin + 120); c.fill();
+      c.beginPath(); c.moveTo(J.L, fin + 40); c.lineTo(J.L - 110, fin - 30); c.lineTo(J.L - 170, fin + 10); c.lineTo(J.L - 170, fin + 60); c.lineTo(J.L, fin + 120); c.fill();
+    }
+  }
   function dessinerPlate(c, p, t) {
+    if (p.img === "basalte") {
+      var l = p.l, g = c.createRadialGradient(p.x, p.y + 30, 10, p.x, p.y + 30, l * 0.7);
+      g.addColorStop(0, "rgba(255,120,20,0.45)"); g.addColorStop(1, "rgba(255,80,0,0)");
+      c.fillStyle = g; c.fillRect(p.x - l, p.y - 20, l * 2, 100);
+      c.fillStyle = "#292524"; c.beginPath(); c.moveTo(p.x - l / 2, p.y - 4); c.lineTo(p.x + l / 2, p.y - 4); c.lineTo(p.x + l / 2 - 16, p.y + 26); c.lineTo(p.x + l * 0.1, p.y + 44); c.lineTo(p.x - l / 2 + 12, p.y + 24); c.closePath(); c.fill();
+      c.lineWidth = 4; c.strokeStyle = "#0c0a09"; c.stroke();
+      c.strokeStyle = "rgba(251,146,60," + (0.6 + 0.4 * Math.sin(t * 3 + p.i)) + ")"; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(p.x - l * 0.3, p.y + 6); c.lineTo(p.x - l * 0.1, p.y + 20); c.lineTo(p.x + l * 0.05, p.y + 10); c.lineTo(p.x + l * 0.25, p.y + 24); c.stroke();
+      c.fillStyle = "#57534e"; c.fillRect(p.x - l / 2 + 2, p.y - 6, l - 4, 5);
+      return;
+    }
+    if (p.img === "rebord.png") { rebord(c, p.x, p.y, p.l, false, false); return; }
     var im = A.img(p.img);
     if (im) {
       var w = p.l * 0.95, h = w * im.height / im.width;
@@ -101,6 +138,7 @@ JEUX.ascension = (function () {
       return;
     }
     var m = mondeDe(p.i), l = p.l;
+    if (m === 4) m = 3; else if (m === 3) m = 2;
     if (m === 0) { c.fillStyle = "#fb923c"; c.beginPath(); c.ellipse(p.x, p.y + 14, l / 2, 18, 0, 0, 7); c.fill(); c.strokeStyle = "#7c2d12"; c.lineWidth = 3; c.stroke(); }
     else if (m === 3) { boule(c, p.x, p.y + 16, l / 2.6, "#a8a29e", "#44403c"); }
     else { c.fillStyle = "#f8fafc"; for (var k = -2; k <= 2; k++) { c.beginPath(); c.arc(p.x + k * l / 6, p.y + 12, l / 6 + (k === 0 ? 8 : 0), 0, 7); c.fill(); } }
@@ -111,14 +149,15 @@ JEUX.ascension = (function () {
     legende: [
       ["Cadeau avec un cœur : m'aide à monter (BLEUS)", "#93c5fd"],
       ["Autres cadeaux : me font tomber (ROUGES)", "#fca5a5"],
-      ["Chaque nouveau monde atteint est sauvegardé", "#e2e8f0"],
+      ["Nappe · volcan · montagne · ciel · espace · trou noir", "#e2e8f0"],
       ["Les likes m'aident à sauter plus haut", "#cbd5e1"]
     ],
-    legendeSolo: [["Chacun pour soi : tout le monde contre moi !", "#ffe27a"], ["Cadeaux : ancres, éclairs, météorites…", "#fca5a5"], ["Vos likes me font monter", "#93c5fd"], ["Objectif : le trou noir au niveau 1000", "#cbd5e1"]],
+    legendeSolo: [["Chacun pour soi : tout le monde contre moi !", "#ffe27a"], ["Cadeaux : ancres, lave, rochers, éclairs, météorites…", "#fca5a5"], ["Vos likes me font monter", "#93c5fd"], ["Objectif : le trou noir au niveau 1000", "#cbd5e1"]],
     init: function (api) {
       J = api; creerPlates();
       var s = charger(); record = s.record || 0; victoires = s.victoires || 0; plancher = borne(s.plancher || 0, 0, NIVEAUX - 1);
       objets = []; bouclier = 0; jaugeAide = 0; aspiration = 0; departManche = J.temps(); sauvegardeA = 0;
+      alertes = {}; zoomDebut = -99; [150, 168, 185].forEach(function (n) { if (plancher > n) alertes[n] = 1; }); if (plancher >= 260) alertes.eruption = 1;
       placerSur(plancher);
       if (plancher > 0) J.annoncer("On reprend au niveau " + plancher + " !", "#ffe27a", 4, true);
     },
@@ -161,7 +200,7 @@ JEUX.ascension = (function () {
         var cx = 360, cy = plates[NIVEAUX].y - 360, ang = aspiration * 6, rayon = Math.max(0, 260 - aspiration * 70);
         heros.x = cx + Math.cos(ang) * rayon; heros.y = cy + Math.sin(ang) * rayon * 0.4;
         camera += (cy - 640 - camera) * Math.min(1, dt * 3);
-        if (aspiration > 4.5) { victoires++; nouvelleAventure(); J.annoncer("Nouvelle aventure ! Retour à l'océan", "#38bdf8", 4, true); }
+        if (aspiration > 4.5) { victoires++; nouvelleAventure(); J.annoncer("Nouvelle aventure ! Retour à la nappe phréatique", "#38bdf8", 4, true); }
         return;
       }
       if (bouclier > 0) bouclier = Math.max(0, bouclier - dt);
@@ -205,7 +244,24 @@ JEUX.ascension = (function () {
       if (niv > record) record = niv;
       // Nouveau monde atteint : point de sauvegarde
       var m = mondeDe(niv);
-      if (heros.sol && MONDES[m].debut > plancher) { plancher = MONDES[m].debut; sauver(); J.annoncer("BIENVENUE DANS : " + MONDES[m].nom + " !", MONDES[m].couleur, 4, true); J.son("victoire"); }
+      if (heros.sol && MONDES[m].debut > plancher) {
+        plancher = MONDES[m].debut; sauver(); zoomDebut = t;
+        J.annoncer("STADE " + (m + 1) + " : " + MONDES[m].nom, MONDES[m].couleur, 5, true); J.son("victoire"); J.secouer(m === 1 ? 24 : 10);
+        if (m === 1) J.annoncer("Le volcan se réveille…", "#fdba74", 5);
+      }
+      // L'eau de la nappe se réchauffe à l'approche du volcan
+      [[150, "L'eau commence à bouillir…", "#bae6fd"], [168, "L'eau devient rouge !", "#fca5a5"], [185, "De la LAVE ! Le volcan est tout près !", "#fb923c"]].forEach(function (a) {
+        if (niv >= a[0] && !alertes[a[0]]) { alertes[a[0]] = 1; J.annoncer(a[1], a[2], 4, true); J.secouer(10); zoomDebut = t; }
+      });
+      // Dans le conduit, le sol tremble régulièrement
+      if (m === 1 && Math.random() < dt * 0.4) J.secouer(6);
+      // En haut du conduit : ÉRUPTION, le personnage est projeté sur la montagne
+      if (heros.sol && heros.plate === 259 && !alertes.eruption) {
+        alertes.eruption = 1; heros.propulsion += 5; zoomDebut = t;
+        J.annoncer("ÉRUPTION !", "#f97316", 4, true); J.secouer(30); J.son("gros");
+        for (var e = 0; e < 6; e++) J.eclat(hasard(150, 570), heros.y - camera, ["#f97316", "#facc15", "#ef4444"][e % 3], 30, 600);
+        J.boum(360, heros.y - camera - 60, 400);
+      }
       if (t - sauvegardeA > 5) { sauvegardeA = t; sauver(); }
       if (heros.sol && heros.plate === NIVEAUX) {
         aspiration = 0.001; heros.etourdi = 0;
@@ -217,23 +273,29 @@ JEUX.ascension = (function () {
       var g = c.createLinearGradient(0, -J.haut(), 0, J.H);
       g.addColorStop(0, teinte(nivCam + 5, true)); g.addColorStop(1, teinte(nivCam, false));
       c.fillStyle = g; c.fillRect(0, -J.haut(), J.L, J.H + J.haut());
-      // Décor qui défile : bulles dans l'eau, nuages dans le ciel, étoiles dans l'espace
-      var m = mondeDe(Math.round(nivCam));
+      // Décor qui défile : bulles (qui bouillent près du volcan), montagnes, nuages, étoiles
       for (var i = 0; i < deco.length; i++) {
         var dd = deco[i], y = ((dd.y - camera * dd.v * 0.3) % 1600 + 1600) % 1600 - J.haut() - 100;
-        if (nivCam < 245) { c.strokeStyle = "rgba(186,230,253,0.45)"; c.lineWidth = 2; c.beginPath(); c.arc(dd.x + Math.sin(t + i) * 6, y - (t * 40 * dd.v) % 1600, dd.t, 0, 7); c.stroke(); }
-        else if (nivCam < 740) { if (i % 4 === 0) { c.fillStyle = "rgba(255,255,255," + (0.25 + 0.2 * dd.v) + ")"; for (var k = -1; k <= 1; k++) { c.beginPath(); c.arc(dd.x + k * 26 * dd.v * 2, y, 22 * dd.v * 2, 0, 7); c.fill(); } } }
+        if (nivCam < 200) {
+          var bout = borne((nivCam - 145) / 40, 0, 1);
+          c.strokeStyle = bout > 0.5 ? "rgba(254,202,202,0.55)" : "rgba(186,230,253,0.45)"; c.lineWidth = 2;
+          c.beginPath(); c.arc(dd.x + Math.sin(t * (1 + bout * 6) + i) * (6 + bout * 10), y - (t * 40 * dd.v * (1 + bout * 4)) % 1600, dd.t * (1 + bout), 0, 7); c.stroke();
+        } else if (nivCam < 260) {
+          if (i % 2) { c.fillStyle = "rgba(255," + (120 + i % 80) + ",0," + (0.4 + 0.4 * Math.sin(t * 5 + i)) + ")"; c.fillRect(dd.x, y - (t * 120 * dd.v) % 1600, 4, 4); }
+        } else if (nivCam < 500) {
+          if (i < 3) { c.fillStyle = "rgba(30,41,59," + (0.35 - i * 0.08) + ")"; c.beginPath(); c.moveTo(0, J.H); for (var mx = 0; mx <= J.L; mx += 60) c.lineTo(mx, 560 + i * 140 + Math.sin(mx * 0.013 + i * 2) * 120 + Math.sin(mx * 0.05) * 30); c.lineTo(J.L, J.H); c.fill(); }
+        } else if (nivCam < 740) {
+          if (i % 4 === 0) { c.fillStyle = "rgba(255,255,255," + (0.25 + 0.2 * dd.v) + ")"; for (var k = -1; k <= 1; k++) { c.beginPath(); c.arc(dd.x + k * 26 * dd.v * 2, y, 22 * dd.v * 2, 0, 7); c.fill(); } }
+        }
         if (nivCam > 700) { c.fillStyle = "rgba(255,255,255," + borne((nivCam - 700) / 80, 0, 1) * (0.4 + 0.6 * Math.abs(Math.sin(t * dd.v + i))) + ")"; c.fillRect(dd.x, y, 2 + dd.t / 3, 2 + dd.t / 3); }
       }
+      // Zoom arrière lors d'un nouveau stade : on voit d'où vient le personnage et où il va
+      var age = t - zoomDebut, z = 1;
+      if (age >= 0 && age < 6) z = age < 1 ? 1 - 0.62 * age : (age < 5 ? 0.38 : 0.38 + 0.62 * (age - 5));
+      var hy = heros.y - camera;
+      c.save(); c.translate(360, hy); c.scale(z, z); c.translate(-360, -hy);
       c.save(); c.translate(0, -camera);
-      // Surface de l'eau (niveau 250)
-      var ySurf = -250 * ESPACE + 60;
-      if (ySurf - camera > -J.haut() - 60 && ySurf - camera < J.H + 400) {
-        c.fillStyle = "rgba(14,116,184,0.55)"; c.beginPath(); c.moveTo(0, ySurf);
-        for (var x = 0; x <= J.L; x += 20) c.lineTo(x, ySurf + Math.sin(x / 50 + t * 2) * 8);
-        c.lineTo(J.L, ySurf + 400); c.lineTo(0, ySurf + 400); c.fill();
-        c.strokeStyle = "#e0f2fe"; c.lineWidth = 5; c.beginPath(); for (var x2 = 0; x2 <= J.L; x2 += 20) { if (!x2) c.moveTo(x2, ySurf + Math.sin(t * 2) * 8); else c.lineTo(x2, ySurf + Math.sin(x2 / 50 + t * 2) * 8); } c.stroke();
-      }
+      dessinerParois(c, t, camera - 3000, camera + J.H + 3000);
       // Trou noir au-dessus du niveau 1000
       var yTrou = plates[NIVEAUX].y - 360;
       if (yTrou - camera > -J.haut() - 500 && yTrou - camera < J.H + 300) {
@@ -244,9 +306,10 @@ JEUX.ascension = (function () {
       }
       // Plateformes
       var nh = niveauHeros();
-      for (var j = Math.max(0, nh - 10); j <= Math.min(NIVEAUX, nh + 12); j++) {
+      var portee = z < 1 ? 26 : 12;
+      for (var j = Math.max(0, nh - portee); j <= Math.min(NIVEAUX, nh + portee); j++) {
         var p = plates[j];
-        if (j === 0) { c.fillStyle = "#c2a36b"; c.fillRect(0, p.y, J.L, 300); c.fillStyle = "#e5c98f"; c.fillRect(0, p.y, J.L, 10); continue; }
+        if (j === 0) { c.fillStyle = "#1e293b"; c.fillRect(0, p.y, J.L, 300); c.fillStyle = "#334155"; c.fillRect(0, p.y, J.L, 10); continue; }
         dessinerPlate(c, p, t);
         if (p.i === plancher && plancher > 0 && !A.image(c, "asc-balise.png", p.x + 40, p.y + 4, 80)) drapeauVert(c, p.x + 40, p.y - 4);
         if (p.i % 50 === 0) J.texte("Niveau " + p.i, 40, p.y - 24, 22, "#fef3c7", "left");
@@ -266,14 +329,15 @@ JEUX.ascension = (function () {
       if (bouclier > 0) { if (!A.image(c, "asc-bulle.png", heros.x, heros.y - 66, 190, { centre: true, alpha: 0.6 })) bulle(c, heros.x, heros.y - 66, 85, t); }
       if (nivCam < 245 && Math.random() < 0.08) J.eclat(heros.x + 10, heros.y - 120 - camera, "#bae6fd", 1, 40);
       c.restore();
+      c.restore();
       J.particules(c, 0);
       // Barre du haut
       var niv = Math.min(NIVEAUX, niveauHeros()), mm = MONDES[mondeDe(niv)];
       J.cadre(c, 14, 14, J.L - 28, 118, 18, "rgba(0,0,0,0.55)");
-      J.texte("L'ASCENSION · " + mm.nom, 34, 46, 28, mm.couleur, "left");
+      J.texte(mm.nom, 34, 46, 26, mm.couleur, "left");
       J.texte("Niveau " + niv + " / " + NIVEAUX, J.L - 34, 46, 30, "#fff", "right");
-      var bx = 34, bw = J.L - 68, cols = ["#0ea5e9", "#7dd3fc", "#e0e7ff", "#a78bfa"];
-      for (var s = 0; s < 4; s++) { c.fillStyle = "rgba(255,255,255,0.12)"; c.fillRect(bx + s * bw / 4 + 1, 76, bw / 4 - 2, 18); c.fillStyle = cols[s]; c.fillRect(bx + s * bw / 4 + 1, 76, (bw / 4 - 2) * borne((niv - s * 250) / 250, 0, 1), 18); }
+      var bx = 34, bw = J.L - 68, cols = ["#0ea5e9", "#f97316", "#22c55e", "#7dd3fc", "#a78bfa"], bornes = [0, 200, 260, 500, 750, 1000];
+      for (var s = 0; s < 5; s++) { var x1 = bx + bw * bornes[s] / 1000, x2 = bx + bw * bornes[s + 1] / 1000; c.fillStyle = "rgba(255,255,255,0.12)"; c.fillRect(x1 + 1, 76, x2 - x1 - 2, 18); c.fillStyle = cols[s]; c.fillRect(x1 + 1, 76, (x2 - x1 - 2) * borne((niv - bornes[s]) / (bornes[s + 1] - bornes[s]), 0, 1), 18); }
       J.texte("Record : " + record + " · Sauvegarde : " + plancher + (victoires ? " · Trous noirs : " + victoires : ""), 34, 114, 21, "#cbd5e1", "left");
       J.texte(bouclier > 0 ? "Bouclier " + Math.ceil(bouclier) + " s" : "", J.L - 34, 114, 21, "#7dd3fc", "right");
     }
