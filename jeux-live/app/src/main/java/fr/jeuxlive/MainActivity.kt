@@ -24,6 +24,8 @@ import org.json.JSONObject
 class MainActivity : Activity() {
     lateinit var jeu: WebView
     lateinit var lecteur: Lecteur
+    private lateinit var cadre: FrameLayout
+    private var panneau: android.widget.LinearLayout? = null
     private val principal = Handler(Looper.getMainLooper())
     private var pageChargee = false
     private val enAttente = ArrayList<String>()
@@ -35,6 +37,7 @@ class MainActivity : Activity() {
         lecteur = Lecteur(this) { fonction, json -> appelerJs("App.$fonction(${JSONObject.quote(json)})") }
         // Le lecteur est une petite vue invisible derrière le jeu : il lit le live sans rien afficher.
         cadre.addView(lecteur.vue, FrameLayout.LayoutParams(2, 2))
+        this.cadre = cadre
         jeu = WebView(this)
         jeu.settings.javaScriptEnabled = true
         jeu.settings.domStorageEnabled = true
@@ -101,8 +104,39 @@ class MainActivity : Activity() {
         }
     }
 
+    /** Affiche la page de connexion TikTok en plein écran, avec un bouton pour revenir. */
+    private fun montrerConnexion() {
+        if (panneau != null) return
+        val p = android.widget.LinearLayout(this)
+        p.orientation = android.widget.LinearLayout.VERTICAL
+        p.setBackgroundColor(0xFF0B1020.toInt())
+        val texte = android.widget.TextView(this)
+        texte.text = "Connecte-toi à TikTok ci-dessous (ton compte ou un deuxième compte). Tape toi-même ton mot de passe : l'appli ne le lit pas. Ensuite touche le bouton vert."
+        texte.setTextColor(0xFFFFFFFF.toInt()); texte.textSize = 15f; texte.setPadding(24, 24, 24, 12)
+        val bouton = android.widget.Button(this)
+        bouton.text = "J'ai fini, revenir à l'appli"
+        bouton.setBackgroundColor(0xFF16A34A.toInt()); bouton.setTextColor(0xFFFFFFFF.toInt()); bouton.textSize = 18f
+        bouton.setOnClickListener { cacherConnexion() }
+        p.addView(texte); p.addView(bouton, android.widget.LinearLayout.LayoutParams(-1, -2))
+        cadre.removeView(lecteur.vue)
+        p.addView(lecteur.vue, android.widget.LinearLayout.LayoutParams(-1, 0, 1f))
+        cadre.addView(p, FrameLayout.LayoutParams(-1, -1))
+        panneau = p
+        lecteur.ouvrirConnexion()
+    }
+    private fun cacherConnexion() {
+        val p = panneau ?: return
+        p.removeView(lecteur.vue)
+        cadre.removeView(p)
+        cadre.addView(lecteur.vue, 0, FrameLayout.LayoutParams(2, 2))
+        panneau = null
+        lecteur.fermerConnexion()
+        appelerJs("App.majConnexion()")
+    }
+
     @Deprecated("Gestion simple du bouton retour")
     override fun onBackPressed() {
+        if (panneau != null) { if (lecteur.vue.canGoBack()) lecteur.vue.goBack() else cacherConnexion(); return }
         jeu.evaluateJavascript("App.retour()") { r ->
             if (r != "true") {
                 @Suppress("DEPRECATION")
@@ -158,6 +192,9 @@ class MainActivity : Activity() {
             return true
         }
         @JavascriptInterface fun rapport(texte: String) { Log.i(ETIQUETTE, texte) }
+        @JavascriptInterface fun connexionTikTok() { principal.post { montrerConnexion() } }
+        @JavascriptInterface fun estConnecte(): Boolean = lecteur.estConnecte()
+        @JavascriptInterface fun deconnecterTikTok() { principal.post { lecteur.deconnecter() } }
     }
 
     companion object {

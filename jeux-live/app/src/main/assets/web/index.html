@@ -59,11 +59,17 @@
   </div>
 
   <div class="carte">
-    <div class="etape"><div class="num">2</div><div><b style="font-size:19px">Choisis le jeu</b></div></div>
+    <div class="etape"><div class="num">2</div><div style="flex:1"><b style="font-size:19px">Connecter la lecture à TikTok</b><br><span class="petit">Une seule fois. TikTok demande d'être connecté pour suivre un live. Tu peux utiliser ton compte ou un deuxième compte.</span></div></div>
+    <p id="infoConnexion" class="etat-att">Vérification…</p>
+    <button class="bouton bleu" onclick="App.connecter()">Connecter la lecture à TikTok</button>
+  </div>
+
+  <div class="carte">
+    <div class="etape"><div class="num">3</div><div><b style="font-size:19px">Choisis le jeu</b></div></div>
     <div id="listeJeux"></div>
   </div>
 
-  <button class="bouton vert grand" onclick="App.preparerLive()">3. Lancer le jeu pour mon live</button>
+  <button class="bouton vert grand" onclick="App.preparerLive()">4. Lancer le jeu pour mon live</button>
 
   <button class="bouton bleu" onclick="App.ecran('aide')">Mode d'emploi (si tu es perdu)</button>
   <button class="bouton violet" onclick="App.lancerEssai()">Essayer sans live (faux cadeaux)</button>
@@ -81,8 +87,9 @@
   <div class="carte">
     <h2>Avant le premier live (une seule fois)</h2>
     <div class="etape"><div class="num">1</div><p>Écris ton nom TikTok sur la page d'accueil (ce qui est après le @).</p></div>
-    <div class="etape"><div class="num">2</div><p>Touche « Essayer sans live » pour voir les jeux avec de faux cadeaux. Rien n'est envoyé sur TikTok.</p></div>
-    <div class="etape"><div class="num">3</div><p>Si tu veux des lives à heures fixes, va dans « Mes horaires de live ». Le téléphone sonnera à l'heure choisie.</p></div>
+    <div class="etape"><div class="num">2</div><p>Touche « Connecter la lecture à TikTok ». Connecte-toi avec ton compte (ou un deuxième compte). Tape toi-même ton mot de passe : l'appli ne le lit pas. Puis touche le bouton vert « J'ai fini ».</p></div>
+    <div class="etape"><div class="num">3</div><p>Touche « Essayer sans live » pour voir les jeux avec de faux cadeaux. Rien n'est envoyé sur TikTok.</p></div>
+    <div class="etape"><div class="num">4</div><p>Si tu veux des lives à heures fixes, va dans « Mes horaires de live ». Le téléphone sonnera à l'heure choisie.</p></div>
   </div>
   <div class="carte">
     <h2>Pour faire un live</h2>
@@ -109,7 +116,8 @@
   </div>
   <div class="carte">
     <h2>Si les cadeaux ne font rien</h2>
-    <p>Va dans « Vérifier que les cadeaux arrivent ». Si c'est écrit en rouge, vérifie ton nom TikTok et Internet, puis relance le jeu.</p>
+    <p>Va dans « Vérifier que les cadeaux arrivent ». Si c'est écrit en rouge, suis ce qui est écrit (connecter la lecture, vérifier ton nom TikTok ou Internet), puis relance le jeu.</p>
+    <p>Si ça ne marche toujours pas, fais une capture de cet écran et envoie-la à Claude : il y a des détails pour l'aider à corriger.</p>
     <p>Si ça ne marche toujours pas, regarde « Mise à jour de l'application » : une correction peut être disponible.</p>
   </div>
   <div class="carte">
@@ -134,8 +142,10 @@
   <h1>Les cadeaux arrivent-ils ?</h1>
   <div class="carte">
     <p>Lecture du live : <span id="etatLecture" class="etat-att">pas encore lancée</span></p>
-    <p class="petit" id="etatDetail"></p>
+    <p class="petit" id="etatDetail" style="white-space:pre-line"></p>
+    <p id="etatConnexion" class="petit"></p>
   </div>
+  <button class="bouton bleu" onclick="App.connecter()">Connecter la lecture à TikTok</button>
   <p class="petit">Ici s'affichent les derniers cadeaux, likes et commentaires lus sur ton live :</p>
   <div class="carte" id="journal"><div>Rien pour l'instant.</div></div>
   <button class="bouton bleu" onclick="App.relancerLecture()">Relancer la lecture du live</button>

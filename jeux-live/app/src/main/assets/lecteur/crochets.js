@@ -5,6 +5,7 @@
   window.__JL_ACTIF = true;
 
   var vus = {}, nbVus = 0, series = {}, dernierBinaire = 0, compteurs = { trames: 0, evenements: 0, erreurs: 0 };
+  var diag = { connexions: {}, types: {}, methodes: {} };
 
   function envoyer(canal, obj) {
     var t = JSON.stringify(obj);
@@ -13,7 +14,11 @@
     } catch (e) { }
     try { console.log((canal === "evenement" ? "JLEV" : "JLSTAT") + t); } catch (e2) { }
   }
-  function etat(msg) { envoyer("etat", { msg: msg, trames: compteurs.trames, evenements: compteurs.evenements, erreurs: compteurs.erreurs }); }
+  function etat(msg) {
+    var txt = ""; try { txt = document.body ? document.body.innerText.slice(0, 4000) : ""; } catch (e) { }
+    var deconnecte = /Connecte-toi pour poursuivre|Log in to continue|Se connecter pour continuer/i.test(txt);
+    envoyer("etat", { msg: msg, trames: compteurs.trames, evenements: compteurs.evenements, erreurs: compteurs.erreurs, deconnecte: deconnecte, diag: diag });
+  }
 
   function personne(u) { return u ? { nom: u.nom || "Quelqu'un", pseudo: u.pseudo || "", id: u.id || "" } : { nom: "Quelqu'un", pseudo: "", id: "" }; }
 
@@ -60,11 +65,14 @@
     } catch (e) { compteurs.erreurs++; }
   }
 
-  function surTrame(octets) {
+  function surTrame(octets, hote) {
     compteurs.trames++;
     dernierBinaire = Date.now();
+    diag.connexions[hote || "?"] = (diag.connexions[hote || "?"] || 0) + 1;
     try {
       var r = JL_dec.trame(octets);
+      diag.types[r.typeCharge || "vide"] = (diag.types[r.typeCharge || "vide"] || 0) + 1;
+      for (var k = 0; k < r.evenements.length; k++) diag.methodes[r.evenements[k].methode] = (diag.methodes[r.evenements[k].methode] || 0) + 1;
       for (var i = 0; i < r.evenements.length; i++) traiter(r.evenements[i], "connexion");
     } catch (e) { compteurs.erreurs++; }
   }
@@ -73,6 +81,7 @@
     dernierBinaire = Date.now();
     try {
       var evs = JL_dec.lot(JL_dec.degzip(octets));
+      diag.connexions["recuperation"] = (diag.connexions["recuperation"] || 0) + 1;
       for (var i = 0; i < evs.length; i++) traiter(evs[i], "recuperation");
     } catch (e) { compteurs.erreurs++; }
   }
@@ -85,7 +94,8 @@
       try {
         if (true) {
           etat("connexion aux messages ouverte");
-          ws.addEventListener("message", function (e) { if (typeof e.data !== "string") octetsDe(e.data, surTrame); });
+          var hote = String(url).split("/")[2] || "?";
+          ws.addEventListener("message", function (e) { if (typeof e.data !== "string") octetsDe(e.data, function (o) { surTrame(o, hote); }); });
           ws.addEventListener("close", function () { etat("connexion aux messages fermée"); });
         }
       } catch (e) { compteurs.erreurs++; }

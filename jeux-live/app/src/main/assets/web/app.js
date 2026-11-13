@@ -26,7 +26,8 @@ var App = (function () {
     $("e-" + nom).scrollTop = 0;
     if (nom === "horaires") afficherHoraires();
     if (nom === "maj") $("majVersion").textContent = "Version installée : " + (natif("version") || "essai");
-    if (nom === "accueil") majInfoHoraire();
+    if (nom === "accueil") { majInfoHoraire(); majConnexion(); }
+    if (nom === "etat") majConnexion();
   }
 
   function dessinerListe() {
@@ -64,8 +65,22 @@ var App = (function () {
     JL.lancer(JEUX[jeuChoisi], { essai: modeEssai });
     if (modeEssai) barreEssai(); else $("essaiBarre").style.display = "none";
   }
-  function preparerLive() {
+  function estConnecte() { var r = natif("estConnecte"); return r === true || r === "true"; }
+  function majConnexion() {
+    var ok = estConnecte(), dispo = !!N;
+    var el = $("infoConnexion");
+    if (!dispo) { el.className = "petit"; el.textContent = "Disponible dans l'application installée."; }
+    else if (ok) { el.className = "etat-ok"; el.textContent = "Lecture connectée à TikTok."; }
+    else { el.className = "etat-ko"; el.textContent = "Pas encore connectée."; }
+    $("etatConnexion").textContent = dispo ? (ok ? "Lecture connectée à TikTok : oui" : "Lecture connectée à TikTok : non") : "";
+  }
+  function connecter() { natif("connexionTikTok"); }
+  function preparerLive(forcer) {
     var p = pseudo();
+    if (N && !estConnecte() && forcer !== true) {
+      dialogue("Lecture pas connectée", "Pour que les cadeaux fassent quelque chose dans le jeu, connecte d'abord la lecture à TikTok (une seule fois).", [["Connecter maintenant", connecter, "bleu"], ["Lancer quand même", function () { preparerLive(true); }, "gris"]]);
+      return;
+    }
     if (!p) { dialogue("Il manque ton nom TikTok", "Écris ton nom TikTok tout en haut (ce qui est après le @ sur ton profil), puis recommence.", [["Compris", function () { $("pseudo").focus(); }, "vert"]]); return; }
     stock("pseudo", p);
     natif("demarrerLecture", p);
@@ -240,6 +255,7 @@ var App = (function () {
     dessinerListe();
     var v = natif("version"); $("version").textContent = v ? "Version " + v : "";
     majInfoHoraire();
+    majConnexion();
   }
   document.addEventListener("DOMContentLoaded", demarrage);
   if (document.readyState !== "loading") setTimeout(demarrage, 0);
@@ -249,6 +265,7 @@ var App = (function () {
     ouvrirTikTok: ouvrirTikTok, quitterJeu: quitterJeu, lancerEssai: lancerEssai, evenement: evenement, etatLecture: etatLecture,
     relancerLecture: relancerLecture, basculer: basculer, heure: heure, jour: jour, enregistrerHoraires: enregistrerHoraires,
     chercherMaj: chercherMaj, resultatMaj: resultatMaj, installerMaj: installerMaj, progresMaj: progresMaj, messageMaj: messageMaj,
+    connecter: connecter, majConnexion: majConnexion,
     retour: retour, ouvertParHoraire: ouvertParHoraire, finHoraire: finHoraire, signaler: signaler,
     // pour les tests automatiques
     _jeux: function () { return LISTE.map(function (j) { return j.id; }); }, _demarrerJeu: function (id, essai) { jeuChoisi = id; demarrerJeu(essai); }

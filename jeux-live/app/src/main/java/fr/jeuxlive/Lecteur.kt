@@ -49,6 +49,8 @@ class Lecteur(private val activite: Activity, private val sortie: (String, Strin
         s.useWideViewPort = true
         s.loadWithOverviewMode = true
         vue.addJavascriptInterface(Recepteur(), "JeuxLiveNatif")
+        android.webkit.CookieManager.getInstance().setAcceptCookie(true)
+        android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(vue, true)
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             try {
                 WebViewCompat.addDocumentStartJavaScript(vue, script, setOf("https://www.tiktok.com", "https://*.tiktok.com"))
@@ -62,7 +64,7 @@ class Lecteur(private val activite: Activity, private val sortie: (String, Strin
             override fun shouldInterceptRequest(view: WebView, req: WebResourceRequest): WebResourceResponse? {
                 val u = req.url.toString()
                 if (Regex("""\.(flv|m3u8|ts|mp4|m4s|webm)(\?|$)""").containsMatchIn(u) || u.contains("pull-") && (u.contains(".flv") || u.contains(".m3u8"))) {
-                    return WebResourceResponse("text/plain", "utf-8", 204, "Bloqué", emptyMap(), ByteArrayInputStream(ByteArray(0)))
+                    return WebResourceResponse("text/plain", "utf-8", 204, "No Content", emptyMap(), ByteArrayInputStream(ByteArray(0)))
                 }
                 return null
             }
@@ -90,6 +92,21 @@ class Lecteur(private val activite: Activity, private val sortie: (String, Strin
         charger()
         principal.removeCallbacks(surveillance)
         principal.postDelayed(surveillance, 20_000)
+    }
+
+    /** Ouvre la page de connexion TikTok dans la vue du lecteur (l'utilisateur tape lui-même ses identifiants). */
+    fun ouvrirConnexion() {
+        vue.settings.blockNetworkImage = false
+        vue.loadUrl("https://www.tiktok.com/login")
+    }
+    fun fermerConnexion() {
+        vue.settings.blockNetworkImage = true
+        if (actif) charger() else vue.loadUrl("about:blank")
+    }
+    fun estConnecte(): Boolean = (android.webkit.CookieManager.getInstance().getCookie("https://www.tiktok.com") ?: "").contains("sessionid=")
+    fun deconnecter() {
+        android.webkit.CookieManager.getInstance().removeAllCookies(null)
+        android.webkit.CookieManager.getInstance().flush()
     }
 
     fun arreter() {
@@ -135,10 +152,13 @@ class Lecteur(private val activite: Activity, private val sortie: (String, Strin
                 val o = JSONObject(json)
                 val trames = o.optInt("trames"); val evs = o.optInt("evenements")
                 if (trames > 0) derniereTrame = maxOf(derniereTrame, System.currentTimeMillis() - 1000)
+                val d = o.optJSONObject("diag")
+                val technique = if (d != null) "\n\nDétails pour Claude : connexions ${d.optJSONObject("connexions")} · types ${d.optJSONObject("types")} · messages ${d.optJSONObject("methodes")} · erreurs ${o.optInt("erreurs")}" else ""
                 when {
-                    evs > 0 -> { derniersEvenements = evs; this@Lecteur.etat("ok", "ok", "$evs messages lus depuis le début (cadeaux, likes, commentaires, arrivées).") }
-                    trames > 0 -> this@Lecteur.etat("ok", "ok", "Connecté à ton live. En attente des premiers cadeaux ou commentaires.")
-                    else -> this@Lecteur.etat("att", "en attente de ton live", "Si ton live n'est pas encore démarré, c'est normal. Sinon vérifie ton nom TikTok (@$pseudo).")
+                    evs > 0 -> { derniersEvenements = evs; this@Lecteur.etat("ok", "ok", "$evs messages lus depuis le début (cadeaux, likes, commentaires, arrivées).$technique") }
+                    o.optBoolean("deconnecte") -> this@Lecteur.etat("ko", "il faut connecter la lecture à TikTok", "TikTok demande d'être connecté pour suivre un live. Touche « Connecter la lecture à TikTok ».$technique")
+                    trames > 0 -> this@Lecteur.etat("ok", "ok", "Connecté à ton live. En attente des premiers cadeaux ou commentaires.$technique")
+                    else -> this@Lecteur.etat("att", "en attente de ton live", "Si ton live n'est pas encore démarré, c'est normal. Sinon vérifie ton nom TikTok (@$pseudo).$technique")
                 }
             } catch (e: Exception) { }
         }

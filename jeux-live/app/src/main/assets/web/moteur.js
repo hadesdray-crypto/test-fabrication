@@ -203,6 +203,8 @@ var JL = (function () {
   }, 100);
   function image(t) {
     derniereImage = t;
+    if (canvas && window.innerWidth && Math.round(window.innerWidth * Math.min(window.devicePixelRatio || 1, 2)) !== canvas.width) ajuster();
+    if (!(echelle > 0) || !isFinite(haut)) ajuster();
     if (dernier && t < dernier) dernier = t;
     var dt = dernier ? Math.min(0.05, (t - dernier) / 1000) : 0.016;
     dernier = t; temps += dt; images++;
@@ -225,6 +227,7 @@ var JL = (function () {
   function ajuster() {
     if (!canvas) return;
     var r = window.devicePixelRatio || 1, w = window.innerWidth, h = window.innerHeight;
+    if (!w || !h) { echelle = 1; decX = 0; decY = 0; haut = 0; return; } // écran pas encore prêt : on réessaie à l'image suivante
     r = Math.min(r, 2);
     canvas.width = Math.round(w * r); canvas.height = Math.round(h * r);
     canvas.style.width = w + "px"; canvas.style.height = h + "px";
