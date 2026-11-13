@@ -1,0 +1,55 @@
+name: Usine à applications
+
+on:
+  workflow_dispatch:
+    inputs:
+      depot:
+        description: "Nom du dépôt privé de l'appli (ex. projo-arena)"
+        required: true
+      gradle:
+        description: "Version de l'outil de fabrication"
+        default: "8.10.2"
+
+permissions:
+  contents: read
+
+jobs:
+  fabriquer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Récupérer le code privé
+        uses: actions/checkout@v4
+        with:
+          repository: hadesdray-crypto/${{ inputs.depot }}
+          token: ${{ secrets.ACCES_DEPOTS }}
+          path: appli
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ inputs.gradle }}
+
+      - name: Préparer les outils Android
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" > /dev/null
+
+      - name: Tests puis fabrication et signature de l'APK
+        working-directory: appli
+        run: gradle testDebugUnitTest assembleDebug --no-daemon --console=plain -q
+
+      - name: Déposer l'APK dans le dépôt privé (jamais dans ce dépôt public)
+        working-directory: appli
+        env:
+          GH_TOKEN: ${{ secrets.ACCES_DEPOTS }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk "${{ inputs.depot }}.apk"
+          gh release create "usine-${{ github.run_number }}" "${{ inputs.depot }}.apk" \
+            --repo "hadesdray-crypto/${{ inputs.depot }}" --prerelease \
+            --title "Usine ${{ github.run_number }}" \
+            --notes "Fabriquée par l'usine (signature fixe). À installer par-dessus la précédente."
