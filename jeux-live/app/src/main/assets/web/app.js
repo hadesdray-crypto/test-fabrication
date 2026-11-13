@@ -10,6 +10,7 @@ var App = (function () {
   function stock(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { } return null; }
 
   var LISTE = [
+    { id: "ascension", nom: "L'Ascension (1000 niveaux)", desc: "Du fond de l'océan jusqu'au trou noir de l'espace. La partie continue d'un live à l'autre." },
     { id: "montee", nom: "La Montée", desc: "Un grimpeur monte tout seul. Les spectateurs le font tomber ou l'aident à grimper." },
     { id: "colline", nom: "Le Roi de la Colline", desc: "Le roi tient le sommet. Les canons des spectateurs veulent le faire tomber." },
     { id: "course", nom: "La Course des Équipes", desc: "Équipe rouge contre équipe bleue : chaque cadeau fait avancer son équipe." },
