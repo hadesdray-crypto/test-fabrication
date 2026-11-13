@@ -53,6 +53,11 @@ class MainActivity : Activity() {
             }
         }
         jeu.webViewClient = object : WebViewClient() {
+            override fun onRenderProcessGone(view: WebView, detail: android.webkit.RenderProcessGoneDetail): Boolean {
+                Log.w(ETIQUETTE, "jeu : moteur de page arrêté, redémarrage de l'appli")
+                recreate()
+                return true
+            }
             override fun onPageFinished(view: WebView, url: String) {
                 pageChargee = true
                 for (s in enAttente) jeu.evaluateJavascript(s, null)

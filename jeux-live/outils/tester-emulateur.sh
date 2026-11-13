@@ -25,6 +25,10 @@ done
 adb logcat -d > "$SORTIE/logcat-complet.txt"
 grep -E 'AUTOTEST|jeu:' "$SORTIE/journal.txt"
 grep -E 'FATAL EXCEPTION|AndroidRuntime' -A8 "$SORTIE/logcat-complet.txt" | head -40
+echo "--- WebView / blocages ---"
+grep -iE "render process|RenderProcessGone|ANR in|chromium.*(crash|fatal|OOM)|lowmemorykiller|am_kill|Watchdog" "$SORTIE/logcat-complet.txt" | head -30
+adb shell dumpsys package com.google.android.webview | grep -m2 versionName
+adb shell dumpsys package com.android.webview | grep -m2 versionName
 if grep -q 'FATAL EXCEPTION' "$SORTIE/logcat-complet.txt"; then echo "ECHEC plantage"; exit 1; fi
 if [ "$FIN" != "AUTOTEST FIN OK" ]; then echo "ECHEC : ${FIN:-pas de fin}"; exit 1; fi
 echo "REUSSITE $NOM"

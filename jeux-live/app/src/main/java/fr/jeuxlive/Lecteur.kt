@@ -74,6 +74,11 @@ class Lecteur(private val activite: Activity, private val sortie: (String, Strin
             override fun onPageFinished(view: WebView, url: String) {
                 if (!injectionAuDebut) view.evaluateJavascript(script, null)
             }
+            override fun onRenderProcessGone(view: WebView, detail: android.webkit.RenderProcessGoneDetail): Boolean {
+                Log.w(MainActivity.ETIQUETTE, "lecteur : moteur de page arrêté (manque de mémoire ?)")
+                etat("ko", "la lecture a dû redémarrer", "Le téléphone a manqué de mémoire. Ferme les autres applis si ça se répète.")
+                return true
+            }
             override fun onReceivedError(view: WebView, req: WebResourceRequest, err: WebResourceError) {
                 if (req.isForMainFrame) {
                     erreurReseau = true
