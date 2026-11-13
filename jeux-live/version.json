@@ -1,11 +1,13 @@
 {
- "code": 16,
- "nom": "1.0.16",
- "sha256": "df8c756dd50048a765667fae564249c1e89f275d944e9ca9f25c92bef2198de6",
+ "code": 17,
+ "nom": "1.0.17",
+ "sha256": "1de7267915a13ae5307cacba89c708a00eb5d4c014e644ec86b411636d371a81",
  "changes": [
-  "Nouveau jeu : L'Ascension, 1000 niveaux de l'océan jusqu'au trou noir de l'espace (poissons, pieuvres, oiseaux, nuages, astéroïdes…)",
-  "Dans L'Ascension, chaque monde atteint est sauvegardé et la partie continue d'un live à l'autre",
-  "Écran « Vérifier que les cadeaux arrivent » : résumé du dernier live gardé"
+  "L'Ascension : départ dans une nappe phréatique (poissons, pieuvres, algues, tortues)",
+  "À l'approche du volcan, l'eau bout, devient rouge, puis se change en lave",
+  "Stade du conduit du volcan (60 niveaux, le sol tremble), puis ÉRUPTION qui projette le personnage sur la montagne",
+  "Puis la montagne, le ciel, l'espace et le trou noir au niveau 1000",
+  "À chaque nouveau stade : la caméra recule pour montrer où on est, l'écran tremble, grand titre"
  ],
- "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0.16/Jeux-Live.apk"
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/jeux-live-1.0.17/Jeux-Live.apk"
 }
