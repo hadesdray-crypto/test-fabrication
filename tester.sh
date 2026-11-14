@@ -32,6 +32,7 @@ I=$(centre 'te à c'); [ -n "$I" ] && adb shell input tap $I; sleep 2.5
 cap 5-cote-a-cote-sans-contours
 adb shell "input tap $CX $CY & sleep 0.12; input tap $CX $CY"; sleep 2
 cap 6-double-appui
+K=$(centre 'GOT IT'); [ -z "$K" ] && K=$(centre 'OK'); echo "aide Android: [$K]" >> version-$API.txt; [ -n "$K" ] && adb shell input tap $K; sleep 1.5
 adb shell dumpsys window | grep -c "mCurrentFocus" >/dev/null
 F=$(centre 'text="Disposition"'); echo "apres double appui, barre du haut visible: [$F]" >> version-$API.txt
 if [ -n "$F" ]; then adb shell input tap $CX $CY; sleep 1; A=$(centre 'content-desc="Agrandir"'); [ -n "$A" ] && adb shell input tap $A; sleep 2; cap 6b-agrandir; fi
