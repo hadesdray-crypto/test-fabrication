@@ -1,0 +1,124 @@
+11-14 02:37:02.244  1714  2041 V installed: DexInv: --- END '/data/app/fr.hadesdray.youpub-UdqDrom2vwPBBMWyStCyHA==/base.apk' (success) ---
+11-14 02:37:09.814  1963  2530 I ActivityManager: START u0 {flg=0x10000000 cmp=fr.hadesdray.youpub/.ui.MultiScreenActivity (has extras)} from uid 0
+11-14 02:37:09.949  1963  1980 I ActivityManager: Start proc 3126:fr.hadesdray.youpub/u0a67 for activity fr.hadesdray.youpub/.ui.MultiScreenActivity
+11-14 02:37:10.964  1963  1986 I ActivityManager: Displayed fr.hadesdray.youpub/.ui.MultiScreenActivity: +1s29ms
+11-14 02:37:10.986  1918  2038 W SurfaceFlinger: Attempting to set client state on removed layer: Splash Screen fr.hadesdray.youpub#0
+11-14 02:37:10.986  1918  2038 W SurfaceFlinger: Attempting to destroy on removed layer: Splash Screen fr.hadesdray.youpub#0
+11-14 02:37:16.005  3126  3278 D ProfileInstaller: Installing profile for fr.hadesdray.youpub
+11-14 02:37:30.221  1963  2486 W NotificationService: Toast already killed. pkg=fr.hadesdray.youpub callback=android.app.ITransientNotification$Stub$Proxy@d445304
+11-14 02:38:29.247  6183  6183 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:38:32.018  6183  6183 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:38:32.134  6183  6183 D AndroidRuntime: Shutting down VM
+11-14 02:39:06.541  7953  7953 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:39:08.807  7953  7953 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:39:10.156  7953  7953 D AndroidRuntime: Shutting down VM
+11-14 02:39:45.092  9702  9702 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:39:45.669  9702  9702 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:39:47.143  9702  9702 D AndroidRuntime: Shutting down VM
+11-14 02:39:52.211 10057 10057 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:39:53.900 10057 10057 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:39:54.059 10057 10057 D AndroidRuntime: Shutting down VM
+11-14 02:39:54.335  1918  1918 D SurfaceFlinger: duplicate layer name: changing fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity to fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:39:55.193  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 1 line
+11-14 02:39:56.967  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 2 lines
+11-14 02:40:25.842 11663 11663 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:40:27.758 11663 11663 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:40:29.091 11663 11663 D AndroidRuntime: Shutting down VM
+11-14 02:40:32.736 12016 12016 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:40:34.750 12016 12016 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:40:34.900 12016 12016 D AndroidRuntime: Shutting down VM
+11-14 02:40:35.481  1918  1926 W SurfaceFlinger: Attempting to set client state on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:40:35.481  1918  1926 W SurfaceFlinger: Attempting to destroy on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:40:39.172  1963  3331 W NotificationService: Toast already killed. pkg=fr.hadesdray.youpub callback=android.app.ITransientNotification$Stub$Proxy@b3c85f4
+11-14 02:41:20.286 14270 14270 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:41:21.230 14270 14270 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:41:22.789 14270 14270 D AndroidRuntime: Shutting down VM
+11-14 02:41:27.373 14563 14563 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:41:28.052 14563 14563 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:41:28.081 14563 14563 D AndroidRuntime: Shutting down VM
+11-14 02:41:28.291  1918  1918 D SurfaceFlinger: duplicate layer name: changing fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity to fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:41:28.302 14563 14766 I AndroidRuntime: NOTE: attach of thread 'Binder:14563_2' failed
+11-14 02:41:30.638  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 6 lines
+11-14 02:41:33.019 14846 14846 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:41:34.923 14846 14846 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:41:36.510 14846 14846 D AndroidRuntime: Shutting down VM
+11-14 02:41:41.216 15235 15235 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:41:43.281 15235 15235 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:41:43.501 15235 15235 D AndroidRuntime: Shutting down VM
+11-14 02:41:43.980  1918  2342 W SurfaceFlinger: Attempting to set client state on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:41:43.980  1918  2342 W SurfaceFlinger: Attempting to destroy on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:41:48.695 15607 15607 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:41:50.947 15607 15607 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:41:52.277 15607 15607 D AndroidRuntime: Shutting down VM
+11-14 02:41:56.698 15971 15971 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:41:58.709 15971 15971 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:41:58.785 15971 15971 D AndroidRuntime: Shutting down VM
+11-14 02:41:58.921  1918  1918 D SurfaceFlinger: duplicate layer name: changing fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity to fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:41:59.397  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 2 lines
+11-14 02:42:01.466  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 4 lines
+11-14 02:42:04.213 16335 16335 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:42:06.607 16335 16335 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:42:08.044 16335 16335 D AndroidRuntime: Shutting down VM
+11-14 02:42:12.459 16750 16750 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:42:14.066 16750 16750 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:42:14.315 16750 16750 D AndroidRuntime: Shutting down VM
+11-14 02:42:14.647  1918  1926 W SurfaceFlinger: Attempting to set client state on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:42:14.647  1918  1926 W SurfaceFlinger: Attempting to destroy on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:42:56.411 18818 18818 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:42:57.533 18828 18828 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:42:58.875 18818 18818 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:42:59.042 18818 18818 D AndroidRuntime: Shutting down VM
+11-14 02:43:00.256 18828 18828 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:43:00.388 18828 18828 D AndroidRuntime: Shutting down VM
+11-14 02:43:15.259 19495 19495 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:43:17.151 19495 19495 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:43:18.716 19495 19495 D AndroidRuntime: Shutting down VM
+11-14 02:43:23.388 19908 19908 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:43:25.315 19908 19908 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:43:26.966 19908 19908 D AndroidRuntime: Shutting down VM
+11-14 02:43:33.767 20416 20416 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:43:35.747 20416 20416 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:43:37.225 20416 20416 D AndroidRuntime: Shutting down VM
+11-14 02:43:42.178 20840 20840 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:43:44.484 20840 20840 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:43:44.598 20840 20840 D AndroidRuntime: Shutting down VM
+11-14 02:43:49.317 21197 21197 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:43:51.714 21197 21197 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:43:53.043 21197 21197 D AndroidRuntime: Shutting down VM
+11-14 02:44:32.009 23179 23179 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:44:33.346 23179 23179 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:44:34.617 23179 23179 D AndroidRuntime: Shutting down VM
+11-14 02:44:38.802 23519 23519 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:44:40.340 23519 23519 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:44:40.490 23519 23519 D AndroidRuntime: Shutting down VM
+11-14 02:45:18.511 25336 25336 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:45:20.438 25336 25336 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:45:21.706 25336 25336 D AndroidRuntime: Shutting down VM
+11-14 02:45:26.345 25705 25705 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:45:27.924 25705 25705 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:45:29.103 25705 25705 D AndroidRuntime: Shutting down VM
+11-14 02:45:32.972 26040 26040 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:45:34.896 26040 26040 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:45:34.956 26040 26040 D AndroidRuntime: Shutting down VM
+11-14 02:45:35.170  1918  1918 D SurfaceFlinger: duplicate layer name: changing fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity to fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:45:36.757  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 4 lines
+11-14 02:45:37.792  3126  3152 I chatty  : uid=10067(fr.hadesdray.youpub) RenderThread identical 3 lines
+11-14 02:46:05.730 27529 27529 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:46:07.674 27529 27529 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:46:07.764 27529 27529 D AndroidRuntime: Shutting down VM
+11-14 02:46:07.876  1918  1922 W SurfaceFlinger: Attempting to set client state on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:46:07.876  1918  1922 W SurfaceFlinger: Attempting to destroy on removed layer: fr.hadesdray.youpub/fr.hadesdray.youpub.ui.MultiScreenActivity#1
+11-14 02:46:13.158 27888 27888 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:46:15.300 27888 27888 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:46:16.877 27888 27888 D AndroidRuntime: Shutting down VM
+11-14 02:46:21.092 28331 28331 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:46:22.453 28331 28331 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:46:22.503 28331 28331 D AndroidRuntime: Shutting down VM
+11-14 02:46:26.122  1963  2486 W NotificationService: Toast already killed. pkg=fr.hadesdray.youpub callback=android.app.ITransientNotification$Stub$Proxy@5737ec2
+11-14 02:46:56.947 29934 29934 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:46:59.682 29934 29934 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 02:47:02.341 29934 29934 D AndroidRuntime: Shutting down VM
+11-14 02:47:06.014 30446 30446 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-14 02:47:08.138 30446 30446 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 02:47:08.281 30446 30446 D AndroidRuntime: Shutting down VM
+11-14 02:47:11.985  1963  2176 W NotificationService: Toast already killed. pkg=fr.hadesdray.youpub callback=android.app.ITransientNotification$Stub$Proxy@a22856c

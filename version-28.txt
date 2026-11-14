@@ -1,0 +1,10 @@
+    versionName=1.0.93
+jauge: 
+disposition: 293 95
+contours: 947 1174
+aide Android: []
+apres double appui, barre du haut visible: [293 95]
+plein ecran, barre du haut visible: [293 95]
+apres glissement, barre du haut visible: [293 95]
+diffuser: 706 95
+enregistrer: 897 95
