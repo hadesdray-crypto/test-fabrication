@@ -63,7 +63,7 @@
   function plus(hhmm, minutes) { var p = hhmm.split(":"); var tot = (+p[0]) * 60 + (+p[1]) + minutes; return p2(Math.floor(tot / 60) % 24) + ":" + p2(tot % 60); }
 
   // ---------- Pages ----------
-  var pile = ["accueil"], mois = { a: 0, m: 0 }, edition = null;
+  var pile = ["accueil"], mois = { a: 0, m: 0 }, vue = { a: 0, m: 0 };
   var TITRES = { accueil: "Heures sup", saisie: "Saisir mes heures", feuille: "Ma feuille", reglages: "Réglages" };
   function aller(p, empiler) {
     document.querySelectorAll(".page").forEach(function (e) { e.classList.remove("on"); });
@@ -84,18 +84,19 @@
     return s.join(" ; ") || "—";
   }
   function rafraichir() {
-    var n = new Date(), a = n.getFullYear(), m = n.getMonth();
-    $("t-mois").textContent = "Heures de " + MOIS[m] + " " + a;
+    var n = new Date(), a = vue.a, m = vue.m;
+    $("t-mois").textContent = MOIS[m] + " " + a;
     var ks = infoMois(a, m), h = "";
-    if (!ks.length) h = '<div class="aide">Rien d\'enregistré ce mois-ci.</div>';
+    if (!ks.length) h = '<div class="aide" style="text-align:center">Rien d\'enregistré ce mois-là.</div>';
     ks.forEach(function (k) {
       var d = +k.slice(8);
       h += '<div class="ligne"><div class="t"><b>' + d + " " + MOIS_COURT[m] + "</b><small>" + esc(resume(k)) + '</small></div><button class="petit" data-mod="' + k + '">Modifier</button><button class="petit rouge" data-sup="' + k + '">Supprimer</button></div>';
     });
     $("liste-mois").innerHTML = h;
     // échéance : avant le 15
+    a = n.getFullYear(); m = n.getMonth();
     var j = n.getDate(), e = $("echeance"), txt;
-    var mp = m === 0 ? 11 : m - 1, ap = m === 0 ? a - 1 : a;
+    var mp = m === 0 ? 11 : m - 1;
     if (j <= 15) txt = "À envoyer avant le 15 : la feuille de " + MOIS[mp] + " (complète) et celle de " + MOIS[m] + " (à jour au 15).";
     else txt = "Prochain envoi avant le 15 " + MOIS[(m + 1) % 12] + " : la feuille de " + MOIS[m] + " (complète).";
     var dernier = D.envois[cleMois(a, m)];
@@ -108,13 +109,15 @@
   function ouvrirSaisie(v, msg) {
     var R = D.reglages;
     v = v || {};
-    $("f-date").value = v.date || cleJour(new Date());
+    var nn = new Date(), cur = vue.a === nn.getFullYear() && vue.m === nn.getMonth();
+    $("f-date").value = v.date || (cur ? cleJour(nn) : cleJour(new Date(vue.a, vue.m, nbJours(vue.a, vue.m))));
     choisirPer(v.per || "a");
-    $("f-poste").value = v.poste || R.poste;
+    setPoste("f-poste", v.poste || R.poste);
     $("f-pds").value = v.pds || ""; $("f-fds").value = v.fds || ""; $("f-obs").value = v.obs || "";
     $("msg-saisie").textContent = msg || "";
     aller("saisie");
   }
+  function setPoste(id, val) { var sel = $(id), ok = false; for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === val) ok = true; if (!ok && val) { var o = document.createElement("option"); o.textContent = val; sel.appendChild(o); } sel.value = val; }
   var perCourante = "a";
   function choisirPer(p) { perCourante = p; $("f-m").classList.toggle("on", p === "m"); $("f-a").classList.toggle("on", p === "a"); }
   function depuisPhrase(txt) {
@@ -135,6 +138,7 @@
     j.poste = $("f-poste").value.trim() || D.reglages.poste;
     j[perCourante] = { pds: enH(pds), fds: enH(fds), obs: $("f-obs").value.trim() };
     D.jours[date] = j; sauver();
+    vue.a = +date.slice(0, 4); vue.m = +date.slice(5, 7) - 1;
     pile = ["accueil"]; aller("accueil", false);
   }
 
@@ -253,7 +257,7 @@
 
   // ---------- Réglages ----------
   var CH = { nom: "r-nom", mail: "r-mail", poste: "r-poste", obsm: "r-obsm", mpds: "r-mpds", mfds: "r-mfds", apds: "r-apds", afds: "r-afds", rappel: "r-rappel" };
-  function ouvrirReglages() { for (var k in CH) $(CH[k]).value = D.reglages[k]; $("t-version").textContent = "Version " + (N ? N.version() : "essai"); aller("reglages"); }
+  function ouvrirReglages() { for (var k in CH) { if (k === "poste") setPoste(CH[k], D.reglages[k]); else $(CH[k]).value = D.reglages[k]; } $("t-version").textContent = "Version " + (N ? N.version() : "essai"); aller("reglages"); }
   function sauverReglages() {
     for (var k in CH) D.reglages[k] = $(CH[k]).value.trim ? $(CH[k]).value.trim() : $(CH[k]).value;
     sauver(); if (N) N.rappel(D.reglages.rappel === "1");
@@ -292,11 +296,13 @@
   // ---------- Branchements ----------
   function init() {
     charger();
-    var n = new Date(); mois.a = n.getFullYear(); mois.m = n.getMonth();
+    var n = new Date(); mois.a = vue.a = n.getFullYear(); mois.m = vue.m = n.getMonth();
     $("b-dicter").onclick = function () { if (N) N.dicter(); else alert2("La dictée marche dans l'application. Écris la phrase dans la case ci-dessous."); };
     $("b-analyser").onclick = function () { var t = $("phrase").value.trim(); if (t) depuisPhrase(t); else alert2("Écris d'abord une phrase dans la case."); };
     $("b-main").onclick = function () { ouvrirSaisie(); };
-    $("b-feuille").onclick = function () { aller("feuille"); };
+    $("b-feuille").onclick = function () { mois.a = vue.a; mois.m = vue.m; aller("feuille"); };
+    $("l-prec").onclick = function () { vue.m--; if (vue.m < 0) { vue.m = 11; vue.a--; } rafraichir(); };
+    $("l-suiv").onclick = function () { vue.m++; if (vue.m > 11) { vue.m = 0; vue.a++; } rafraichir(); };
     $("b-reglages").onclick = ouvrirReglages;
     $("f-m").onclick = function () { choisirPer("m"); }; $("f-a").onclick = function () { choisirPer("a"); };
     $("b-enreg").onclick = enregistrer; $("b-annuler").onclick = retour;

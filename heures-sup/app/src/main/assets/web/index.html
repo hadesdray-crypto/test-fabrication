@@ -56,7 +56,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   </div>
   <button class="gros gris" id="b-main">Saisir à la main</button>
   <button class="gros vert" id="b-feuille">Voir et envoyer la feuille</button>
-  <div class="carte"><b id="t-mois"></b><div id="liste-mois"></div></div>
+  <div class="carte"><div class="mois" style="margin-bottom:6px"><button id="l-prec" aria-label="Mois précédent">&lsaquo;</button><b id="t-mois"></b><button id="l-suiv" aria-label="Mois suivant">&rsaquo;</button></div><div class="aide" style="text-align:center">Touche les flèches pour remplir un mois passé.</div><div id="liste-mois"></div></div>
   <button class="gros gris" id="b-reglages">Réglages</button>
 </section>
 
@@ -66,7 +66,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
     <label for="f-date" style="margin-top:0">Jour</label><input type="date" id="f-date">
     <label>Moment</label>
     <div class="bascule"><button id="f-m">Matin</button><button id="f-a">Après-midi</button></div>
-    <label for="f-poste">Poste</label><input id="f-poste">
+    <label for="f-poste">Poste</label><select id="f-poste"><option>ADS</option><option>SIAP</option></select>
     <div class="duo">
       <div><label for="f-pds">Prise de service</label><input type="time" id="f-pds"></div>
       <div><label for="f-fds">Fin de service</label><input type="time" id="f-fds"></div>
@@ -90,7 +90,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   <div class="carte">
     <label for="r-nom" style="margin-top:0">Nom de l'agent (à compléter)</label><input id="r-nom" placeholder="Nom Prénom">
     <label for="r-mail">Adresse mail du patron (à compléter)</label><input id="r-mail" type="email" inputmode="email" placeholder="adresse@exemple.fr">
-    <label for="r-poste">Poste habituel</label><input id="r-poste">
+    <label for="r-poste">Poste habituel</label><select id="r-poste"><option>ADS</option><option>SIAP</option></select>
     <label for="r-obsm">Observation habituelle du matin</label><input id="r-obsm">
     <div class="duo">
       <div><label for="r-mpds">Matin : prise</label><input type="time" id="r-mpds"></div>
