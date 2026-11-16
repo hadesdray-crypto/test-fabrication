@@ -2,15 +2,15 @@
 (function () {
   var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
   var MOIS_COURT = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
-  var DEFAUT = { nom: "", mail: "", poste: "ADS", obsm: "JAF", mpds: "08:45", mfds: "12:45", apds: "13:30", afds: "17:15", rappel: "1" };
+  var DEFAUT = { nom: "", mail: "", poste: "ADS", obsm: "JAF", mpds: "08:45", mfds: "12:45", apds: "13:30", afds: "17:15", rappel: "1", vibr: "1", avance: "10" };
   var $ = function (id) { return document.getElementById(id); };
   var N = window.Natif || null;
 
   // ---------- Données (restent sur le téléphone) ----------
-  var D = { reglages: {}, jours: {}, envois: {} };
+  var D = { reglages: {}, jours: {}, envois: {}, planning: { sem: {}, dates: {} } };
   function charger() {
     try { var t = localStorage.getItem("hs_v1"); if (t) D = JSON.parse(t); } catch (e) { }
-    D.reglages = Object.assign({}, DEFAUT, D.reglages || {}); D.jours = D.jours || {}; D.envois = D.envois || {};
+    D.reglages = Object.assign({}, DEFAUT, D.reglages || {}); D.jours = D.jours || {}; D.envois = D.envois || {}; D.planning = D.planning || {}; D.planning.sem = D.planning.sem || {}; D.planning.dates = D.planning.dates || {};
   }
   function sauver() { try { localStorage.setItem("hs_v1", JSON.stringify(D)); } catch (e) { } }
   function p2(n) { return (n < 10 ? "0" : "") + n; }
@@ -62,15 +62,151 @@
   }
   function plus(hhmm, minutes) { var p = hhmm.split(":"); var tot = (+p[0]) * 60 + (+p[1]) + minutes; return p2(Math.floor(tot / 60) % 24) + ":" + p2(tot % 60); }
 
+
+  // ---------- Planning, alarme APJ, rappels ----------
+  var JOURS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+  var ORDRE = [1, 2, 3, 4, 5, 6, 0];
+  function aMin(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ""); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+  // Planning prévu pour un jour : date précise d'abord, sinon semaine type. null = repos ou rien de prévu.
+  function planDe(cle) {
+    var P = D.planning, p = P.dates[cle];
+    if (!p) { var d = new Date(+cle.slice(0, 4), +cle.slice(5, 7) - 1, +cle.slice(8)); p = P.sem[d.getDay()]; }
+    if (!p || p.off) return null;
+    var ok = (p.m && p.m[0] && p.m[1]) || (p.a && p.a[0] && p.a[1]);
+    return ok ? p : null;
+  }
+  // L'alarme APJ est active : week-end 24h/24 ; du lundi au vendredi de 22h à 4h50.
+  function alarmeActive(jour, min) { return jour === 0 || jour === 6 || min >= 22 * 60 || min < 4 * 60 + 50; }
+  function rappelsAVenir(depuis, nbJ) {
+    var R = D.reglages, out = [], av = +R.avance || 10;
+    if (R.vibr !== "1") return out;
+    for (var i = 0; i < (nbJ || 14); i++) {
+      var d = new Date(depuis.getFullYear(), depuis.getMonth(), depuis.getDate() + i), cle = cleJour(d), p = planDe(cle);
+      if (!p) continue;
+      var debuts = [], fins = [];
+      [p.m, p.a].forEach(function (c) { if (c && c[0] && c[1]) { debuts.push(aMin(c[0])); fins.push(aMin(c[1])); } });
+      var pds = Math.min.apply(null, debuts), fds = Math.max.apply(null, fins), j = d.getDay();
+      var ajoute = function (min, titre, texte) { var t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, min).getTime(); if (t > depuis.getTime()) out.push({ t: t, titre: titre, texte: texte, jour: cle, heure: p2(Math.floor(min / 60)) + "h" + p2(min % 60) }); };
+      if (alarmeActive(j, pds)) ajoute(pds - av, "Arrivée sur site", "L'alarme est active : entre ton code personnel puis appuie sur MA.");
+      if (j >= 1 && j <= 5 && fds > 21 * 60 + 45) ajoute(21 * 60 + 45, "Alarme à 22h", "L'alarme s'active automatiquement à 22h. Pense à la procédure avant.");
+      if (alarmeActive(j, fds)) ajoute(fds - av, "Départ du site", "Entre ton code personnel puis appuie sur MS.");
+    }
+    out.sort(function (a, b) { return a.t - b.t; });
+    return out;
+  }
+  function syncAlarmes() {
+    var l = rappelsAVenir(new Date(), 14);
+    if (N && N.alarmes) { try { N.alarmes(JSON.stringify(l.map(function (r) { return { t: r.t, titre: r.titre, texte: r.texte }; }))); } catch (e) { } }
+    return l;
+  }
+  function texteJour(p) {
+    var s = [];
+    if (p.m && p.m[0] && p.m[1]) s.push("matin " + enH(p.m[0]) + " – " + enH(p.m[1]));
+    if (p.a && p.a[0] && p.a[1]) s.push("après-midi " + enH(p.a[0]) + " – " + enH(p.a[1]));
+    return (p.poste || D.reglages.poste) + " : " + s.join(" ; ");
+  }
+  function carteJour() {
+    var n = new Date(), cle = cleJour(n), p = planDe(cle), e = $("c-jour"), h = "<b>Aujourd'hui</b><div class=\"aide\" style=\"font-size:16px;color:#0f172a\">";
+    h += p ? esc(texteJour(p)) : "Repos, ou pas de planning pour ce jour (touche « Mon planning et l'alarme »).";
+    var r = syncAlarmes()[0];
+    h += "</div>";
+    h += r ? "<div class=\"aide\" style=\"margin-top:8px;font-size:15px\">Prochain rappel (vibration) : <b>" + esc(r.titre) + "</b>, le " + r.jour.split("-").reverse().join("/") + " à " + r.heure + "</div>" : "<div class=\"aide\" style=\"margin-top:8px\">Aucun rappel d'alarme prévu.</div>";
+    e.innerHTML = h;
+  }
+  function dessinerGrille() {
+    var h = "";
+    ORDRE.forEach(function (j) {
+      var p = D.planning.sem[j] || {}, m = p.m || ["", ""], a = p.a || ["", ""];
+      h += '<div class="carte" style="background:#f8fafc;box-shadow:none;border:1px solid #e2e8f0;padding:10px"><div class="duo" style="align-items:center"><b style="flex:1.2">' + JOURS[j] + '</b>' +
+        '<select data-j="' + j + '" data-c="off"><option value="0"' + (p.off ? "" : " selected") + '>Travaillé</option><option value="1"' + (p.off ? " selected" : "") + '>Repos</option></select>' +
+        '<select data-j="' + j + '" data-c="poste"><option' + ((p.poste || D.reglages.poste) === "ADS" ? " selected" : "") + '>ADS</option><option' + ((p.poste || D.reglages.poste) === "SIAP" ? " selected" : "") + '>SIAP</option></select></div>' +
+        '<div class="aide" style="margin:8px 0 2px">Matin : prise et fin</div><div class="duo"><input type="time" data-j="' + j + '" data-c="m0" value="' + m[0] + '"><input type="time" data-j="' + j + '" data-c="m1" value="' + m[1] + '"></div>' +
+        '<div class="aide" style="margin:8px 0 2px">Après-midi : prise et fin</div><div class="duo"><input type="time" data-j="' + j + '" data-c="a0" value="' + a[0] + '"><input type="time" data-j="' + j + '" data-c="a1" value="' + a[1] + '"></div></div>';
+    });
+    $("pl-grille").innerHTML = h;
+  }
+  function lireGrille() {
+    var sem = {};
+    document.querySelectorAll("#pl-grille [data-j]").forEach(function (e) {
+      var j = e.getAttribute("data-j"), c = e.getAttribute("data-c"); sem[j] = sem[j] || { m: ["", ""], a: ["", ""], off: false, poste: D.reglages.poste };
+      if (c === "off") sem[j].off = e.value === "1"; else if (c === "poste") sem[j].poste = e.value;
+      else if (c === "m0") sem[j].m[0] = e.value; else if (c === "m1") sem[j].m[1] = e.value; else if (c === "a0") sem[j].a[0] = e.value; else sem[j].a[1] = e.value;
+    });
+    return sem;
+  }
+  function majRappels() {
+    var l = syncAlarmes(), h = "";
+    if (!l.length) h = '<div class="aide">Aucun rappel : remplis ton planning ci-dessus (ou vérifie que la vibration est sur « Oui »).</div>';
+    l.slice(0, 10).forEach(function (r) { h += '<div class="ligne"><div class="t"><b>' + esc(r.titre) + '</b><small>' + r.jour.split("-").reverse().join("/") + ' à ' + r.heure + ' — ' + esc(r.texte) + '</small></div></div>'; });
+    $("pl-rappels").innerHTML = h;
+    var p = planDe(cleJour(new Date())); $("pl-etat").textContent = Object.keys(D.planning.sem).length || Object.keys(D.planning.dates).length ? "Planning enregistré. Il remplit tes heures et déclenche les rappels." : "Aucun planning pour l'instant : remplis la semaine type ou importe le code.";
+  }
+  function ouvrirPlanning() {
+    dessinerGrille(); $("al-vibr").value = D.reglages.vibr; $("al-av").value = D.reglages.avance; $("pl-msg").textContent = ""; $("pl-mois-msg").textContent = "";
+    majRappels(); chargerPhoto(); aller("planning");
+  }
+  function sauverPlanning() {
+    D.planning.sem = lireGrille(); D.reglages.vibr = $("al-vibr").value; D.reglages.avance = $("al-av").value; sauver(); majRappels();
+    $("pl-msg").textContent = "Planning enregistré.";
+  }
+  function importerPlanning() {
+    var t = $("pl-code").value.trim(); if (!t) { $("pl-msg").textContent = "Colle d'abord le code."; return; }
+    try {
+      var o = JSON.parse(t), n = 0;
+      if (o.sem) { Object.keys(o.sem).forEach(function (k) { D.planning.sem[k] = o.sem[k]; n++; }); }
+      if (o.jours) { Object.keys(o.jours).forEach(function (k) { var j = o.jours[k]; D.planning.dates[k] = { poste: j.poste || D.reglages.poste, off: !!j.off, m: j.m || ["", ""], a: j.a || ["", ""] }; n++; }); }
+      if (!n) throw new Error("vide");
+      sauver(); dessinerGrille(); majRappels(); $("pl-code").value = ""; $("pl-msg").textContent = n + " jour(s) importé(s).";
+    } catch (e) { $("pl-msg").textContent = "Code illisible. Copie-le en entier depuis le message de Claude."; }
+  }
+  function remplirMois() {
+    var a = vue.a, m = vue.m, n = 0, N = nbJours(a, m);
+    for (var d = 1; d <= N; d++) {
+      var cle = a + "-" + p2(m + 1) + "-" + p2(d), p = planDe(cle); if (!p || D.jours[cle]) continue;
+      var j = { poste: p.poste || D.reglages.poste };
+      if (p.m && p.m[0] && p.m[1]) j.m = { pds: enH(p.m[0]), fds: enH(p.m[1]), obs: "" };
+      if (p.a && p.a[0] && p.a[1]) j.a = { pds: enH(p.a[0]), fds: enH(p.a[1]), obs: "" };
+      D.jours[cle] = j; n++;
+    }
+    sauver(); $("pl-mois-msg").textContent = n ? n + " jour(s) ajoutés à " + MOIS[m] + " " + a + " depuis ton planning (les jours déjà saisis n'ont pas changé)." : "Rien à ajouter pour " + MOIS[m] + " " + a + " : planning vide ou jours déjà saisis.";
+  }
+  // photo du planning : réduite puis gardée sur le téléphone
+  function idb(mode, val) {
+    return new Promise(function (ok) {
+      try {
+        var r = indexedDB.open("hs-photos", 1); r.onupgradeneeded = function () { r.result.createObjectStore("p"); };
+        r.onerror = function () { ok(null); };
+        r.onsuccess = function () {
+          var tx = r.result.transaction("p", mode === "get" ? "readonly" : "readwrite"), st = tx.objectStore("p"), q = mode === "get" ? st.get("planning") : mode === "put" ? st.put(val, "planning") : st.delete("planning");
+          q.onsuccess = function () { ok(q.result || null); }; q.onerror = function () { ok(null); };
+        };
+      } catch (e) { ok(null); }
+    });
+  }
+  function chargerPhoto() { idb("get").then(function (u) { $("ph-img").style.display = u ? "block" : "none"; $("ph-sup").style.display = u ? "inline-block" : "none"; if (u) $("ph-img").src = u; }); }
+  function photoChoisie(f) {
+    if (!f) return; var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var k = Math.min(1, 1800 / Math.max(im.width, im.height)), c = document.createElement("canvas"); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+        idb("put", c.toDataURL("image/jpeg", 0.85)).then(function () { chargerPhoto(); $("pl-msg").textContent = "Photo enregistrée sur le téléphone. Envoie-la à Claude pour obtenir le code."; });
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(f);
+  }
+
   // ---------- Pages ----------
   var pile = ["accueil"], mois = { a: 0, m: 0 }, vue = { a: 0, m: 0 };
-  var TITRES = { accueil: "Heures sup", saisie: "Saisir mes heures", feuille: "Ma feuille", reglages: "Réglages" };
+  var TITRES = { accueil: "Heures sup", saisie: "Saisir mes heures", feuille: "Ma feuille", reglages: "Réglages", planning: "Planning et alarme" };
   function aller(p, empiler) {
     document.querySelectorAll(".page").forEach(function (e) { e.classList.remove("on"); });
     $("p-" + p).classList.add("on"); $("titre").textContent = TITRES[p];
     if (empiler !== false) pile.push(p); else pile[pile.length - 1] = p;
     document.querySelector("main").scrollTop = 0;
-    if (p === "accueil") rafraichir(); if (p === "feuille") dessinerApercu();
+    if (p === "accueil") { rafraichir(); carteJour(); } if (p === "feuille") dessinerApercu();
   }
   function retour() { if ($("fond").classList.contains("on")) { fermerMaj(); return true; } if (pile.length > 1) { pile.pop(); var p = pile[pile.length - 1]; pile.pop(); aller(p); return true; } return false; }
 
@@ -114,18 +250,30 @@
     choisirPer(v.per || "a");
     setPoste("f-poste", v.poste || R.poste);
     $("f-pds").value = v.pds || ""; $("f-fds").value = v.fds || ""; $("f-obs").value = v.obs || "";
+    if (!v.pds && !v.fds) remplirAuto();
     $("msg-saisie").textContent = msg || "";
     aller("saisie");
   }
   function setPoste(id, val) { var sel = $(id), ok = false; for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === val) ok = true; if (!ok && val) { var o = document.createElement("option"); o.textContent = val; sel.appendChild(o); } sel.value = val; }
   var perCourante = "a";
-  function choisirPer(p) { perCourante = p; $("f-m").classList.toggle("on", p === "m"); $("f-a").classList.toggle("on", p === "a"); }
+  function horairesPrevus(date, per) {
+    var p = planDe(date), c = p && (per === "m" ? p.m : p.a);
+    if (c && c[0] && c[1]) return { pds: c[0], fds: c[1], poste: p.poste };
+    var R = D.reglages; return per === "m" ? { pds: R.mpds, fds: R.mfds, poste: p && p.poste } : { pds: R.apds, fds: R.afds, poste: p && p.poste };
+  }
+  function remplirAuto() {
+    var h = horairesPrevus($("f-date").value, perCourante);
+    if (!$("f-pds").value || $("f-pds").getAttribute("data-auto")) { $("f-pds").value = h.pds; $("f-pds").setAttribute("data-auto", "1"); }
+    if (!$("f-fds").value || $("f-fds").getAttribute("data-auto")) { $("f-fds").value = h.fds; $("f-fds").setAttribute("data-auto", "1"); }
+    if (h.poste) setPoste("f-poste", h.poste);
+  }
+  function choisirPer(p) { perCourante = p; $("f-m").classList.toggle("on", p === "m"); $("f-a").classList.toggle("on", p === "a"); if ($("p-saisie").classList.contains("on")) remplirAuto(); }
   function depuisPhrase(txt) {
     var r = analyser(txt, new Date()), R = D.reglages, note = "";
     if (!r.pds && r.duree) {
-      var pd = r.per === "m" ? R.mpds : R.apds, fd = r.per === "m" ? R.mfds : R.afds;
-      r.pds = pd; r.fds = plus(fd, r.duree);
-      note = "Durée comprise : " + r.duree + " min en plus de ta fin de service habituelle. Vérifie les heures puis touche « Enregistrer ».";
+      var hp = horairesPrevus(r.date, r.per);
+      r.pds = hp.pds; r.fds = plus(hp.fds, r.duree);
+      note = "Durée comprise : " + r.duree + " min en plus de ta fin de service prévue. Vérifie les heures puis touche « Enregistrer ».";
     } else if (!r.pds) note = "Je n'ai pas compris les heures. Remplis-les puis touche « Enregistrer ».";
     else note = "Vérifie puis touche « Enregistrer ».";
     ouvrirSaisie(r, note);
@@ -304,6 +452,12 @@
     $("l-prec").onclick = function () { vue.m--; if (vue.m < 0) { vue.m = 11; vue.a--; } rafraichir(); };
     $("l-suiv").onclick = function () { vue.m++; if (vue.m > 11) { vue.m = 0; vue.a++; } rafraichir(); };
     $("b-reglages").onclick = ouvrirReglages;
+    ["f-pds", "f-fds"].forEach(function (id) { $(id).oninput = function () { $(id).removeAttribute("data-auto"); }; });
+    $("f-date").onchange = function () { remplirAuto(); };
+    $("b-planning").onclick = ouvrirPlanning; $("pl-ok").onclick = sauverPlanning; $("pl-imp").onclick = importerPlanning; $("pl-mois").onclick = function () { var bt = $("pl-mois"); if (bt.getAttribute("data-sur")) { bt.removeAttribute("data-sur"); bt.textContent = "Remplir le mois avec mon planning"; sauverPlanning(); remplirMois(); } else { bt.setAttribute("data-sur", "1"); bt.textContent = "Confirmer : remplir " + MOIS[vue.m] + " " + vue.a + " ?"; } }; $("pl-retour").onclick = retour;
+    $("al-vibr").onchange = $("al-av").onchange = function () { D.reglages.vibr = $("al-vibr").value; D.reglages.avance = $("al-av").value; sauver(); majRappels(); };
+    $("ph-b").onclick = function () { $("ph-in").click(); }; $("ph-in").onchange = function () { photoChoisie($("ph-in").files[0]); $("ph-in").value = ""; };
+    $("ph-sup").onclick = function () { idb("del").then(chargerPhoto); };
     $("f-m").onclick = function () { choisirPer("m"); }; $("f-a").onclick = function () { choisirPer("a"); };
     $("b-enreg").onclick = enregistrer; $("b-annuler").onclick = retour;
     $("m-prec").onclick = function () { mois.m--; if (mois.m < 0) { mois.m = 11; mois.a--; } dessinerApercu(); };
@@ -319,9 +473,9 @@
       k = b.getAttribute("data-sup");
       if (k) { if (b.getAttribute("data-sur")) { delete D.jours[k]; sauver(); rafraichir(); } else { b.setAttribute("data-sur", "1"); b.textContent = "Sûr ?"; } }
     };
-    rafraichir();
+    rafraichir(); carteJour();
     if (N) setTimeout(function () { chercherMaj(true); }, 1500);
   }
-  App._test = { analyser: analyser, dessiner: dessiner, pdf: pdf, charger: charger, D: function () { return D; }, sauver: sauver, enH: enH };
+  App._test = { planDe: planDe, rappels: rappelsAVenir, alarmeActive: alarmeActive, importer: function (o) { D.planning.sem = o.sem || D.planning.sem; Object.assign(D.planning.dates, o.jours || {}); }, analyser: analyser, dessiner: dessiner, pdf: pdf, charger: charger, D: function () { return D; }, sauver: sauver, enH: enH };
   document.addEventListener("DOMContentLoaded", init);
 })();

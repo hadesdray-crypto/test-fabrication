@@ -44,5 +44,5 @@ class RecepteurRappel : BroadcastReceiver() {
 }
 
 class RecepteurDemarrage : BroadcastReceiver() {
-    override fun onReceive(c: Context, i: Intent) { Rappel.programmer(c) }
+    override fun onReceive(c: Context, i: Intent) { Rappel.programmer(c); Alarmes.programmer(c) }
 }

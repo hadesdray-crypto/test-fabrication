@@ -28,6 +28,8 @@ class MainActivity : Activity() {
     private val principal = Handler(Looper.getMainLooper())
     private var pageChargee = false
     private val enAttente = ArrayList<String>()
+    private var choixFichier: android.webkit.ValueCallback<Array<Uri>>? = null
+    private var photoUri: Uri? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,21 @@ class MainActivity : Activity() {
         vue.setBackgroundColor(0xFFFFFFFF.toInt())
         vue.addJavascriptInterface(Pont(), "Natif")
         vue.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(w: WebView, cb: android.webkit.ValueCallback<Array<Uri>>, p: FileChooserParams): Boolean {
+                choixFichier?.onReceiveValue(null); choixFichier = cb
+                val galerie = Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*")
+                val choix = Intent.createChooser(galerie, "Photo du planning")
+                try {
+                    val dossier = File(cacheDir, "photos"); dossier.mkdirs()
+                    val f = File(dossier, "planning.jpg")
+                    photoUri = FileProvider.getUriForFile(this@MainActivity, "fr.heuressup.fichiers", f)
+                    val cam = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri).addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    choix.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cam))
+                } catch (e: Exception) { photoUri = null }
+                try { @Suppress("DEPRECATION") startActivityForResult(choix, CODE_PHOTO) }
+                catch (e: Exception) { choixFichier = null; cb.onReceiveValue(null); return false }
+                return true
+            }
             override fun onConsoleMessage(m: ConsoleMessage): Boolean {
                 val t = m.message() ?: ""
                 if (t.startsWith("AUTOTEST") || m.messageLevel() == ConsoleMessage.MessageLevel.ERROR) Log.i(ETIQUETTE, "page: $t (${m.sourceId()}:${m.lineNumber()})")
@@ -104,6 +121,10 @@ class MainActivity : Activity() {
     @Deprecated("Résultat de la dictée")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CODE_PHOTO) {
+            val u: Uri? = if (resultCode != RESULT_OK) null else (data?.data ?: photoUri)
+            choixFichier?.onReceiveValue(if (u != null) arrayOf(u) else null); choixFichier = null; return
+        }
         if (requestCode != CODE_DICTEE) return
         val liste = if (resultCode == RESULT_OK) data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) else null
         if (liste.isNullOrEmpty()) appelerJs("App.dicteeErreur('Rien entendu. Touche « Dicter » et parle plus près du téléphone.')")
@@ -140,6 +161,7 @@ class MainActivity : Activity() {
             } catch (e: Exception) { "Envoi impossible : ${e.message}" }
         }
 
+        @JavascriptInterface fun alarmes(json: String) { Alarmes.enregistrer(this@MainActivity, json) }
         @JavascriptInterface fun rappel(actif: Boolean) {
             getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean("rappel", actif).apply()
             Rappel.programmer(this@MainActivity)
@@ -162,6 +184,7 @@ class MainActivity : Activity() {
         const val ETIQUETTE = "HEURESSUP"
         const val PREFS = "heuressup"
         const val CODE_DICTEE = 42
+        const val CODE_PHOTO = 43
         /** Adresse de signalement des erreurs : à compléter plus tard. */
         const val ADRESSE_SIGNALEMENT = ""
     }

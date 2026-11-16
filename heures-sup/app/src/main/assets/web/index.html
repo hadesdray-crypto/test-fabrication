@@ -55,7 +55,9 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
     <button class="gros gris" id="b-analyser" style="margin:10px 0 0">Analyser la phrase</button>
   </div>
   <button class="gros gris" id="b-main">Saisir à la main</button>
+  <div class="carte" id="c-jour"></div>
   <button class="gros vert" id="b-feuille">Voir et envoyer la feuille</button>
+  <button class="gros gris" id="b-planning">Mon planning et l'alarme</button>
   <div class="carte"><div class="mois" style="margin-bottom:6px"><button id="l-prec" aria-label="Mois précédent">&lsaquo;</button><b id="t-mois"></b><button id="l-suiv" aria-label="Mois suivant">&rsaquo;</button></div><div class="aide" style="text-align:center">Touche les flèches pour remplir un mois passé.</div><div id="liste-mois"></div></div>
   <button class="gros gris" id="b-reglages">Réglages</button>
 </section>
@@ -107,6 +109,46 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   <button class="gros vert" id="r-ok">Enregistrer les réglages</button>
   <button class="gros gris" id="b-maj">Chercher une mise à jour</button>
   <div class="aide" id="t-version"></div>
+</section>
+
+
+<section class="page" id="p-planning">
+  <div class="carte alerte ok" id="pl-etat"></div>
+  <div class="carte">
+    <b>Mon planning de la semaine</b>
+    <div class="aide">Les heures de prise et de fin de service se remplissent toutes seules selon le jour. Tu peux les changer à chaque saisie.</div>
+    <div id="pl-grille"></div>
+  </div>
+  <div class="carte">
+    <b>Photo de mon planning</b>
+    <div class="aide">Prends ton planning en photo ou choisis une image. Envoie-la ensuite à Claude dans la conversation : il lit les horaires et te donne un code à coller ci-dessous.</div>
+    <input type="file" id="ph-in" accept="image/*" hidden>
+    <button class="gros gris" id="ph-b" style="margin-top:10px">Prendre ou choisir une photo</button>
+    <img id="ph-img" alt="Photo du planning" style="width:100%;display:none;border-radius:10px;margin-bottom:10px">
+    <button class="petit rouge" id="ph-sup" style="display:none;margin-bottom:10px">Supprimer la photo</button>
+    <label for="pl-code">Code du planning (donné par Claude)</label>
+    <textarea id="pl-code" rows="3" placeholder="Colle le code ici"></textarea>
+    <button class="gros gris" id="pl-imp" style="margin:10px 0 0">Importer le planning</button>
+    <div class="msg" id="pl-msg"></div>
+  </div>
+  <div class="carte">
+    <b>Alarme anti-intrusion APJ</b>
+    <ul style="margin:8px 0 8px 18px;padding:0;font-size:16px;line-height:1.5">
+      <li><b>Activation automatique :</b> du lundi au vendredi de 22h à 4h50 ; le week-end 24h/24.</li>
+      <li><b>Arrivée sur site (arrêt) :</b> entrer le code personnel, puis appuyer sur MA.</li>
+      <li><b>Départ du site (mise en service) :</b> entrer le code personnel, puis appuyer sur MS.</li>
+    </ul>
+    <label for="al-vibr">Vibration de rappel</label>
+    <select id="al-vibr"><option value="1">Oui</option><option value="0">Non</option></select>
+    <label for="al-av">Me prévenir avant l'heure</label>
+    <select id="al-av"><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option><option value="30">30 minutes</option></select>
+    <div class="aide">Rappels : à l'arrivée si l'alarme est active (« code + MA »), au départ si elle l'est (« code + MS »), et à 21h45 en semaine si tu es prévu encore là à 22h.</div>
+  </div>
+  <div class="carte"><b>Prochains rappels</b><div id="pl-rappels"></div></div>
+  <button class="gros vert" id="pl-ok">Enregistrer</button>
+  <button class="gros gris" id="pl-mois">Remplir le mois avec mon planning</button>
+  <div class="aide" id="pl-mois-msg" style="margin-bottom:10px"></div>
+  <button class="gros gris" id="pl-retour">Retour</button>
 </section>
 
 </main>
