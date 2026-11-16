@@ -1,12 +1,12 @@
 {
- "code": 3,
- "nom": "1.0.3",
- "sha256": "7709229427189ff7dc05e7cff88a15f1a4876a625d36fded526191a3ab96310d",
+ "code": 4,
+ "nom": "1.0.4",
+ "sha256": "b8c1fd59200df8b0efa9e78fbc2f9058dc8766538ecb61279a48fd12513cfe61",
  "changes": [
-  "Mon planning : semaine type (ADS/SIAP, matin et après-midi, repos), les heures de prise et de fin de service se remplissent toutes seules selon le jour",
-  "Alarme APJ : fiche claire (activation 22h-4h50, week-end 24h/24, code + MA à l'arrivée, code + MS au départ) et rappels avec vibration calculés d'après ton planning",
-  "Photo du planning : prise ou choisie dans l'appli, gardée sur le téléphone ; import d'un planning par code",
-  "Bouton « Remplir le mois avec mon planning » (avec confirmation)"
+  "Feuille interactive : touche un jour sur la feuille pour ajouter tes heures",
+  "Boutons rapides : Midi +45 min, +1h30, minutes, heure de fin du soir (SIAP ou Nouveau Palais)",
+  "Accueil : boutons « Midi +45 min » et « Soir : heure de fin » pour aujourd'hui",
+  "Réglage : prolongation habituelle du midi"
  ],
- "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.3/Heures-Sup.apk"
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.4/Heures-Sup.apk"
 }
