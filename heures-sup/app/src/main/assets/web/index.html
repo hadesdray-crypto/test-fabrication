@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Heures sup</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:system-ui,Roboto,Arial,sans-serif;color:#0f172a;background:#f1f5f9;font-size:17px}
+#app{display:flex;flex-direction:column;height:100%}
+header{background:#1e3a8a;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
+header h1{font-size:20px;margin:0;flex:1}
+.ptit{background:#fff;color:#1e3a8a;border:0;width:36px;height:36px;border-radius:18px;font-size:19px;font-weight:700}
+main{flex:1;overflow:auto;padding:14px}
+.page{display:none}.page.on{display:block}
+.carte{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.alerte{background:#fef3c7;border:2px solid #f59e0b}
+.alerte.ok{background:#dcfce7;border-color:#16a34a}
+button.gros{display:block;width:100%;padding:16px;margin:0 0 10px;border:0;border-radius:14px;font-size:19px;font-weight:700;background:#1e3a8a;color:#fff}
+button.gros.vert{background:#15803d}
+button.gros.gris{background:#e2e8f0;color:#0f172a}
+button.petit{padding:9px 12px;border:0;border-radius:10px;background:#e2e8f0;font-size:15px;font-weight:600}
+button.petit.rouge{background:#fee2e2;color:#991b1b}
+label{display:block;font-weight:700;margin:12px 0 4px;font-size:15px}
+input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #cbd5e1;border-radius:10px;background:#fff;font-family:inherit}
+.duo{display:flex;gap:10px}.duo>*{flex:1}
+.bascule{display:flex;gap:8px}.bascule button{flex:1;padding:14px;font-size:17px;font-weight:700;border-radius:12px;border:2px solid #cbd5e1;background:#fff}
+.bascule button.on{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+.ligne{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #e2e8f0}
+.ligne:last-child{border:0}.ligne .t{flex:1;font-size:16px}.ligne small{color:#475569;display:block}
+.mois{display:flex;align-items:center;gap:10px;margin-bottom:12px}.mois b{flex:1;text-align:center;font-size:20px}
+.mois button{width:48px;height:48px;border-radius:24px;border:0;background:#1e3a8a;color:#fff;font-size:24px;font-weight:700}
+#apercu{width:100%;border:1px solid #94a3b8;background:#fff;display:block;margin-bottom:12px}
+.msg{min-height:22px;margin:8px 0;font-weight:600;color:#1e3a8a}
+.aide{color:#475569;font-size:14px;margin-top:4px}
+#fond{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;padding:14px;z-index:9}
+#fond.on{display:flex}
+#boite{background:#fff;border-radius:16px;width:100%;max-height:88vh;display:flex;flex-direction:column}
+#boite .corps{padding:16px;overflow:auto;flex:1}#boite .pied{padding:12px 16px;border-top:1px solid #e2e8f0}
+#barre{height:14px;background:#e2e8f0;border-radius:7px;overflow:hidden;margin:10px 0;display:none}#barre i{display:block;height:100%;width:0;background:#15803d}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1 id="titre">Heures sup</h1><button class="ptit" id="bpt" aria-label="Signaler une erreur sur cette page">?</button></header>
+<main>
+
+<section class="page on" id="p-accueil">
+  <div class="carte alerte" id="echeance"></div>
+  <button class="gros" id="b-dicter">Dicter mes heures</button>
+  <div class="carte">
+    <label for="phrase" style="margin-top:0">Ou écris la phrase (le micro du clavier marche aussi)</label>
+    <textarea id="phrase" rows="2" placeholder="Ex. : aujourd'hui de 17h30 à 18h15, audience"></textarea>
+    <div class="aide">Exemples : « hier après-midi de 13h30 à 18h pour alarme en cours » — « aujourd'hui 45 minutes en plus pour audience ».</div>
+    <button class="gros gris" id="b-analyser" style="margin:10px 0 0">Analyser la phrase</button>
+  </div>
+  <button class="gros gris" id="b-main">Saisir à la main</button>
+  <button class="gros vert" id="b-feuille">Voir et envoyer la feuille</button>
+  <div class="carte"><b id="t-mois"></b><div id="liste-mois"></div></div>
+  <button class="gros gris" id="b-reglages">Réglages</button>
+</section>
+
+<section class="page" id="p-saisie">
+  <div class="carte">
+    <div class="msg" id="msg-saisie"></div>
+    <label for="f-date" style="margin-top:0">Jour</label><input type="date" id="f-date">
+    <label>Moment</label>
+    <div class="bascule"><button id="f-m">Matin</button><button id="f-a">Après-midi</button></div>
+    <label for="f-poste">Poste</label><input id="f-poste">
+    <div class="duo">
+      <div><label for="f-pds">Prise de service</label><input type="time" id="f-pds"></div>
+      <div><label for="f-fds">Fin de service</label><input type="time" id="f-fds"></div>
+    </div>
+    <label for="f-obs">Observation (cause de la prolongation)</label><input id="f-obs" placeholder="Ex. : Audience, Alarme en cours">
+  </div>
+  <button class="gros vert" id="b-enreg">Enregistrer</button>
+  <button class="gros gris" id="b-annuler">Annuler</button>
+</section>
+
+<section class="page" id="p-feuille">
+  <div class="mois"><button id="m-prec" aria-label="Mois précédent">&lsaquo;</button><b id="m-nom"></b><button id="m-suiv" aria-label="Mois suivant">&rsaquo;</button></div>
+  <canvas id="apercu"></canvas>
+  <div class="msg" id="msg-feuille"></div>
+  <button class="gros vert" id="b-envoyer">Envoyer à mon patron (PDF)</button>
+  <div class="aide" style="margin-bottom:10px">La messagerie s'ouvre avec la feuille jointe. Tu valides l'envoi toi-même.</div>
+  <button class="gros gris" id="b-retour1">Retour</button>
+</section>
+
+<section class="page" id="p-reglages">
+  <div class="carte">
+    <label for="r-nom" style="margin-top:0">Nom de l'agent (à compléter)</label><input id="r-nom" placeholder="Nom Prénom">
+    <label for="r-mail">Adresse mail du patron (à compléter)</label><input id="r-mail" type="email" inputmode="email" placeholder="adresse@exemple.fr">
+    <label for="r-poste">Poste habituel</label><input id="r-poste">
+    <label for="r-obsm">Observation habituelle du matin</label><input id="r-obsm">
+    <div class="duo">
+      <div><label for="r-mpds">Matin : prise</label><input type="time" id="r-mpds"></div>
+      <div><label for="r-mfds">Matin : fin</label><input type="time" id="r-mfds"></div>
+    </div>
+    <div class="duo">
+      <div><label for="r-apds">Après-midi : prise</label><input type="time" id="r-apds"></div>
+      <div><label for="r-afds">Après-midi : fin</label><input type="time" id="r-afds"></div>
+    </div>
+    <label for="r-rappel">Rappel le 14 de chaque mois</label>
+    <select id="r-rappel"><option value="1">Oui</option><option value="0">Non</option></select>
+    <div class="aide">Ces informations restent seulement sur ton téléphone.</div>
+  </div>
+  <button class="gros vert" id="r-ok">Enregistrer les réglages</button>
+  <button class="gros gris" id="b-maj">Chercher une mise à jour</button>
+  <div class="aide" id="t-version"></div>
+</section>
+
+</main>
+</div>
+
+<div id="fond"><div id="boite">
+  <div class="corps"><h2 style="margin-top:0" id="maj-titre">Mise à jour</h2><div id="maj-texte"></div><div id="barre"><i></i></div><div class="msg" id="maj-msg"></div></div>
+  <div class="pied"><button class="gros vert" id="maj-go" style="display:none">Mettre à jour maintenant</button><button class="gros gris" id="maj-fermer" style="margin:0">Fermer</button></div>
+</div></div>
+
+<script src="app.js"></script>
+</body>
+</html>
