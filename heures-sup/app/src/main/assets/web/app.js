@@ -2,7 +2,7 @@
 (function () {
   var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
   var MOIS_COURT = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
-  var DEFAUT = { nom: "", mail: "", poste: "ADS", obsm: "JAF", mpds: "08:45", mfds: "12:45", apds: "13:30", afds: "17:15", rappel: "1", vibr: "1", avance: "10" };
+  var DEFAUT = { nom: "", mail: "", poste: "ADS", obsm: "JAF", mpds: "08:45", mfds: "12:45", apds: "13:30", afds: "17:15", rappel: "1", vibr: "1", avance: "10", midi: "45" };
   var $ = function (id) { return document.getElementById(id); };
   var N = window.Natif || null;
 
@@ -36,7 +36,7 @@
       }
     }
     r.date = cleJour(d);
-    if (/matin/.test(t)) r.per = "m"; else if (/apr[eè]s[- ]?midi|soir/.test(t)) r.per = "a";
+    if (/matin/.test(t)) r.per = "m"; else if (/apr[eè]s[- ]?midi|soir/.test(t)) r.per = "a"; else if (/(^|[^è])\bmidi\b/.test(t)) r.per = "m";
     // heures
     var re = /(\d{1,2})\s*(?:heures?|h|:)\s*(\d{2})?/g, m, hs = [];
     var sans = t.replace(/(\d+)\s*(?:minutes?|min)\b/g, " ");
@@ -301,7 +301,8 @@
       a: [aa.pds || "//", aa.fds || "//", aa.obs || "//"]
     };
   }
-  function dessiner(cv, a, m) {
+  var GX = 109, GY = 202, GTH = 1845, GHH = 99, GRH = (1845 - 99) / 31, GW = 1654, GH = 2339;
+  function dessiner(cv, a, m, sel) {
     var W = 1654, H = 2339; cv.width = W; cv.height = H;
     var g = cv.getContext("2d");
     g.fillStyle = "#fff"; g.fillRect(0, 0, W, H);
@@ -355,6 +356,7 @@
     for (d = 0; d <= 31; d++) { var yy = Y + HH + d * RH; g.beginPath(); g.moveTo(X, yy); g.lineTo(X + TW, yy); g.stroke(); }
     for (var k = 1; k < 8; k++) { g.beginPath(); g.moveTo(cx[k], k >= 2 && k !== 2 && k !== 5 ? Y + 37 : Y); g.lineTo(cx[k], Y + TH); g.stroke(); }
     g.beginPath(); g.moveTo(cx[2], Y + 37); g.lineTo(X + TW, Y + 37); g.stroke();
+    if (sel) { var ys = Y + HH + (sel - 1) * RH; g.fillStyle = "rgba(30,58,138,0.16)"; g.fillRect(X, ys, TW, RH); g.strokeStyle = "#1e3a8a"; g.lineWidth = 5; g.strokeRect(X, ys, TW, RH); }
     // pied de page
     g.fillStyle = "#111"; g.font = "26px Arial, sans-serif";
     g.fillText("Merci de remplir dans les cases « observations » la cause de la prolongation de vacation (prolongation d’audience,", 109, 2108);
@@ -367,9 +369,57 @@
     while (g.measureText(t).width > max && s > 12) { s -= 1; g.font = s + "px Arial, sans-serif"; }
     g.fillText(t, x, y);
   }
+  var zoom = 2, selJour = 0;
   function dessinerApercu() {
     var a = mois.a, m = mois.m; $("m-nom").textContent = MOIS[m] + " " + a;
-    dessiner($("apercu"), a, m);
+    dessiner($("apercu"), a, m, selJour);
+    $("apercu").style.width = (zoom * 100) + "%";
+  }
+  function toucheFeuille(e) {
+    var cv = $("apercu"), r = cv.getBoundingClientRect(), fy = (e.clientY - r.top) / r.height * GH, fx = (e.clientX - r.left) / r.width * GW;
+    var j = Math.floor((fy - (GY + GHH)) / GRH) + 1;
+    if (fx < GX || fx > GX + 1454 || j < 1 || j > nbJours(mois.a, mois.m)) return;
+    selJour = j; dessinerApercu(); ouvrirJour(mois.a + "-" + p2(mois.m + 1) + "-" + p2(j));
+  }
+  // ----- fenêtre d'un jour : ajouter les heures en quelques touches -----
+  var jourCle = null;
+  function hms(t) { return t || ""; }
+  function ouvrirJour(cle) {
+    jourCle = cle; var j = D.jours[cle] || {}, p = planDe(cle), R = D.reglages, d = new Date(+cle.slice(0, 4), +cle.slice(5, 7) - 1, +cle.slice(8));
+    $("j-titre").textContent = JOURS[d.getDay()] + " " + (+cle.slice(8)) + " " + MOIS[d.getMonth()];
+    var hm = horairesPrevus(cle, "m"), ha = horairesPrevus(cle, "a");
+    var m = j.m || {}, a = j.a || {};
+    $("j-poste").value = j.poste || (p && p.poste) || R.poste; setPoste("j-poste", j.poste || (p && p.poste) || R.poste);
+    $("j-lieu").value = j.lieu || "";
+    $("j-m0").value = (m.pds || "").replace("H", ":") || hm.pds; $("j-m1h").value = (m.fds || "").replace("H", ":") || hm.fds; $("j-mobs").value = m.obs || "";
+    $("j-a0").value = (a.pds || "").replace("H", ":") || ha.pds; $("j-a1").value = (a.fds || "").replace("H", ":") || ha.fds; $("j-aobs").value = a.obs || "";
+    $("j-soir").value = ""; $("j-msg").textContent = "";
+    $("j-midi").textContent = "Midi +" + (+R.midi || 45) + " min";
+    suggere(); $("fond2").classList.add("on");
+  }
+  function suggere() {
+    var siap = $("j-poste").value === "SIAP" || $("j-lieu").value === "NP";
+    $("j-sugg").textContent = siap ? "SIAP ou Nouveau Palais : en général, prolongation le soir selon la fin des audiences. Indique l'heure de fin." : "ADS : en général, prolongation du midi. Touche « Midi + minutes ».";
+    $("j-midi").className = "gros" + (siap ? " gris" : ""); $("j-soirb").className = "gros" + (siap ? "" : " gris");
+    $("j-aide").textContent = "Les heures se mettent sur la feuille quand tu touches « Enregistrer ce jour ».";
+  }
+  function addMin(champ, n) { var v = $(champ).value || "12:00"; $(champ).value = plus(v, n); }
+  function appliqueMidi(n) { addMin("j-m1h", n); if (!$("j-mobs").value) $("j-mobs").value = "Audience"; $("j-msg").textContent = "Matin : fin à " + enH($("j-m1h").value) + ". Vérifie puis enregistre."; }
+  function appliqueSoir(fin) { if (!fin) { $("j-msg").textContent = "Indique d'abord l'heure de fin du soir."; return; } $("j-a1").value = fin; if (!$("j-aobs").value) $("j-aobs").value = "Audience"; $("j-msg").textContent = "Après-midi : fin à " + enH(fin) + ". Vérifie puis enregistre."; }
+  function enregistrerJour() {
+    var j = D.jours[jourCle] || {}; j.poste = $("j-poste").value; j.lieu = $("j-lieu").value;
+    var m0 = $("j-m0").value, m1 = $("j-m1h").value, a0 = $("j-a0").value, a1 = $("j-a1").value;
+    if (m0 && m1) j.m = { pds: enH(m0), fds: enH(m1), obs: $("j-mobs").value.trim() }; else delete j.m;
+    if (a0 && a1) j.a = { pds: enH(a0), fds: enH(a1), obs: $("j-aobs").value.trim() }; else delete j.a;
+    if (!j.m && !j.a) { $("j-msg").textContent = "Remplis au moins un moment (prise et fin)."; return; }
+    D.jours[jourCle] = j; sauver(); fermerJour(); selJour = +jourCle.slice(8);
+    if ($("p-feuille").classList.contains("on")) dessinerApercu(); else { rafraichir(); carteJour(); }
+  }
+  function fermerJour() { $("fond2").classList.remove("on"); }
+  function viderJour() { delete D.jours[jourCle]; sauver(); fermerJour(); if ($("p-feuille").classList.contains("on")) dessinerApercu(); else { rafraichir(); carteJour(); } }
+  function ouvrirAuj(mode) {
+    var n = new Date(); mois.a = vue.a = n.getFullYear(); mois.m = vue.m = n.getMonth(); ouvrirJour(cleJour(n));
+    if (mode === "midi") appliqueMidi(+D.reglages.midi || 45); else if (mode === "soir") $("j-soir").focus();
   }
 
   // ---------- PDF (feuille A4 = une image dans un fichier PDF) ----------
@@ -404,7 +454,7 @@
   }
 
   // ---------- Réglages ----------
-  var CH = { nom: "r-nom", mail: "r-mail", poste: "r-poste", obsm: "r-obsm", mpds: "r-mpds", mfds: "r-mfds", apds: "r-apds", afds: "r-afds", rappel: "r-rappel" };
+  var CH = { nom: "r-nom", mail: "r-mail", poste: "r-poste", obsm: "r-obsm", mpds: "r-mpds", mfds: "r-mfds", apds: "r-apds", afds: "r-afds", rappel: "r-rappel", midi: "r-midi" };
   function ouvrirReglages() { for (var k in CH) { if (k === "poste") setPoste(CH[k], D.reglages[k]); else $(CH[k]).value = D.reglages[k]; } $("t-version").textContent = "Version " + (N ? N.version() : "essai"); aller("reglages"); }
   function sauverReglages() {
     for (var k in CH) D.reglages[k] = $(CH[k]).value.trim ? $(CH[k]).value.trim() : $(CH[k]).value;
@@ -462,6 +512,16 @@
     $("b-enreg").onclick = enregistrer; $("b-annuler").onclick = retour;
     $("m-prec").onclick = function () { mois.m--; if (mois.m < 0) { mois.m = 11; mois.a--; } dessinerApercu(); };
     $("m-suiv").onclick = function () { mois.m++; if (mois.m > 11) { mois.m = 0; mois.a++; } dessinerApercu(); };
+    $("z-plus").onclick = function () { zoom = Math.min(3, zoom + 0.5); dessinerApercu(); }; $("z-moins").onclick = function () { zoom = Math.max(1, zoom - 0.5); dessinerApercu(); };
+    $("z-auj").onclick = function () { var n = new Date(); mois.a = n.getFullYear(); mois.m = n.getMonth(); selJour = n.getDate(); dessinerApercu(); ouvrirJour(cleJour(n)); };
+    $("apercu").onclick = toucheFeuille;
+    $("a-midi").onclick = function () { ouvrirAuj("midi"); }; $("a-soir").onclick = function () { ouvrirAuj("soir"); };
+    $("a-midi").textContent = "Midi +" + (+D.reglages.midi || 45) + " min";
+    $("j-midi").onclick = function () { appliqueMidi(+D.reglages.midi || 45); }; $("j-m1").onclick = function () { addMin("j-a1", 90); if (!$("j-aobs").value) $("j-aobs").value = "Audience"; $("j-msg").textContent = "Après-midi : fin à " + enH($("j-a1").value) + ". Vérifie puis enregistre."; };
+    $("j-mn").onclick = function () { var n = parseInt($("j-nmin").value, 10); if (!n) { $("j-msg").textContent = "Écris le nombre de minutes."; return; } addMin("j-a1", n); if (!$("j-aobs").value) $("j-aobs").value = "Audience"; $("j-msg").textContent = "Après-midi : fin à " + enH($("j-a1").value) + ". Vérifie puis enregistre."; };
+    $("j-soirb").onclick = function () { appliqueSoir($("j-soir").value); };
+    $("j-poste").onchange = $("j-lieu").onchange = suggere;
+    $("j-ok").onclick = enregistrerJour; $("j-vide").onclick = viderJour; $("j-x").onclick = fermerJour;
     $("b-envoyer").onclick = envoyer; $("b-retour1").onclick = retour;
     $("r-ok").onclick = sauverReglages; $("b-maj").onclick = function () { chercherMaj(false); };
     $("maj-go").onclick = function () { $("maj-msg").textContent = "Démarrage…"; N && N.installerMaj(); };

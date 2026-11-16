@@ -30,13 +30,14 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
 .ligne:last-child{border:0}.ligne .t{flex:1;font-size:16px}.ligne small{color:#475569;display:block}
 .mois{display:flex;align-items:center;gap:10px;margin-bottom:12px}.mois b{flex:1;text-align:center;font-size:20px}
 .mois button{width:48px;height:48px;border-radius:24px;border:0;background:#1e3a8a;color:#fff;font-size:24px;font-weight:700}
-#apercu{width:100%;border:1px solid #94a3b8;background:#fff;display:block;margin-bottom:12px}
+#apercu{display:block}
 .msg{min-height:22px;margin:8px 0;font-weight:600;color:#1e3a8a}
 .aide{color:#475569;font-size:14px;margin-top:4px}
 #fond{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;padding:14px;z-index:9}
 #fond.on{display:flex}
 #boite{background:#fff;border-radius:16px;width:100%;max-height:88vh;display:flex;flex-direction:column}
 #boite .corps{padding:16px;overflow:auto;flex:1}#boite .pied{padding:12px 16px;border-top:1px solid #e2e8f0}
+#fond2{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;padding:10px;z-index:10}#fond2.on{display:flex}#boite2{background:#fff;border-radius:16px;width:100%;max-height:94vh;display:flex;flex-direction:column}#boite2 .corps{padding:16px;overflow:auto;flex:1}#boite2 .pied{padding:12px 16px;border-top:1px solid #e2e8f0}
 #barre{height:14px;background:#e2e8f0;border-radius:7px;overflow:hidden;margin:10px 0;display:none}#barre i{display:block;height:100%;width:0;background:#15803d}
 </style>
 </head>
@@ -56,6 +57,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   </div>
   <button class="gros gris" id="b-main">Saisir à la main</button>
   <div class="carte" id="c-jour"></div>
+  <div class="duo"><button class="gros" id="a-midi" style="font-size:17px">Midi +45 min</button><button class="gros" id="a-soir" style="font-size:17px">Soir : heure de fin</button></div>
   <button class="gros vert" id="b-feuille">Voir et envoyer la feuille</button>
   <button class="gros gris" id="b-planning">Mon planning et l'alarme</button>
   <div class="carte"><div class="mois" style="margin-bottom:6px"><button id="l-prec" aria-label="Mois précédent">&lsaquo;</button><b id="t-mois"></b><button id="l-suiv" aria-label="Mois suivant">&rsaquo;</button></div><div class="aide" style="text-align:center">Touche les flèches pour remplir un mois passé.</div><div id="liste-mois"></div></div>
@@ -81,7 +83,9 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
 
 <section class="page" id="p-feuille">
   <div class="mois"><button id="m-prec" aria-label="Mois précédent">&lsaquo;</button><b id="m-nom"></b><button id="m-suiv" aria-label="Mois suivant">&rsaquo;</button></div>
-  <canvas id="apercu"></canvas>
+  <div class="aide" style="margin-bottom:6px">Touche un jour sur la feuille pour ajouter tes heures.</div>
+  <div class="duo" style="margin-bottom:8px"><button class="petit" id="z-moins">Réduire</button><button class="petit" id="z-plus">Agrandir</button><button class="petit" id="z-auj">Aujourd'hui</button></div>
+  <div id="cadre-feuille" style="overflow:auto;max-height:62vh;border:1px solid #94a3b8;background:#fff;margin-bottom:12px;-webkit-overflow-scrolling:touch"><canvas id="apercu" style="display:block;margin:0;border:0"></canvas></div>
   <div class="msg" id="msg-feuille"></div>
   <button class="gros vert" id="b-envoyer">Envoyer à mon patron (PDF)</button>
   <div class="aide" style="margin-bottom:10px">La messagerie s'ouvre avec la feuille jointe. Tu valides l'envoi toi-même.</div>
@@ -102,6 +106,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
       <div><label for="r-apds">Après-midi : prise</label><input type="time" id="r-apds"></div>
       <div><label for="r-afds">Après-midi : fin</label><input type="time" id="r-afds"></div>
     </div>
+    <label for="r-midi">Prolongation habituelle du midi (minutes)</label><input id="r-midi" type="number" inputmode="numeric" min="0" max="240">
     <label for="r-rappel">Rappel le 14 de chaque mois</label>
     <select id="r-rappel"><option value="1">Oui</option><option value="0">Non</option></select>
     <div class="aide">Ces informations restent seulement sur ton téléphone.</div>
@@ -159,6 +164,31 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   <div class="pied"><button class="gros vert" id="maj-go" style="display:none">Mettre à jour maintenant</button><button class="gros gris" id="maj-fermer" style="margin:0">Fermer</button></div>
 </div></div>
 
+<div id="fond2"><div id="boite2">
+  <div class="corps">
+    <h2 style="margin-top:0" id="j-titre">Jour</h2>
+    <div class="aide" id="j-aide"></div>
+    <div class="duo"><div><label for="j-poste">Poste</label><select id="j-poste"><option>ADS</option><option>SIAP</option></select></div>
+    <div><label for="j-lieu">Lieu</label><select id="j-lieu"><option value="">Habituel</option><option value="NP">Nouveau Palais</option></select></div></div>
+    <div class="carte" style="background:#f8fafc;box-shadow:none;border:1px solid #e2e8f0;margin-top:12px">
+      <b>Ajouter des heures</b>
+      <button class="gros" id="j-midi" style="margin:10px 0 8px">Midi +45 min</button>
+      <div class="duo"><button class="gros gris" id="j-m1" style="margin:0 0 8px">+ 1h30</button><div style="display:flex;gap:6px;margin:0 0 8px"><input id="j-nmin" type="number" inputmode="numeric" placeholder="min" style="width:70px"><button class="gros gris" id="j-mn" style="margin:0">+ min soir</button></div></div>
+      <label for="j-soir" style="margin-top:4px">Soir : j'ai fini à</label>
+      <div class="duo"><input type="time" id="j-soir"><button class="gros" id="j-soirb" style="margin:0">Appliquer</button></div>
+      <div class="aide" id="j-sugg" style="margin-top:8px"></div>
+    </div>
+    <b style="display:block;margin-top:12px">Matin</b>
+    <div class="duo"><input type="time" id="j-m0"><input type="time" id="j-m1h"></div>
+    <label for="j-mobs">Observation du matin</label><input id="j-mobs">
+    <b style="display:block;margin-top:12px">Après-midi</b>
+    <div class="duo"><input type="time" id="j-a0"><input type="time" id="j-a1"></div>
+    <label for="j-aobs">Observation de l'après-midi</label><input id="j-aobs" list="obs-liste" placeholder="Ex. : Audience">
+    <datalist id="obs-liste"><option>Audience</option><option>Alarme en cours</option></datalist>
+    <div class="msg" id="j-msg"></div>
+  </div>
+  <div class="pied"><button class="gros vert" id="j-ok">Enregistrer ce jour</button><div class="duo"><button class="gros gris" id="j-vide" style="margin:0">Vider le jour</button><button class="gros gris" id="j-x" style="margin:0">Annuler</button></div></div>
+</div></div>
 <script src="app.js"></script>
 </body>
 </html>
