@@ -1,9 +1,12 @@
 {
- "code": 2,
- "nom": "1.0.2",
- "sha256": "e3b98dd828d6a1d303bc6a1c3a30e5e3ea03fc74fddd03f9cd54bb9c1e1fa281",
+ "code": 3,
+ "nom": "1.0.3",
+ "sha256": "7709229427189ff7dc05e7cff88a15f1a4876a625d36fded526191a3ab96310d",
  "changes": [
-  "Première version : dictée de tes heures, feuille Protec à l'identique, envoi du PDF par mail, rappel le 14 de chaque mois"
+  "Mon planning : semaine type (ADS/SIAP, matin et après-midi, repos), les heures de prise et de fin de service se remplissent toutes seules selon le jour",
+  "Alarme APJ : fiche claire (activation 22h-4h50, week-end 24h/24, code + MA à l'arrivée, code + MS au départ) et rappels avec vibration calculés d'après ton planning",
+  "Photo du planning : prise ou choisie dans l'appli, gardée sur le téléphone ; import d'un planning par code",
+  "Bouton « Remplir le mois avec mon planning » (avec confirmation)"
  ],
- "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.2/Heures-Sup.apk"
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.3/Heures-Sup.apk"
 }
