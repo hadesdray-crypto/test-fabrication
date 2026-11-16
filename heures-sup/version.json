@@ -1,9 +1,9 @@
 {
- "code": 1,
- "nom": "1.0.1",
- "sha256": "db54369030550c1b94ac056efde3407a517d45a69ff79eba695d57244dba052f",
+ "code": 2,
+ "nom": "1.0.2",
+ "sha256": "e3b98dd828d6a1d303bc6a1c3a30e5e3ea03fc74fddd03f9cd54bb9c1e1fa281",
  "changes": [
   "Première version : dictée de tes heures, feuille Protec à l'identique, envoi du PDF par mail, rappel le 14 de chaque mois"
  ],
- "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.1/Heures-Sup.apk"
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.2/Heures-Sup.apk"
 }
