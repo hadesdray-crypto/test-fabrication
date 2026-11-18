@@ -1,12 +1,12 @@
 {
- "code": 4,
- "nom": "1.0.4",
- "sha256": "b8c1fd59200df8b0efa9e78fbc2f9058dc8766538ecb61279a48fd12513cfe61",
+ "code": 7,
+ "nom": "1.0.7",
+ "sha256": "280d53e4b19c29aac6ac968c2f3d17aefbbbceeaa40fb6764a04ee3a332bb520",
  "changes": [
-  "Feuille interactive : touche un jour sur la feuille pour ajouter tes heures",
-  "Boutons rapides : Midi +45 min, +1h30, minutes, heure de fin du soir (SIAP ou Nouveau Palais)",
-  "Accueil : boutons « Midi +45 min » et « Soir : heure de fin » pour aujourd'hui",
-  "Réglage : prolongation habituelle du midi"
+  "Import de fichiers : tous les fichiers peuvent être choisis (photos, PDF, fichiers texte), plus l'appareil photo",
+  "Feuille papier déjà remplie à la main : prends-la en photo (ou PDF), l'appli lit les heures, tu coches les jours et ils vont sur ta feuille",
+  "Les observations de tes feuilles sont retenues et proposées pour les prochaines feuilles",
+  "Code de Claude : peut aussi remplir directement la feuille"
  ],
- "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.4/Heures-Sup.apk"
+ "apk": "https://github.com/hadesdray-crypto/test-fabrication/releases/download/heures-sup-1.0.7/Heures-Sup.apk"
 }
