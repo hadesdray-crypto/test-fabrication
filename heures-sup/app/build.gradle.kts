@@ -51,4 +51,6 @@ android {
 
 dependencies {
     implementation("androidx.webkit:webkit:1.12.1")
+    // Lecture du texte des photos, sur le téléphone, sans Internet (gratuit)
+    implementation("com.google.mlkit:text-recognition:16.0.1")
 }

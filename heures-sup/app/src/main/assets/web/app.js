@@ -155,6 +155,7 @@
       var o = JSON.parse(t), n = 0;
       if (o.sem) { Object.keys(o.sem).forEach(function (k) { D.planning.sem[k] = o.sem[k]; n++; }); }
       if (o.jours) { Object.keys(o.jours).forEach(function (k) { var j = o.jours[k]; D.planning.dates[k] = { poste: j.poste || D.reglages.poste, off: !!j.off, m: j.m || ["", ""], a: j.a || ["", ""] }; n++; }); }
+      if (o.heures) { n += ajouterHeures(o.heures, true); }
       if (!n) throw new Error("vide");
       sauver(); dessinerGrille(); majRappels(); $("pl-code").value = ""; $("pl-msg").textContent = n + " jour(s) importé(s).";
     } catch (e) { $("pl-msg").textContent = "Code illisible. Copie-le en entier depuis le message de Claude."; }
@@ -170,6 +171,139 @@
     }
     sauver(); $("pl-mois-msg").textContent = n ? n + " jour(s) ajoutés à " + MOIS[m] + " " + a + " depuis ton planning (les jours déjà saisis n'ont pas changé)." : "Rien à ajouter pour " + MOIS[m] + " " + a + " : planning vide ou jours déjà saisis.";
   }
+  // ---------- Feuille papier : lecture et analyse ----------
+  // Colonnes de la feuille Protec (mêmes proportions que la feuille dessinée par l'appli)
+  var PF = [0.067, 0.179, 0.088, 0.081, 0.202, 0.065, 0.069, 0.25], PX = 109, PTW = 1454, PRH = 1746 / 31;
+  function colonnesModele() { var cx = [PX], c = []; PF.forEach(function (f, i) { cx.push(cx[i] + f * PTW); }); for (var i = 0; i < 8; i++) c.push((cx[i] + cx[i + 1]) / 2); return { centres: c, bords: cx }; }
+  function normHeure(t) {
+    var s = String(t || "").replace(/[Oo]/g, "0").replace(/[lI|]/g, "1").replace(/\s+/g, "");
+    var m = /(\d{1,2})[hH:.,'](\d{2})?/.exec(s) || /^(\d{1,2})(\d{2})$/.exec(s.replace(/[^\d]/g, "")) || /^(\d{1,2})[hH]?$/.exec(s);
+    if (!m) return "";
+    var h = +m[1], mi = m[2] ? +m[2] : 0; if (h > 23 || mi > 59) return "";
+    return p2(h) + ":" + p2(mi);
+  }
+  function deuxHeures(t) { // une case peut contenir « 17h30 » ou parfois les deux heures collées
+    var s = String(t || "").replace(/[Oo]/g, "0").replace(/[lI|]/g, "1"), out = [], re = /(\d{1,2})\s*[hH:.,]\s*(\d{2})?/g, m;
+    while ((m = re.exec(s))) { var v = normHeure(m[0]); if (v) out.push(v); }
+    if (!out.length) { var v2 = normHeure(s); if (v2) out.push(v2); }
+    return out;
+  }
+  function moisDansTexte(t) {
+    t = String(t || "").toLowerCase().replace(/fevrier/g, "février").replace(/aout/g, "août").replace(/decembre/g, "décembre");
+    for (var i = 0; i < 12; i++) if (new RegExp("(^|[^a-zà-ÿ])" + MOIS[i] + "([^a-zà-ÿ]|$)").test(t)) return i;
+    return -1;
+  }
+  // o = { w, h, el: [{t,x,y,w,h}] } ; renvoie { jours: {jour: {poste,m,a}}, mois } ou { erreur }
+  function analyserPapier(o) {
+    var el = (o.el || []).map(function (e) { return { t: String(e.t), x: e.x, y: e.y, w: e.w, h: e.h, cx: e.x + e.w / 2, cy: e.y + e.h / 2 }; });
+    if (el.length < 5) return { erreur: "Presque rien n'a été lu sur la photo." };
+    var minX = Math.min.apply(null, el.map(function (e) { return e.x; })), maxX = Math.max.apply(null, el.map(function (e) { return e.x + e.w; }));
+    // 1) numéros des jours dans la colonne de gauche -> position des lignes
+    var cand = el.filter(function (e) { var m = /^(\d{1,2})(er)?$/i.exec(e.t); return m && +m[1] >= 1 && +m[1] <= 31 && e.x < minX + 0.2 * (maxX - minX); });
+    if (cand.length < 5) return { erreur: "Les numéros des jours (1 à 31) n'ont pas été trouvés à gauche du tableau." };
+    function ajuste(l) { var n = l.length, sx = 0, sy = 0, sxx = 0, sxy = 0; l.forEach(function (e) { var d = parseInt(e.t, 10); sx += d; sy += e.cy; sxx += d * d; sxy += d * e.cy; }); var b = (n * sxy - sx * sy) / (n * sxx - sx * sx || 1); return { b: b, a: (sy - b * sx) / n }; }
+    var f = ajuste(cand);
+    for (var passe = 0; passe < 2; passe++) { var garde = cand.filter(function (e) { return Math.abs(e.cy - (f.a + f.b * parseInt(e.t, 10))) < Math.abs(f.b) * 0.45; }); if (garde.length >= 5) { cand = garde; f = ajuste(cand); } }
+    if (!(f.b > 0)) return { erreur: "Le tableau n'a pas été reconnu (photo de travers ?)." };
+    // 2) colonnes : d'après l'écart entre lignes, puis recalées sur les titres PdS / FdS / Observation s'ils sont lus
+    var mod = colonnesModele(), s = f.b / PRH;
+    var gauche = cand.map(function (e) { return e.x; }).sort(function (a, b) { return a - b; })[Math.floor(cand.length / 2)];
+    var c0 = gauche - s * (PX + 36), ctr = mod.centres.map(function (L) { return c0 + s * L; });
+    var tit = el.filter(function (e) { return e.cy < f.a + f.b * 0.6 && /^(pds|fds|observ)/i.test(e.t.replace(/[^a-z]/gi, "")); }).sort(function (a, b) { return a.cx - b.cx; });
+    var att = [2, 3, 4, 5, 6, 7], paires = [];
+    if (tit.length === 6) tit.forEach(function (e, i) { paires.push([mod.centres[att[i]], e.cx]); });
+    if (paires.length >= 4) { var n = paires.length, sx = 0, sy = 0, sxx = 0, sxy = 0; paires.forEach(function (p) { sx += p[0]; sy += p[1]; sxx += p[0] * p[0]; sxy += p[0] * p[1]; }); var ss = (n * sxy - sx * sy) / (n * sxx - sx * sx); if (ss > 0) { var cc = (sy - ss * sx) / n; ctr = mod.centres.map(function (L) { return cc + ss * L; }); } }
+    var bords = []; for (var i = 0; i < 7; i++) bords.push((ctr[i] + ctr[i + 1]) / 2);
+    function col(x) { for (var i = 0; i < 7; i++) if (x < bords[i]) return i; return 7; }
+    // 3) chaque mot va dans sa case (jour, colonne)
+    var cases = {};
+    el.forEach(function (e) {
+      if (cand.indexOf(e) >= 0) return;
+      var d = Math.round((e.cy - f.a) / f.b); if (d < 1 || d > 31) return;
+      var c = col(e.cx); if (c === 0) return;
+      var k = d + "_" + c; (cases[k] = cases[k] || []).push(e);
+    });
+    function txt(d, c) { var l = cases[d + "_" + c]; if (!l) return ""; return l.sort(function (a, b) { return a.x - b.x; }).map(function (e) { return e.t; }).join(" ").trim(); }
+    function obs(t) { t = t.replace(/^[\/\\|\-_.\s]+$/, "").trim(); return t ? t.charAt(0).toUpperCase() + t.slice(1) : ""; }
+    var jours = {}, nb = 0;
+    for (var d = 1; d <= 31; d++) {
+      var j = {}, po = txt(d, 1);
+      if (/s+i+a+p/i.test(po)) j.poste = "SIAP"; else if (/a\s*d\s*s/i.test(po)) j.poste = "ADS";
+      [["m", 2], ["a", 5]].forEach(function (z) {
+        var h1 = deuxHeures(txt(d, z[1])), h2 = deuxHeures(txt(d, z[1] + 1));
+        var deb = h1[0] || "", fin = h2[0] || h1[1] || "";
+        if (deb && fin) j[z[0]] = { pds: deb, fds: fin, obs: obs(txt(d, z[1] + 2)) };
+      });
+      if (j.m || j.a) { jours[d] = j; nb++; }
+    }
+    if (!nb) return { erreur: "Le tableau a été trouvé, mais aucune heure lisible dedans." };
+    return { jours: jours, mois: moisDansTexte(o.texte || el.map(function (e) { return e.t; }).join(" ")) };
+  }
+  // heures : { "AAAA-MM-JJ": { poste, m:[pds,fds,obs] ou {pds,fds,obs}, a:… } } -> D.jours ; retient les observations
+  function ajouterHeures(h, remplacer) {
+    var n = 0;
+    Object.keys(h).forEach(function (k) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || (D.jours[k] && !remplacer)) return;
+      var x = h[k], j = { poste: x.poste || D.reglages.poste };
+      ["m", "a"].forEach(function (c) {
+        var v = x[c]; if (!v) return; if (Array.isArray(v)) v = { pds: v[0], fds: v[1], obs: v[2] };
+        var a = normHeure(v.pds), b = normHeure(v.fds); if (!a || !b) return;
+        j[c] = { pds: enH(a), fds: enH(b), obs: String(v.obs || "").trim() }; apprendreObs(j[c].obs);
+      });
+      if (j.m || j.a) { D.jours[k] = j; n++; }
+    });
+    return n;
+  }
+  function apprendreObs(o) {
+    if (!o || o.length < 2) return; D.reglages.obsConnues = D.reglages.obsConnues || [];
+    var l = D.reglages.obsConnues, i = l.map(function (x) { return x.toLowerCase(); }).indexOf(o.toLowerCase());
+    if (i >= 0) l.splice(i, 1); l.unshift(o); if (l.length > 30) l.length = 30; majObs();
+  }
+  function majObs() {
+    var dl = $("obs-liste"); if (!dl) return;
+    var base = ["Audience", "Alarme en cours"], l = (D.reglages.obsConnues || []).concat(base), vus = {}, h = "";
+    l.forEach(function (o) { var k = o.toLowerCase(); if (vus[k]) return; vus[k] = 1; h += "<option>" + esc(o) + "</option>"; });
+    dl.innerHTML = h;
+  }
+  var papier = null;
+  function papierChoisi(f) {
+    if (!f) return;
+    if (estTexte(f)) { lireTexte(f, function (t) { try { var o = JSON.parse(t), n = ajouterHeures(o.heures || o, true); sauver(); dessinerApercu(); $("pa-msg").textContent = n ? n + " jour(s) ajouté(s) à ta feuille." : "Aucun jour trouvé dans ce fichier."; } catch (e) { $("pa-msg").textContent = "Ce fichier texte n'est pas un code de feuille."; } }); return; }
+    if (!N || !N.lireFeuille) { $("pa-msg").textContent = "La lecture des feuilles marche dans l'application installée."; return; }
+    $("pa-msg").textContent = "Ouverture du fichier…";
+    fichierEnImage(f, 2600, function (u) { $("pa-msg").textContent = "Lecture de la feuille… (quelques secondes)"; N.lireFeuille(u); }, function (m) { $("pa-msg").textContent = m; });
+  }
+  function feuilleLue(js) {
+    var o; try { o = JSON.parse(js); } catch (e) { o = { erreur: "réponse illisible" }; }
+    if (App._ocr) { var cb = App._ocr; App._ocr = null; cb(o); return; }
+    var r = o.erreur ? { erreur: "La photo n'a pas pu être lue." } : analyserPapier(o);
+    if (r.erreur) { $("pa-msg").textContent = r.erreur + " Reprends la photo bien à plat, droite, avec toute la feuille et une bonne lumière. Sinon, envoie-la à Claude : il te donne un code à coller dans « Mon planning »."; return; }
+    var n = new Date(), m = r.mois >= 0 ? r.mois : mois.m, a = n.getFullYear(); if (r.mois >= 0 && r.mois > n.getMonth()) a--; if (r.mois < 0) a = mois.a;
+    papier = { jours: r.jours, a: a, m: m }; $("pa-msg").textContent = ""; dessinerPapier(); $("fond3").classList.add("on");
+  }
+  function lignePapier(j) {
+    var s = [];
+    if (j.m) s.push("Matin " + enH(j.m.pds) + " – " + enH(j.m.fds) + (j.m.obs ? " (" + j.m.obs + ")" : ""));
+    if (j.a) s.push("Après-midi " + enH(j.a.pds) + " – " + enH(j.a.fds) + (j.a.obs ? " (" + j.a.obs + ")" : ""));
+    return s.join(" ; ");
+  }
+  function dessinerPapier() {
+    $("pa-mois").textContent = MOIS[papier.m] + " " + papier.a;
+    var h = "", N2 = nbJours(papier.a, papier.m);
+    Object.keys(papier.jours).map(Number).sort(function (a, b) { return a - b; }).forEach(function (d) {
+      if (d > N2) return;
+      var k = papier.a + "-" + p2(papier.m + 1) + "-" + p2(d), deja = !!D.jours[k], j = papier.jours[d];
+      h += '<label class="coche"><input type="checkbox" data-d="' + d + '"' + (deja ? "" : " checked") + '><span><b>' + d + " " + MOIS_COURT[papier.m] + "</b>" + (j.poste ? " — " + j.poste : "") + "<br>" + esc(lignePapier(j)) + (deja ? '<br><small style="color:#991b1b">Déjà rempli dans l\'appli : coche pour remplacer.</small>' : "") + "</span></label>";
+    });
+    $("pa-liste").innerHTML = h || '<div class="aide">Aucun jour pour ce mois.</div>';
+  }
+  function validerPapier() {
+    var h = {}; document.querySelectorAll("#pa-liste input[data-d]").forEach(function (c) { if (!c.checked) return; var d = +c.getAttribute("data-d"), j = papier.jours[d]; h[papier.a + "-" + p2(papier.m + 1) + "-" + p2(d)] = j; });
+    var n = ajouterHeures(h, true); sauver(); $("fond3").classList.remove("on");
+    mois.a = papier.a; mois.m = papier.m; dessinerApercu(); rafraichir();
+    $("pa-msg").textContent = n ? n + " jour(s) ajouté(s) à ta feuille de " + MOIS[papier.m] + ". Tes observations sont retenues pour les prochaines feuilles." : "Aucun jour coché : rien n'a changé.";
+  }
+
   // photo du planning : réduite puis gardée sur le téléphone
   function idb(mode, val) {
     return new Promise(function (ok) {
@@ -184,18 +318,37 @@
     });
   }
   function chargerPhoto() { idb("get").then(function (u) { $("ph-img").style.display = u ? "block" : "none"; $("ph-sup").style.display = u ? "inline-block" : "none"; if (u) $("ph-img").src = u; }); }
-  function photoChoisie(f) {
-    if (!f) return; var fr = new FileReader();
+  // Lecture d'un fichier choisi : image, PDF (converti en image par le téléphone) ou texte (code).
+  function estPdf(f) { return /pdf/i.test(f.type || "") || /\.pdf$/i.test(f.name || ""); }
+  function estTexte(f) { return /^text\/|json/i.test(f.type || "") || /\.(txt|json|csv)$/i.test(f.name || ""); }
+  function fichierEnImage(f, maxi, ok, ko) {
+    var fr = new FileReader();
+    fr.onerror = function () { ko("Fichier illisible."); };
     fr.onload = function () {
+      var url = fr.result;
+      if (estPdf(f)) {
+        if (!N || !N.pdfEnImage) { ko("Les PDF s'ouvrent dans l'application installée."); return; }
+        url = N.pdfEnImage(url); if (!url) { ko("Ce PDF n'a pas pu être ouvert (protégé ou abîmé). Prends-le en photo à la place."); return; }
+      }
       var im = new Image();
+      im.onerror = function () { ko("Ce fichier n'est ni une image, ni un PDF, ni un code. Choisis une photo, un PDF ou un fichier texte."); };
       im.onload = function () {
-        var k = Math.min(1, 1800 / Math.max(im.width, im.height)), c = document.createElement("canvas"); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
-        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-        idb("put", c.toDataURL("image/jpeg", 0.85)).then(function () { chargerPhoto(); $("pl-msg").textContent = "Photo enregistrée sur le téléphone. Envoie-la à Claude pour obtenir le code."; });
+        var k = Math.min(1, maxi / Math.max(im.width, im.height)), c = document.createElement("canvas"); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+        var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+        ok(c.toDataURL("image/jpeg", 0.88));
       };
-      im.src = fr.result;
+      im.src = url;
     };
     fr.readAsDataURL(f);
+  }
+  function lireTexte(f, ok) { var fr = new FileReader(); fr.onload = function () { ok(String(fr.result || "")); }; fr.onerror = function () { ok(""); }; fr.readAsText(f); }
+  function photoChoisie(f) {
+    if (!f) return;
+    if (estTexte(f)) { lireTexte(f, function (t) { $("pl-code").value = t.trim(); importerPlanning(); }); return; }
+    $("pl-msg").textContent = "Ouverture du fichier…";
+    fichierEnImage(f, 1800, function (u) {
+      idb("put", u).then(function () { chargerPhoto(); $("pl-msg").textContent = "Fichier enregistré sur le téléphone. Envoie-le à Claude pour obtenir le code."; });
+    }, function (m) { $("pl-msg").textContent = m; });
   }
 
   // ---------- Pages ----------
@@ -208,7 +361,7 @@
     document.querySelector("main").scrollTop = 0;
     if (p === "accueil") { rafraichir(); carteJour(); } if (p === "feuille") dessinerApercu();
   }
-  function retour() { if ($("fond").classList.contains("on")) { fermerMaj(); return true; } if (pile.length > 1) { pile.pop(); var p = pile[pile.length - 1]; pile.pop(); aller(p); return true; } return false; }
+  function retour() { if ($("fond3").classList.contains("on")) { $("fond3").classList.remove("on"); return true; } if ($("fond").classList.contains("on")) { fermerMaj(); return true; } if (pile.length > 1) { pile.pop(); var p = pile[pile.length - 1]; pile.pop(); aller(p); return true; } return false; }
 
   function infoMois(a, m) {
     var ks = Object.keys(D.jours).filter(function (k) { return k.indexOf(cleMois(a, m)) === 0; }).sort();
@@ -486,6 +639,7 @@
       else h = "Tu as la dernière version (" + esc(r.nom) + ").";
       $("maj-texte").innerHTML = h; $("maj-go").style.display = r.nouvelle ? "block" : "none"; $("maj-msg").textContent = ""; ouvrirMaj();
     },
+    feuilleLue: function (js) { feuilleLue(js); },
     messageMaj: function (m) { $("maj-msg").textContent = m; },
     progresMaj: function (p) { $("barre").style.display = "block"; $("barre").firstChild.style.width = p + "%"; $("maj-msg").textContent = "Chargement " + p + " %"; }
   };
@@ -508,6 +662,11 @@
     $("al-vibr").onchange = $("al-av").onchange = function () { D.reglages.vibr = $("al-vibr").value; D.reglages.avance = $("al-av").value; sauver(); majRappels(); };
     $("ph-b").onclick = function () { $("ph-in").click(); }; $("ph-in").onchange = function () { photoChoisie($("ph-in").files[0]); $("ph-in").value = ""; };
     $("ph-sup").onclick = function () { idb("del").then(chargerPhoto); };
+    $("pa-b").onclick = function () { $("pa-in").click(); }; $("pa-in").onchange = function () { papierChoisi($("pa-in").files[0]); $("pa-in").value = ""; };
+    $("pa-ok").onclick = validerPapier; $("pa-x").onclick = function () { $("fond3").classList.remove("on"); };
+    $("pa-mp").onclick = function () { papier.m--; if (papier.m < 0) { papier.m = 11; papier.a--; } dessinerPapier(); };
+    $("pa-ms").onclick = function () { papier.m++; if (papier.m > 11) { papier.m = 0; papier.a++; } dessinerPapier(); };
+    majObs();
     $("f-m").onclick = function () { choisirPer("m"); }; $("f-a").onclick = function () { choisirPer("a"); };
     $("b-enreg").onclick = enregistrer; $("b-annuler").onclick = retour;
     $("m-prec").onclick = function () { mois.m--; if (mois.m < 0) { mois.m = 11; mois.a--; } dessinerApercu(); };
@@ -536,6 +695,6 @@
     rafraichir(); carteJour();
     if (N) setTimeout(function () { chercherMaj(true); }, 1500);
   }
-  App._test = { planDe: planDe, rappels: rappelsAVenir, alarmeActive: alarmeActive, importer: function (o) { D.planning.sem = o.sem || D.planning.sem; Object.assign(D.planning.dates, o.jours || {}); }, analyser: analyser, dessiner: dessiner, pdf: pdf, charger: charger, D: function () { return D; }, sauver: sauver, enH: enH };
+  App._test = { planDe: planDe, rappels: rappelsAVenir, alarmeActive: alarmeActive, importer: function (o) { D.planning.sem = o.sem || D.planning.sem; Object.assign(D.planning.dates, o.jours || {}); }, analyser: analyser, analyserPapier: analyserPapier, ajouterHeures: ajouterHeures, dessiner: dessiner, pdf: pdf, charger: charger, D: function () { return D; }, sauver: sauver, enH: enH };
   document.addEventListener("DOMContentLoaded", init);
 })();

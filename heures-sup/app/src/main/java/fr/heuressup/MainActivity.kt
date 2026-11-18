@@ -42,17 +42,23 @@ class MainActivity : Activity() {
         vue.webChromeClient = object : WebChromeClient() {
             override fun onShowFileChooser(w: WebView, cb: android.webkit.ValueCallback<Array<Uri>>, p: FileChooserParams): Boolean {
                 choixFichier?.onReceiveValue(null); choixFichier = cb
-                val galerie = Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*")
-                val choix = Intent.createChooser(galerie, "Photo du planning")
+                // Tous les fichiers sont proposés (images, PDF, textes…) ; l'appareil photo en plus.
+                val galerie = Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*")
+                val choix = Intent.createChooser(galerie, "Choisir un fichier ou prendre une photo")
+                photoUri = null
                 try {
                     val dossier = File(cacheDir, "photos"); dossier.mkdirs()
-                    val f = File(dossier, "planning.jpg")
+                    val f = File(dossier, "photo.jpg"); if (f.exists()) f.delete()
                     photoUri = FileProvider.getUriForFile(this@MainActivity, "fr.heuressup.fichiers", f)
                     val cam = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE).putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri).addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     choix.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cam))
                 } catch (e: Exception) { photoUri = null }
                 try { @Suppress("DEPRECATION") startActivityForResult(choix, CODE_PHOTO) }
-                catch (e: Exception) { choixFichier = null; cb.onReceiveValue(null); return false }
+                catch (e: Exception) {
+                    // Secours : sélecteur de documents d'Android
+                    try { @Suppress("DEPRECATION") startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*"), CODE_PHOTO) }
+                    catch (e2: Exception) { choixFichier = null; cb.onReceiveValue(null); return false }
+                }
                 return true
             }
             override fun onConsoleMessage(m: ConsoleMessage): Boolean {
@@ -122,7 +128,8 @@ class MainActivity : Activity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CODE_PHOTO) {
-            val u: Uri? = if (resultCode != RESULT_OK) null else (data?.data ?: photoUri)
+            val photo = File(File(cacheDir, "photos"), "photo.jpg")
+            val u: Uri? = if (resultCode != RESULT_OK) null else (data?.data ?: if (photo.exists() && photo.length() > 0) photoUri else null)
             choixFichier?.onReceiveValue(if (u != null) arrayOf(u) else null); choixFichier = null; return
         }
         if (requestCode != CODE_DICTEE) return
@@ -178,6 +185,12 @@ class MainActivity : Activity() {
             return true
         }
         @JavascriptInterface fun rapport(texte: String) { Log.i(ETIQUETTE, texte) }
+
+        /** PDF (base64) -> image JPEG des 3 premières pages, l'une sous l'autre. Vide si impossible. */
+        @JavascriptInterface fun pdfEnImage(base64: String): String = Papier.pdfEnImage(this@MainActivity, base64)
+
+        /** Lit le texte d'une photo de feuille (sur le téléphone, sans Internet). Réponse : App.feuilleLue(json). */
+        @JavascriptInterface fun lireFeuille(dataUrl: String) { Papier.lire(this@MainActivity, dataUrl) }
     }
 
     companion object {

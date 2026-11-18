@@ -12,7 +12,7 @@ adb logcat -c
 adb shell am start -n fr.heuressup/.MainActivity --ez autotest true
 sleep 4; adb exec-out screencap -p > "$SORTIE/0-accueil.png"
 FIN=""
-for s in $(seq 1 40); do
+for s in $(seq 1 45); do
   sleep 2
   adb logcat -d -s HEURESSUP:I > "$SORTIE/journal.txt"
   if grep -q 'AUTOTEST FIN' "$SORTIE/journal.txt"; then FIN=$(grep -o 'AUTOTEST FIN [A-Z]*' "$SORTIE/journal.txt" | tail -1); break; fi

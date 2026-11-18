@@ -38,6 +38,8 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
 #boite{background:#fff;border-radius:16px;width:100%;max-height:88vh;display:flex;flex-direction:column}
 #boite .corps{padding:16px;overflow:auto;flex:1}#boite .pied{padding:12px 16px;border-top:1px solid #e2e8f0}
 #fond2{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;padding:10px;z-index:10}#fond2.on{display:flex}#boite2{background:#fff;border-radius:16px;width:100%;max-height:94vh;display:flex;flex-direction:column}#boite2 .corps{padding:16px;overflow:auto;flex:1}#boite2 .pied{padding:12px 16px;border-top:1px solid #e2e8f0}
+#fond3{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:center;justify-content:center;padding:10px;z-index:11}#fond3.on{display:flex}#boite3{background:#fff;border-radius:16px;width:100%;max-height:94vh;display:flex;flex-direction:column}#boite3 .corps{padding:16px;overflow:auto;flex:1}#boite3 .pied{padding:12px 16px;border-top:1px solid #e2e8f0}
+.coche{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #e2e8f0;font-size:15px}.coche input{width:24px;height:24px;flex:none;margin-top:2px}
 #barre{height:14px;background:#e2e8f0;border-radius:7px;overflow:hidden;margin:10px 0;display:none}#barre i{display:block;height:100%;width:0;background:#15803d}
 </style>
 </head>
@@ -75,7 +77,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
       <div><label for="f-pds">Prise de service</label><input type="time" id="f-pds"></div>
       <div><label for="f-fds">Fin de service</label><input type="time" id="f-fds"></div>
     </div>
-    <label for="f-obs">Observation (cause de la prolongation)</label><input id="f-obs" placeholder="Ex. : Audience, Alarme en cours">
+    <label for="f-obs">Observation (cause de la prolongation)</label><input id="f-obs" list="obs-liste" placeholder="Ex. : Audience, Alarme en cours">
   </div>
   <button class="gros vert" id="b-enreg">Enregistrer</button>
   <button class="gros gris" id="b-annuler">Annuler</button>
@@ -89,6 +91,13 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   <div class="msg" id="msg-feuille"></div>
   <button class="gros vert" id="b-envoyer">Envoyer à mon patron (PDF)</button>
   <div class="aide" style="margin-bottom:10px">La messagerie s'ouvre avec la feuille jointe. Tu valides l'envoi toi-même.</div>
+  <div class="carte">
+    <b>Feuille déjà remplie à la main</b>
+    <div class="aide">Prends-la en photo, ou choisis une image ou un PDF. L'appli lit les heures (sur le téléphone, sans Internet), te montre ce qu'elle a trouvé, et tu valides avant que ça aille sur ta feuille. Elle retient aussi tes observations pour les proposer dans les prochaines feuilles.</div>
+    <input type="file" id="pa-in" hidden>
+    <button class="gros gris" id="pa-b" style="margin:10px 0 0">Importer une feuille papier</button>
+    <div class="msg" id="pa-msg"></div>
+  </div>
   <button class="gros gris" id="b-retour1">Retour</button>
 </section>
 
@@ -126,9 +135,9 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
   </div>
   <div class="carte">
     <b>Photo de mon planning</b>
-    <div class="aide">Prends ton planning en photo ou choisis une image. Envoie-la ensuite à Claude dans la conversation : il lit les horaires et te donne un code à coller ci-dessous.</div>
-    <input type="file" id="ph-in" accept="image/*" hidden>
-    <button class="gros gris" id="ph-b" style="margin-top:10px">Prendre ou choisir une photo</button>
+    <div class="aide">Prends ton planning en photo, ou choisis une image, un PDF ou un fichier de code. Pour une photo, envoie-la ensuite à Claude dans la conversation : il lit les horaires et te donne un code à coller ci-dessous.</div>
+    <input type="file" id="ph-in" hidden>
+    <button class="gros gris" id="ph-b" style="margin-top:10px">Importer un fichier ou une photo</button>
     <img id="ph-img" alt="Photo du planning" style="width:100%;display:none;border-radius:10px;margin-bottom:10px">
     <button class="petit rouge" id="ph-sup" style="display:none;margin-bottom:10px">Supprimer la photo</button>
     <label for="pl-code">Code du planning (donné par Claude)</label>
@@ -180,7 +189,7 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
     </div>
     <b style="display:block;margin-top:12px">Matin</b>
     <div class="duo"><input type="time" id="j-m0"><input type="time" id="j-m1h"></div>
-    <label for="j-mobs">Observation du matin</label><input id="j-mobs">
+    <label for="j-mobs">Observation du matin</label><input id="j-mobs" list="obs-liste">
     <b style="display:block;margin-top:12px">Après-midi</b>
     <div class="duo"><input type="time" id="j-a0"><input type="time" id="j-a1"></div>
     <label for="j-aobs">Observation de l'après-midi</label><input id="j-aobs" list="obs-liste" placeholder="Ex. : Audience">
@@ -188,6 +197,15 @@ input,select,textarea{width:100%;padding:12px;font-size:18px;border:2px solid #c
     <div class="msg" id="j-msg"></div>
   </div>
   <div class="pied"><button class="gros vert" id="j-ok">Enregistrer ce jour</button><div class="duo"><button class="gros gris" id="j-vide" style="margin:0">Vider le jour</button><button class="gros gris" id="j-x" style="margin:0">Annuler</button></div></div>
+</div></div>
+<div id="fond3"><div id="boite3">
+  <div class="corps">
+    <h2 style="margin-top:0">Feuille papier lue</h2>
+    <div class="mois" style="margin-bottom:6px"><button id="pa-mp" aria-label="Mois précédent">&lsaquo;</button><b id="pa-mois"></b><button id="pa-ms" aria-label="Mois suivant">&rsaquo;</button></div>
+    <div class="aide">Vérifie le mois et coche les jours à mettre sur ta feuille. Les jours déjà remplis dans l'appli ne sont pas cochés : coche-les pour les remplacer.</div>
+    <div id="pa-liste"></div>
+  </div>
+  <div class="pied"><button class="gros vert" id="pa-ok">Ajouter à ma feuille</button><button class="gros gris" id="pa-x" style="margin:0">Annuler</button></div>
 </div></div>
 <script src="app.js"></script>
 </body>
