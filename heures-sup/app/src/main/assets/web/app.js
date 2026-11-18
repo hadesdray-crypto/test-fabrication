@@ -287,7 +287,7 @@
     var r = o.erreur ? { erreur: "La photo n'a pas pu être lue." } : analyserPapier(o);
     if (r.erreur) { $("pa-msg").textContent = r.erreur + " Reprends la photo bien à plat, droite, avec toute la feuille et une bonne lumière. Sinon, envoie-la à Claude : il te donne un code à coller dans « Mon planning »."; return; }
     var n = new Date(), m = r.mois >= 0 ? r.mois : mois.m, a = n.getFullYear(); if (r.mois >= 0 && r.mois > n.getMonth()) a--; if (r.mois < 0) a = mois.a;
-    papier = { jours: r.jours, a: a, m: m }; $("pa-msg").textContent = ""; dessinerPapier(); $("fond3").classList.add("on");
+    papier = { jours: r.jours, a: a, m: m, devine: r.mois < 0 }; $("pa-msg").textContent = ""; dessinerPapier(); $("fond3").classList.add("on");
   }
   function lignePapier(j) {
     var s = [];
@@ -296,7 +296,7 @@
     return s.join(" ; ");
   }
   function dessinerPapier() {
-    $("pa-mois").textContent = MOIS[papier.m] + " " + papier.a;
+    $("pa-mois").textContent = MOIS[papier.m] + " " + papier.a + (papier.devine ? " ?" : "");
     var h = "", N2 = nbJours(papier.a, papier.m);
     Object.keys(papier.jours).map(Number).sort(function (a, b) { return a - b; }).forEach(function (d) {
       if (d > N2) return;
@@ -672,8 +672,8 @@
     $("ph-sup").onclick = function () { idb("del").then(chargerPhoto); };
     $("pa-b").onclick = function () { $("pa-in").click(); }; $("pa-in").onchange = function () { papierChoisi($("pa-in").files[0]); $("pa-in").value = ""; };
     $("pa-ok").onclick = validerPapier; $("pa-x").onclick = function () { $("fond3").classList.remove("on"); };
-    $("pa-mp").onclick = function () { papier.m--; if (papier.m < 0) { papier.m = 11; papier.a--; } dessinerPapier(); };
-    $("pa-ms").onclick = function () { papier.m++; if (papier.m > 11) { papier.m = 0; papier.a++; } dessinerPapier(); };
+    $("pa-mp").onclick = function () { papier.devine = false; papier.m--; if (papier.m < 0) { papier.m = 11; papier.a--; } dessinerPapier(); };
+    $("pa-ms").onclick = function () { papier.devine = false; papier.m++; if (papier.m > 11) { papier.m = 0; papier.a++; } dessinerPapier(); };
     majObs();
     $("f-m").onclick = function () { choisirPer("m"); }; $("f-a").onclick = function () { choisirPer("a"); };
     $("b-enreg").onclick = enregistrer; $("b-annuler").onclick = retour;
