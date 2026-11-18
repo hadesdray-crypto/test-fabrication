@@ -19,7 +19,7 @@
     App._ocr = function (o) {
       if (o.erreur) { fin("ECHEC lecture " + o.erreur); return; }
       var a = T.analyserPapier(o), j = a.jours || {};
-      log("papier " + JSON.stringify(a));
+      log("papier " + JSON.stringify(a) + " texte=" + String(o.texte || "").slice(0, 160).replace(/\n/g, " | "));
       var bon = j[3] && j[3].m && j[3].m.pds === "08:45" && j[3].m.fds === "13:15" && j[14] && j[14].a && j[14].a.fds === "19:00" && j[14].poste === "SIAP" && j[22] && j[22].a && j[22].a.pds === "13:30" && a.mois === 9;
       fin(bon ? "" : "ECHEC analyse papier");
     };

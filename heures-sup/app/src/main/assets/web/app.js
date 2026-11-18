@@ -188,10 +188,18 @@
     if (!out.length) { var v2 = normHeure(s); if (v2) out.push(v2); }
     return out;
   }
+  function ecart(a, b) { var d = [], i, j; for (i = 0; i <= a.length; i++) { d[i] = [i]; } for (j = 1; j <= b.length; j++) d[0][j] = j; for (i = 1; i <= a.length; i++) for (j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; }
+  function sansAccent(t) { return t.normalize ? t.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : t; }
+  // Mois écrit sur la feuille : exact d'abord, sinon le mot le plus proche (écriture à la main mal lue)
   function moisDansTexte(t) {
-    t = String(t || "").toLowerCase().replace(/fevrier/g, "février").replace(/aout/g, "août").replace(/decembre/g, "décembre");
-    for (var i = 0; i < 12; i++) if (new RegExp("(^|[^a-zà-ÿ])" + MOIS[i] + "([^a-zà-ÿ]|$)").test(t)) return i;
-    return -1;
+    t = sansAccent(String(t || "").toLowerCase());
+    var noms = MOIS.map(sansAccent), mots = t.split(/[^a-z]+/).filter(function (w) { return w.length >= 3; });
+    var apres = /mois\s*de\s*:?\s*([a-z]+)/.exec(t);
+    if (apres) { var w = apres[1], b = -1, bd = 9; noms.forEach(function (n, i) { var e = ecart(w, n); if (e < bd) { bd = e; b = i; } }); if (bd <= Math.max(1, Math.floor(noms[b].length / 3))) return b; }
+    for (var i = 0; i < 12; i++) if (mots.indexOf(noms[i]) >= 0) return i;
+    var best = -1, bd2 = 9;
+    mots.forEach(function (w) { if (w.length < 5) return; noms.forEach(function (n, i) { if (n.length < 5) return; var e = ecart(w, n); if (e < bd2 && e <= Math.floor(n.length / 4)) { bd2 = e; best = i; } }); });
+    return best;
   }
   // o = { w, h, el: [{t,x,y,w,h}] } ; renvoie { jours: {jour: {poste,m,a}}, mois } ou { erreur }
   function analyserPapier(o) {
@@ -695,6 +703,6 @@
     rafraichir(); carteJour();
     if (N) setTimeout(function () { chercherMaj(true); }, 1500);
   }
-  App._test = { planDe: planDe, rappels: rappelsAVenir, alarmeActive: alarmeActive, importer: function (o) { D.planning.sem = o.sem || D.planning.sem; Object.assign(D.planning.dates, o.jours || {}); }, analyser: analyser, analyserPapier: analyserPapier, ajouterHeures: ajouterHeures, dessiner: dessiner, pdf: pdf, charger: charger, D: function () { return D; }, sauver: sauver, enH: enH };
+  App._test = { planDe: planDe, rappels: rappelsAVenir, alarmeActive: alarmeActive, importer: function (o) { D.planning.sem = o.sem || D.planning.sem; Object.assign(D.planning.dates, o.jours || {}); }, analyser: analyser, analyserPapier: analyserPapier, moisDansTexte: moisDansTexte, ajouterHeures: ajouterHeures, dessiner: dessiner, pdf: pdf, charger: charger, D: function () { return D; }, sauver: sauver, enH: enH };
   document.addEventListener("DOMContentLoaded", init);
 })();
