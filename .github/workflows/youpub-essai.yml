@@ -43,7 +43,7 @@ jobs:
             adb shell settings put system user_rotation 0
             adb logcat -c
             adb shell am start -n fr.hadesdray.youpub/.ui.CarActivity --es car_test_style "Hits du moment"
-            sleep 70
+            sleep 90
             adb shell screencap -p /sdcard/a.png && adb pull /sdcard/a.png 1-principal-debout.png
             adb shell settings put system user_rotation 1
             sleep 8
@@ -79,11 +79,12 @@ jobs:
             adb shell screencap -p /sdcard/i.png && adb pull /sdcard/i.png 10-relaxation.png
             adb logcat -d > logcat.txt || true
             grep -E "FATAL|AndroidRuntime" -A 25 logcat.txt | head -200 > plantages.txt || true
+            grep -iE "youpub|exoplayer|Voiture|Extraction" logcat.txt | grep -iE "erreur|error|exception|ratée|fail" | head -80 > journal-lecture.txt || true
       - name: Déposer les captures d'écran
         if: always()
         run: |
           mkdir -p /tmp/out
-          cp *.png plantages.txt /tmp/out/ 2>/dev/null || true
+          cp *.png *.txt /tmp/out/ 2>/dev/null || true
           cd /tmp/out
           git init -q
           git config user.name "usine"
