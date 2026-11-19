@@ -40,15 +40,21 @@ jobs:
             adb shell "D=/data/data/fr.hadesdray.youpub; mkdir -p \$D/shared_prefs; printf '<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<map><boolean name=\"owner\" value=\"true\" /></map>\n' > \$D/shared_prefs/youpub_licence.xml; U=\$(stat -c %u \$D); chown -R \$U:\$U \$D/shared_prefs; chmod 660 \$D/shared_prefs/youpub_licence.xml; restorecon -R \$D/shared_prefs || true"
             adb shell pm grant fr.hadesdray.youpub android.permission.RECORD_AUDIO || true
             adb logcat -c
-            adb shell monkey -p fr.hadesdray.youpub -c android.intent.category.LAUNCHER 1
-            sleep 25
-            adb shell screencap -p /sdcard/a.png && adb pull /sdcard/a.png 1-ouverture.png
-            adb shell am start -n fr.hadesdray.youpub/.ui.CarActivity --es car_test_style "Hits du moment"
-            sleep 40
-            adb shell screencap -p /sdcard/b.png && adb pull /sdcard/b.png 2-voiture.png
-            adb shell am start -n fr.hadesdray.youpub/.ui.CarActivity --es car_test_page reglages
+            adb shell am start -n fr.hadesdray.youpub/.ui.SimpleActivity
+            sleep 12
+            adb shell screencap -p /sdcard/a.png && adb pull /sdcard/a.png 1-simple.png
+            adb shell settings put system accelerometer_rotation 0
+            adb shell settings put system user_rotation 1
             sleep 6
-            adb shell screencap -p /sdcard/c.png && adb pull /sdcard/c.png 3-reglages.png
+            adb shell screencap -p /sdcard/a2.png && adb pull /sdcard/a2.png 2-simple-couche.png
+            adb shell settings put system user_rotation 0
+            sleep 3
+            adb shell am start -n fr.hadesdray.youpub/.ui.LibraryActivity
+            sleep 6
+            adb shell screencap -p /sdcard/b.png && adb pull /sdcard/b.png 3-bibliotheque.png
+            adb shell am start -n fr.hadesdray.youpub/.ui.CarActivity
+            sleep 8
+            adb shell screencap -p /sdcard/c.png && adb pull /sdcard/c.png 4-voiture.png
             adb logcat -d > logcat.txt || true
             grep -E "FATAL|AndroidRuntime" -A 30 logcat.txt | head -200 > plantages.txt || true
             grep -E " I YouPub" logcat.txt | head -100 > journal-lecture.txt || true
