@@ -10,7 +10,7 @@ etoile() {
 }
 adb shell settings put secure immersive_mode_confirmations confirmed
 W=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -1); CX=$(( ${W%x*} / 2 )); CY=$(( ${W#*x} / 5 ))
-adb shell am start -n fr.hadesdray.youpub/.ui.LiveActivity --es name Essai --esa urls "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+adb shell am start -n fr.hadesdray.youpub/.ui.LiveActivity --es name Essai --esal urls "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
 sleep 20
 adb shell input tap $CX $CY; sleep 1; cap 5-direct-etoiles.png
 etoile 1; sleep 2; cap 6-dossier-favori.png
