@@ -17,3 +17,4 @@ S2=$(echo $S1 | awk '{print $1+0}'); S3X=$(echo $S3 | awk '{print $1}'); Y=$(ech
 star "$S2"; sleep 15; cap 9b-son.png
 adb shell input tap $S2; sleep 2; cap 9c-son-arret.png; sleep 5
 adb shell am start -n fr.hadesdray.youpub/.ui.LibraryActivity; sleep 5; cap 10-favoris-dossiers.png
+sleep 3; adb shell ls -l /sdcard/Download/YouPub > fichiers.txt 2>&1
