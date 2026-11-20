@@ -1,0 +1,37 @@
+name: Fabrication Ma Maison
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fabriquer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Récupérer le code (dépôt public ma-maison)
+        uses: actions/checkout@v4
+        with:
+          repository: hadesdray-crypto/ma-maison
+          path: appli
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+      - name: Outils Android
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" > /dev/null
+      - name: Fabrication et signature (clé fixe du dépôt)
+        working-directory: appli
+        run: gradle assembleDebug --no-daemon --console=plain -q
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ma-maison-apk
+          path: appli/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 3
