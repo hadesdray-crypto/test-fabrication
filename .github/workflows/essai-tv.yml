@@ -29,6 +29,7 @@ jobs:
           api-level: 30
           target: android-tv
           arch: x86
+          profile: tv_1080p
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: bash outils/essai-tv.sh > tele.txt 2>&1 || true ; adb logcat -d > logcat.txt || true
