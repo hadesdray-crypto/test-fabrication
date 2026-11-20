@@ -1,0 +1,60 @@
+Performing Streamed Install
+Success
+args: [-p, fr.hadesdray.mamaison, -c, android.intent.category.LEANBACK_LAUNCHER, 1]
+ arg: "-p"
+ arg: "fr.hadesdray.mamaison"
+ arg: "-c"
+ arg: "android.intent.category.LEANBACK_LAUNCHER"
+ arg: "1"
+data="fr.hadesdray.mamaison"
+data="android.intent.category.LEANBACK_LAUNCHER"
+/sdcard/s.png: 1 file pulled, 0 skipped. 3.6 MB/s (158319 bytes in 0.042s)
+/sdcard/s.png: 1 file pulled, 0 skipped. 0.9 MB/s (41656 bytes in 0.044s)
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text="YouPub TV"
+text=""
+text=""
+text=""
+text="Do you want to install this application?"
+text=""
+text=""
+text="CANCEL"
+text="INSTALL"
+installer -> 1353 643
+/sdcard/s.png: 1 file pulled, 0 skipped. 32.7 MB/s (36871 bytes in 0.001s)
+package:fr.hadesdray.mamaison
+package:fr.hadesdray.youpub.tv
+      androidx.profileinstaller.action.SAVE_PROFILE:
+        b2c845d fr.hadesdray.youpub.tv/androidx.profileinstaller.ProfileInstallReceiver filter 1b09a0
+          Action: "androidx.profileinstaller.action.SAVE_PROFILE"
+      androidx.profileinstaller.action.INSTALL_PROFILE:
+        b2c845d fr.hadesdray.youpub.tv/androidx.profileinstaller.ProfileInstallReceiver filter f36e1d2
+          Action: "androidx.profileinstaller.action.INSTALL_PROFILE"
+      androidx.profileinstaller.action.SKIP_FILE:
+        b2c845d fr.hadesdray.youpub.tv/androidx.profileinstaller.ProfileInstallReceiver filter d9852a3
+          Action: "androidx.profileinstaller.action.SKIP_FILE"
+      androidx.profileinstaller.action.BENCHMARK_OPERATION:
+        b2c845d fr.hadesdray.youpub.tv/androidx.profileinstaller.ProfileInstallReceiver filter a320959
+          Action: "androidx.profileinstaller.action.BENCHMARK_OPERATION"
+    versionName=1.0.4
+    installerPackageName=com.google.android.packageinstaller
+      lastDisabledCaller: com.google.android.packageinstaller
+args: [-p, fr.hadesdray.mamaison, -c, android.intent.category.LEANBACK_LAUNCHER, 1]
+ arg: "-p"
+ arg: "fr.hadesdray.mamaison"
+ arg: "-c"
+ arg: "android.intent.category.LEANBACK_LAUNCHER"
+ arg: "1"
+data="fr.hadesdray.mamaison"
+data="android.intent.category.LEANBACK_LAUNCHER"
+fenetre maj -> 1075 991
+/sdcard/s.png: 1 file pulled, 0 skipped. 61.6 MB/s (99217 bytes in 0.002s)
+/sdcard/s.png: 1 file pulled, 0 skipped. 149.0 MB/s (398213 bytes in 0.003s)
+/sdcard/s.png: 1 file pulled, 0 skipped. 22.1 MB/s (398405 bytes in 0.017s)
+/sdcard/s.png: 1 file pulled, 0 skipped. 68.3 MB/s (99217 bytes in 0.001s)
