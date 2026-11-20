@@ -1,0 +1,7 @@
+Starting: Intent { cmp=fr.hadesdray.youpub/.ui.VideoActivity (has extras) }
+/sdcard/s.png: 1 file pulled, 0 skipped. 15.9 MB/s (551439 bytes in 0.033s)
+traduire -> 
+/sdcard/s.png: 1 file pulled, 0 skipped. 12.3 MB/s (600771 bytes in 0.047s)
+piste -> 
+/sdcard/s.png: 1 file pulled, 0 skipped. 10.3 MB/s (606518 bytes in 0.056s)
+/sdcard/s.png: 1 file pulled, 0 skipped. 43.0 MB/s (586670 bytes in 0.013s)

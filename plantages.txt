@@ -1,0 +1,200 @@
+11-20 11:51:46.756  6091  6091 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-20 11:51:46.765   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(1)
+11-20 11:51:46.958     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:46.772  6091  6091 I AndroidRuntime: Using default boot image
+11-20 11:51:46.772  6091  6091 I AndroidRuntime: Leaving lock profiling enabled
+11-20 11:51:46.795   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(2)
+11-20 11:51:46.989     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:46.998     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:46.804  6091  6091 I app_process: Core platform API reporting enabled, enforcing=false
+11-20 11:51:47.006     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:47.006     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.010     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:47.013     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:47.030     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:47.035     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.038     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:47.044     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:47.047     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:47.058     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.078     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.089     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:47.101     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:47.113     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:47.116     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:47.120     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.125     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:47.148     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:47.165     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6ee80000-0x6ee80fff], got write-back
+11-20 11:51:47.197     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:47.207     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.213     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:47.217     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:47.221     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:47.226     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:47.230     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+--
+11-20 11:51:47.785  6091  6091 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-20 11:51:47.980     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:47.799  6091  6091 D AndroidRuntime: Shutting down VM
+11-20 11:51:47.992     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:47.998     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:47.816   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(1)
+11-20 11:51:48.014     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:48.021     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:48.026     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:48.037     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:48.067     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:48.072     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:48.076     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:48.080     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6ee80000-0x6ee80fff], got write-back
+11-20 11:51:48.084     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:48.088     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:48.091     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:48.095     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:48.099     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:48.103     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:48.125     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:48.134     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:48.143     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:48.173     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6ee80000-0x6ee80fff], got write-back
+11-20 11:51:48.195     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:48.201     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:48.215     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:48.225     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:48.225     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:48.238     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:48.240     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:48.242     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:48.277     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+--
+11-20 11:51:50.467  6113  6113 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-20 11:51:50.477  6113  6113 I AndroidRuntime: Using default boot image
+11-20 11:51:50.477  6113  6113 I AndroidRuntime: Leaving lock profiling enabled
+11-20 11:51:50.478  6113  6113 I app_process: Core platform API reporting enabled, enforcing=false
+11-20 11:51:50.676     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:50.685     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:50.716     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:50.726     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:50.545  5517  5925 D BufferPoolAccessor2.0: bufferpool2 0x7da80cf295b8 : 6(34560 size) total buffers - 6(34560 size) used buffers - 1/10 (recycle/alloc) - 9/2555 (fetch/transfer)
+11-20 11:51:50.732     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:50.738     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:50.743     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:50.755     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:50.780     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:50.787     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:50.794     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:50.624  6113  6113 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+11-20 11:51:50.624  6113  6113 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt66l.dat
+11-20 11:51:50.628  6113  6113 W app_process: Unexpected CPU variant for X86 using defaults: x86_64
+11-20 11:51:50.812     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:50.636   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(11)
+11-20 11:51:50.828     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:50.838     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6ee80000-0x6ee80fff], got write-back
+11-20 11:51:50.844     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:50.671   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(3)
+11-20 11:51:50.865     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:50.865     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:50.869     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:50.873     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:50.879     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:50.885     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:50.889     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:50.909     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+--
+11-20 11:51:50.821  6113  6113 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-20 11:51:50.824   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(1)
+11-20 11:51:50.848  6113  6127 V UiAutomation: Init UiAutomation@52551d2[id=1, flags=0]
+11-20 11:51:50.867   434  5929 D BufferPoolAccessor2.0: bufferpool2 0x796e9341bbc8 : 6(552960 size) total buffers - 1(92160 size) used buffers - 1283/1289 (recycle/alloc) - 14/1288 (fetch/transfer)
+11-20 11:51:51.048     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:51.061     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:51.061     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.068     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:51.075     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:51.086     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:51.097     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.103     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:51.110     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:51.151     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.156     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:51.189     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:51.191     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.193     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:51.199     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:51.205     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:51.211     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.260     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.266     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:51.276     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:51.295     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.109   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(16)
+11-20 11:51:51.299     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:51.302     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:51.305     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:51.309     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:51.311     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+--
+11-20 11:51:56.090  6113  6113 D AndroidRuntime: Shutting down VM
+11-20 11:51:56.290     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:56.307     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:56.338     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.351     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:56.383     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.387     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:56.387     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:56.390     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:56.197   434  5929 D BufferPoolAccessor2.0: bufferpool2 0x796e9341bbc8 : 6(552960 size) total buffers - 2(184320 size) used buffers - 1547/1553 (recycle/alloc) - 17/1552 (fetch/transfer)
+11-20 11:51:56.393     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.396     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:56.206   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(28)
+11-20 11:51:56.399     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:56.405     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.409     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:56.413     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:56.417     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.420     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:56.421     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:56.428     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.431     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:56.435     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:56.439     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:56.443     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:56.446     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:56.469     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:56.478     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:56.483     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:56.487     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6ee80000-0x6ee80fff], got write-back
+11-20 11:51:56.513     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6a610000-0x6a610fff], got write-back
+--
+11-20 11:51:56.842  6131  6131 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-20 11:51:56.844  6131  6131 I AndroidRuntime: Using default boot image
+11-20 11:51:56.844  6131  6131 I AndroidRuntime: Leaving lock profiling enabled
+11-20 11:51:56.845  6131  6131 I app_process: Core platform API reporting enabled, enforcing=false
+11-20 11:51:57.034     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:57.038     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:57.063     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:57.080     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:57.090     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:57.109     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:57.114     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:57.114     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x64a96000-0x64a96fff], got write-back
+11-20 11:51:56.934  6131  6131 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+11-20 11:51:56.934  6131  6131 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt66l.dat
+11-20 11:51:56.957  6131  6131 W app_process: Unexpected CPU variant for X86 using defaults: x86_64
+11-20 11:51:56.957  6131  6131 I app_process: The ClassLoaderContext is a special shared library.
+11-20 11:51:57.141     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x5f44f000-0x5f44ffff], got write-back
+11-20 11:51:57.146     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:57.152     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x7a792000-0x7a792fff], got write-back
+11-20 11:51:56.957  6131  6131 I app_process: The ClassLoaderContext is a special shared library.
+11-20 11:51:56.977  6131  6131 W app_process: JNI RegisterNativeMethods: attempt to register 0 native methods for android.media.AudioAttributes
+11-20 11:51:56.980   374   453 D AudioFlinger: mixer(0x76480b640040) throttle end: throttle time(1)
+11-20 11:51:56.980  6131  6131 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-20 11:51:57.156     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x78def000-0x78deffff], got write-back
+11-20 11:51:57.174     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:57.175     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x62bc9000-0x62bc9fff], got write-back
+11-20 11:51:56.991  6131  6145 V UiAutomation: Init UiAutomation@2de52d3[id=2, flags=0]
+11-20 11:51:57.181     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x64c00000-0x64c00fff], got write-back
+11-20 11:51:57.191     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x6eaf0000-0x6eaf0fff], got write-back
+11-20 11:51:57.226     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back
+11-20 11:51:57.231     0     0 W x86/PAT : id.opus.decoder:5929 map pfn RAM range req write-combining for [mem 0x6bae5000-0x6bae5fff], got write-back
+11-20 11:51:57.291     0     0 W x86/PAT : MediaCodec_loop:5925 map pfn RAM range req write-combining for [mem 0x63d80000-0x63d80fff], got write-back

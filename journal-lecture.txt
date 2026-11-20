@@ -1,0 +1,9 @@
+11-20 11:50:45.070  5517  5517 I YouPub  : —— Démarrage YouPub 1.0.117 · Android 11 (API 30) · Google sdk_gphone_x86_64
+11-20 11:50:45.109  5517  5517 I YouPub  : Ouverture SimpleActivity
+11-20 11:50:55.077  5517  5517 I YouPub  : Démarrage réussi
+11-20 11:51:06.702  5517  5517 I YouPub  : Ouverture LibraryActivity
+11-20 11:51:06.924  5517  5517 I YouPub  : Arrière-plan SimpleActivity
+11-20 11:51:13.059  5517  5517 I YouPub  : Ouverture CarActivity
+11-20 11:51:13.757  5517  5517 I YouPub  : Arrière-plan LibraryActivity
+11-20 11:51:21.517  5517  5517 I YouPub  : Ouverture VideoActivity
+11-20 11:51:21.880  5517  5517 I YouPub  : Arrière-plan CarActivity
