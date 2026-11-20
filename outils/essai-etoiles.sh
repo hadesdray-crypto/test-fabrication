@@ -15,3 +15,4 @@ done
 echo "traduire -> $XY"; [ -n "$XY" ] && adb shell input tap $XY; sleep 2; cap 6-traduire.png
 XY=$(find 'text="Sous-titres en français"'); echo "choix -> $XY"; [ -n "$XY" ] && adb shell input tap $XY
 sleep 1; cap 6b-message.png; sleep 12; cap 7-sous-titres.png; sleep 15; cap 8-sous-titres.png
+sleep 45; cap 9-sous-titres.png; sleep 30; cap 10-sous-titres.png
