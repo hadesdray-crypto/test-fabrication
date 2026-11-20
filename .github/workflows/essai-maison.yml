@@ -1,0 +1,45 @@
+name: Essai Ma Maison (tablette)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tablette:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Récupérer Ma Maison
+        run: |
+          git fetch -q --depth 1 origin apk-ma-maison
+          git show origin/apk-ma-maison:ma-maison-arm64.apk > ma-maison.apk
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Tablette virtuelle
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          profile: pixel_c
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            adb install -r ma-maison.apk > maison.txt 2>&1 || true
+            adb shell pm grant fr.hadesdray.mamaison android.permission.RECORD_AUDIO || true
+            adb shell am start -n fr.hadesdray.mamaison/.MainActivity >> maison.txt 2>&1 || true
+            sleep 15 ; adb shell screencap -p /sdcard/s.png ; adb pull /sdcard/s.png 1-maison.png || true
+            adb logcat -d > logcat.txt || true
+      - name: Ranger
+        if: always()
+        run: |
+          mkdir out && cp *.png maison.txt logcat.txt out/ 2>/dev/null || true
+          cd out && git init -q && git checkout -q -b resultat-maison
+          git config user.name essai && git config user.email essai@users.noreply.github.com
+          git add -A && git commit -qm "Essai Ma Maison" && git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" resultat-maison
