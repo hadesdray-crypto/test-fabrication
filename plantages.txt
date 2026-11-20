@@ -1,0 +1,200 @@
+11-20 11:51:01.540  4777  4794 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-20 11:51:01.542  1046  1256 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+11-20 11:51:01.545  1046  1256 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+11-20 11:51:01.548  1046  1256 W ChimeraUtils: Module com.google.android.gms.nearby_en has empty metadata display_name_string_id
+11-20 11:51:01.552   521   550 I ActivityManager: Finished processing BOOT_COMPLETED for u0
+11-20 11:51:01.553   521  1847 D PackageManager: Instant App installer not found with android.intent.action.INSTALL_INSTANT_APP_PACKAGE
+11-20 11:51:01.553   521  1847 D PackageManager: Clear ephemeral installer activity
+11-20 11:51:01.555   322   322 I Zygote  : Process 4777 exited cleanly (0)
+11-20 11:51:01.556   521   550 I ActivityManager: Killing 3930:com.google.android.apps.youtube.music/u0a108 (adj 955): empty #17
+11-20 11:51:01.560   521   892 I ActivityManager: Process com.google.android.apps.maps:server_recovery_process (pid 4777) has died: cch+5 CEM 
+11-20 11:51:01.602  1452  1452 I AppBase : AppBase.onTrimMemory():782 onTrimMemory(): 5
+11-20 11:51:01.602   521   566 I libprocessgroup: Successfully killed process cgroup uid 10108 pid 3930 in 43ms
+11-20 11:51:01.604  1452  1452 I GoogleInputMethodService: GoogleInputMethodService.onTrimMemory():4623 onTrimMemory(): 5
+11-20 11:51:01.606  1174  4230 I Icing   : Indexing com.google.android.gms-apps from com.google.android.gms
+11-20 11:51:01.609   521  3144 W ServiceManager: Permission failure: android.permission.HIGH_SAMPLING_RATE_SENSORS from uid=10113 pid=4727
+11-20 11:51:01.614   322   322 I Zygote  : Process 3930 exited due to signal 9 (Killed)
+11-20 11:51:01.614  4502  4516 D BackupCallingPrefCtrl: Not supported by framework. subId = 1
+11-20 11:51:01.616   521  3213 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10108/3930, android.os.BinderProxy@da570e6)
+11-20 11:51:01.616   521  3213 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10108/3930, android.os.BinderProxy@fbb5627)
+11-20 11:51:01.616   521  3213 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10108/3930, android.os.BinderProxy@2dc0d4)
+11-20 11:51:01.616   521  3213 D ConnectivityService: ConnectivityService NetworkRequestInfo binderDied(uid/pid:10108/3930, android.os.BinderProxy@c33e27d)
+11-20 11:51:01.616   521   703 D ConnectivityService: releasing NetworkRequest [ REQUEST id=94, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10108 RequestorUid: 10108 RequestorPkg: com.google.android.apps.youtube.music] ] (release request)
+11-20 11:51:01.616   521   703 D ConnectivityService: releasing NetworkRequest [ REQUEST id=96, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10108 RequestorUid: 10108 RequestorPkg: com.google.android.apps.youtube.music] ] (release request)
+11-20 11:51:01.616   521   703 D ConnectivityService: releasing NetworkRequest [ REQUEST id=101, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10108 RequestorUid: 10108 RequestorPkg: com.google.android.apps.youtube.music] ] (release request)
+11-20 11:51:01.816     0     0 I binder  : undelivered transaction 298984, process died.
+11-20 11:51:01.620  3701  3722 W Bugle   : TextClassifierLibManagerImpl: Reclaiming memory at level: 80
+11-20 11:51:01.622  1174  4230 I Icing   : Indexing done com.google.android.gms-apps
+11-20 11:51:01.623  1174  4230 I Icing   : Indexing com.google.android.gms-internal.3p:MobileApplication from com.google.android.gms
+11-20 11:51:01.624  1174  4217 I Checkin : [CheckinRequestProcessor] updateCheckinIdTokenFileFromResponse, Reading existing AID
+11-20 11:51:01.630  1174  4230 I Icing   : Indexing done com.google.android.gms-internal.3p:MobileApplication
+11-20 11:51:01.633  1174  4217 I Checkin : [CheckinRequestProcessor] Default Task : Checkin Succeeded: https://android.googleapis.com/checkin (fragment #1).
+--
+11-20 11:51:02.350  4859  4874 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-20 11:51:02.358   322   322 I Zygote  : Process 4859 exited cleanly (0)
+11-20 11:51:02.358   521  1847 I ActivityManager: Process com.google.android.apps.maps:server_recovery_process (pid 4859) has died: cch+5 CEM 
+11-20 11:51:02.358   521   566 I libprocessgroup: Successfully killed process cgroup uid 10113 pid 4859 in 0ms
+11-20 11:51:02.560     0     0 I binder  : undelivered transaction 308286, process died.
+11-20 11:51:02.366   521  1847 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10113; state: DISABLED
+11-20 11:51:02.366   521   565 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10113; state: ENABLED
+11-20 11:51:02.369   322   322 D Zygote  : Forked child process 4880
+11-20 11:51:02.370   521   565 I ActivityManager: Start proc 4880:com.google.android.apps.maps:server_recovery_process/u0a113 for broadcast {com.google.android.apps.maps/com.google.android.apps.gmm.plugins.serverrecovery.PhenotypeServerRecoveryHandlerImpl}
+11-20 11:51:02.374  4880  4880 W ecovery_proces: Unexpected CPU variant for X86 using defaults: x86_64
+11-20 11:51:02.376  2943  2963 I adbd    : jdwp connection from 4880
+11-20 11:51:02.381  4880  4880 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10113; state: ENABLED
+11-20 11:51:02.386  4880  4880 D nativeloader: classloader namespace configured for unbundled product apk. library_path=/product/app/Maps/lib/x86_64:/product/app/Maps/Maps.apk!/lib/x86_64:/product/lib64:/system/product/lib64
+11-20 11:51:02.388  4880  4880 V GraphicsEnvironment: ANGLE Developer option for 'com.google.android.apps.maps' set to: 'default'
+11-20 11:51:02.389  4880  4880 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-20 11:51:02.389  4880  4880 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+11-20 11:51:02.389  4880  4880 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+11-20 11:51:02.408  1046  4145 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:7 exec_start_elapsed_seconds: 91 [CONTEXT service_id=218 ]
+11-20 11:51:02.408  1046  4145 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:7 exec_start_elapsed_seconds: 91 [CONTEXT service_id=218 ]
+11-20 11:51:02.433  1046  4145 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:7 result: 1 elapsed_millis: 63 uptime_millis: 63 exec_start_elapsed_seconds: 91 [CONTEXT service_id=218 ]
+11-20 11:51:02.435  1046  4145 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:7 result: 1 elapsed_millis: 206 uptime_millis: 206 exec_start_elapsed_seconds: 91 [CONTEXT service_id=218 ]
+11-20 11:51:02.455  1046  1046 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.tapandpay.service.BIND dat=chimera-action: cmp=com.google.android.gms/.chimera.PersistentApiService }
+11-20 11:51:02.455  1046  1046 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.tapandpay.service.BIND dat=chimera-action: cmp=com.google.android.gms/.chimera.PersistentApiService }
+11-20 11:51:02.461  1046  4122 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 92 [CONTEXT service_id=218 ]
+11-20 11:51:02.461  1046  4122 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 92 [CONTEXT service_id=218 ]
+11-20 11:51:02.462  1046  4122 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService finished executing. cause:5 result: 1 elapsed_millis: 14 uptime_millis: 14 exec_start_elapsed_seconds: 92 [CONTEXT service_id=218 ]
+11-20 11:51:02.479  1046  4122 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.pay.gcmtask.PayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 92 [CONTEXT service_id=218 ]
+11-20 11:51:02.480  1046  1256 I TapAndPay: Disabling TapAndPay HCE service [CONTEXT service_id=79 ]
+11-20 11:51:02.481  1046  2239 I TapAndPay: Disabling TapAndPay HCE service [CONTEXT service_id=79 ]
+11-20 11:51:02.494  1174  4838 W Pay     : Active account was null, notification task will be cancelled. [CONTEXT service_id=198 ]
+11-20 11:51:02.494  1174  4838 W Pay     : No account found on the task or the device. Notification task will not be rescheduled. [CONTEXT service_id=198 ]
+--
+11-20 11:52:02.805  6345  6345 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-20 11:52:02.808  5230  5305 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.ipa.base.IpaGcmTaskService finished executing. cause:9 result: 1 elapsed_millis: 29 uptime_millis: 29 exec_start_elapsed_seconds: 152 [CONTEXT service_id=218 ]
+11-20 11:52:02.848  6345  6345 I AndroidRuntime: Using default boot image
+11-20 11:52:02.848  6345  6345 I AndroidRuntime: Leaving lock profiling enabled
+11-20 11:52:02.852  6345  6345 I app_process: Core platform API reporting enabled, enforcing=false
+11-20 11:52:02.883  5230  5287 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.auth.account.be.legacy.AuthCronService started execution. cause:5 exec_start_elapsed_seconds: 152 [CONTEXT service_id=218 ]
+11-20 11:52:02.932  5230  6347 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.tapandpay.gcmtask.TapAndPayGcmTaskService started execution. cause:5 exec_start_elapsed_seconds: 152 [CONTEXT service_id=218 ]
+11-20 11:52:02.934  5230  6347 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.auth.account.be.legacy.AuthCronService finished executing. cause:5 result: 3 elapsed_millis: 69 uptime_millis: 69 exec_start_elapsed_seconds: 152 [CONTEXT service_id=218 ]
+11-20 11:52:02.968  5230  6347 I NetworkScheduler.Stats: Task com.google.android.gms/com.google.android.gms.tapandpay.gcmtask.TapAndPayGcmTaskService finished executing. cause:5 result: 2 elapsed_millis: 48 uptime_millis: 48 exec_start_elapsed_seconds: 152 [CONTEXT service_id=218 ]
+11-20 11:52:03.006  5230  5237 I .gms.persisten: Background concurrent copying GC freed 304105(13MB) AllocSpace objects, 15(540KB) LOS objects, 49% free, 12MB/24MB, paused 2.915ms,19us total 113.699ms
+11-20 11:52:03.084  6345  6345 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+11-20 11:52:03.084  6345  6345 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt68l.dat
+11-20 11:52:03.139  6345  6345 W app_process: Unexpected CPU variant for X86 using defaults: x86_64
+11-20 11:52:03.149  6345  6345 W app_process: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*1585996318])
+11-20 11:52:03.213  6345  6345 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-20 11:52:03.290  6345  6360 V UiAutomation: Init UiAutomation@2adf149[id=1, flags=0]
+11-20 11:52:03.302   521   521 D BatterySaverPolicy: accessibility changed to true, updating policy.
+11-20 11:52:03.329  1783  2107 I A       : NGA disabled due to not being eligible.
+11-20 11:52:03.441   321   359 I netd    : trafficSwapActiveStatsMap() <13.30ms>
+11-20 11:52:03.443   321   359 I netd    : tetherGetStats() -> {[]} <0.81ms>
+11-20 11:52:03.467   321   359 I netd    : bandwidthSetGlobalAlert(2097152) <0.10ms>
+11-20 11:52:03.474   321   359 I netd    : bandwidthRemoveInterfaceQuota(eth0) <1.99ms>
+11-20 11:52:03.475   321   359 I netd    : bandwidthSetInterfaceQuota(eth0, 9223372036854775807) <0.91ms>
+11-20 11:52:04.190   321  6361 D resolv  : GetAddrInfoHandler::run: {101 101 101 983141 10145 0}
+11-20 11:52:04.190   321  6361 D resolv  : resolv_getaddrinfo: explore_fqdn(): ai_family=0 ai_socktype=1 ai_protocol=6
+11-20 11:52:04.191   321  6362 D resolv  : doQuery: (1, 28)
+11-20 11:52:04.191   321  6363 D resolv  : doQuery: (1, 1)
+11-20 11:52:04.192   321  6362 D resolv  : res_nmkquery: (QUERY, IN, AAAA)
+11-20 11:52:04.192   321  6362 D resolv  : res_nsend
+11-20 11:52:04.192   321  6362 I resolv  : resolv_cache_lookup: lookup
+11-20 11:52:04.192   321  6362 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0x72bbf4c60b30
+11-20 11:52:04.192   321  6362 D resolv  : doQuery: rcode=0, ancount=2
+11-20 11:52:04.192   321  6363 D resolv  : res_nmkquery: (QUERY, IN, A)
+11-20 11:52:04.193   321  6363 D resolv  : res_nsend
+11-20 11:52:04.193   321  6363 I resolv  : resolv_cache_lookup: lookup
+11-20 11:52:04.193   321  6363 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0x72bbf4c5dbf0
+11-20 11:52:04.193   321  6363 D resolv  : doQuery: rcode=0, ancount=2
+11-20 11:52:04.381  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@5c6f5; boundsInParent: Rect(0, 0 - 318, 96); boundsInScreen: Rect(2867, 1343 - 2532, 1439); packageName: fr.hadesdray.youpub; className: android.widget.Button; text: Écran éteint : non; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_NEXT_AT_MOVEMENT_GRANULARITY - null, AccessibilityAction: ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY - null, AccessibilityAction: ACTION_SET_SELECTION - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.382  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@5cab6; boundsInParent: Rect(0, 0 - 210, 96); boundsInScreen: Rect(3201, 1343 - 2532, 1439); packageName: fr.hadesdray.youpub; className: android.widget.Button; text: Plus tard; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_NEXT_AT_MOVEMENT_GRANULARITY - null, AccessibilityAction: ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY - null, AccessibilityAction: ACTION_SET_SELECTION - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.383  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@5ce77; boundsInParent: Rect(0, 0 - 211, 96); boundsInScreen: Rect(3427, 1343 - 2532, 1439); packageName: fr.hadesdray.youpub; className: android.widget.Button; text: Minuteur; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_NEXT_AT_MOVEMENT_GRANULARITY - null, AccessibilityAction: ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY - null, AccessibilityAction: ACTION_SET_SELECTION - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.389  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@a70b3; boundsInParent: Rect(0, 0 - 2488, 104); boundsInScreen: Rect(36, 1697 - 2524, 1688); packageName: fr.hadesdray.youpub; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.389  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@a8739; boundsInParent: Rect(0, 0 - 2488, 104); boundsInScreen: Rect(36, 1801 - 2524, 1688); packageName: fr.hadesdray.youpub; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.389  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@a9dbf; boundsInParent: Rect(0, 0 - 2488, 104); boundsInScreen: Rect(36, 1905 - 2524, 1688); packageName: fr.hadesdray.youpub; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.389  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@ab445; boundsInParent: Rect(0, 0 - 2488, 104); boundsInScreen: Rect(36, 2009 - 2524, 1688); packageName: fr.hadesdray.youpub; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-20 11:52:04.389  6345  6345 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@acacb; boundsInParent: Rect(0, 0 - 2488, 104); boundsInScreen: Rect(36, 2113 - 2524, 1688); packageName: fr.hadesdray.youpub; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; checkable: false; checked: false; focusable: true; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: true; visible: false; actions: [AccessibilityAction: ACTION_FOCUS - null, AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+--
+11-20 11:52:04.405  6345  6345 D AndroidRuntime: Shutting down VM
+11-20 11:52:04.410  1783  1967 I A       : NGA disabled due to not being eligible.
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal: Playback error
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:   com.google.android.exoplayer2.ExoPlaybackException: Source error
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.google.android.exoplayer2.ExoPlayerImplInternal.handleIoException(ExoPlayerImplInternal.java:684)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.google.android.exoplayer2.ExoPlayerImplInternal.handleMessage(ExoPlayerImplInternal.java:656)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at android.os.Handler.dispatchMessage(Handler.java:102)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at android.os.Looper.loopOnce(Looper.java:201)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at android.os.Looper.loop(Looper.java:288)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at android.os.HandlerThread.run(HandlerThread.java:67)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:   Caused by: com.google.android.exoplayer2.upstream.HttpDataSource$HttpDataSourceException: java.net.ConnectException: Failed to connect to rr1---sn-uphho-hqae.googlevideo.com/2400:ac40:180:3::c:443
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at fr.hadesdray.youpub.net.YoutubeHttpDataSource.open(YoutubeHttpDataSource.java:387)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.google.android.exoplayer2.upstream.StatsDataSource.open(StatsDataSource.java:90)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.google.android.exoplayer2.source.chunk.InitializationChunk.load(InitializationChunk.java:105)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.google.android.exoplayer2.upstream.Loader$LoadTask.run(Loader.java:420)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at java.lang.Thread.run(Thread.java:920)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:   Caused by: java.net.ConnectException: Failed to connect to rr1---sn-uphho-hqae.googlevideo.com/2400:ac40:180:3::c:443
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:147)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.io.RealConnection.connect(RealConnection.java:116)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:186)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:128)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:97)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:289)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:232)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:465)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.huc.HttpURLConnectionImpl.connect(HttpURLConnectionImpl.java:131)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.connect(DelegatingHttpsURLConnection.java:90)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.connect(HttpsURLConnectionImpl.java:30)
+11-20 11:52:04.476  3325  5915 E ExoPlayerImplInternal:       at fr.hadesdray.youpub.net.YoutubeHttpDataSource.makeConnection(YoutubeHttpDataSource.java:684)
+--
+11-20 11:52:09.205  6443  6443 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 0 <<<<<<
+11-20 11:52:09.207  6443  6443 I AndroidRuntime: Using default boot image
+11-20 11:52:09.207  6443  6443 I AndroidRuntime: Leaving lock profiling enabled
+11-20 11:52:09.209  6443  6443 I app_process: Core platform API reporting enabled, enforcing=false
+11-20 11:52:09.257  6443  6443 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+11-20 11:52:09.257  6443  6443 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt68l.dat
+11-20 11:52:09.262  6443  6443 W app_process: Unexpected CPU variant for X86 using defaults: x86_64
+11-20 11:52:09.266  6443  6443 W app_process: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[] | PCL[/system/framework/android.test.runner.jar*1585996318])
+11-20 11:52:09.278  6443  6443 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-20 11:52:09.282   521   521 D BatterySaverPolicy: accessibility changed to true, updating policy.
+11-20 11:52:09.282  6443  6457 V UiAutomation: Init UiAutomation@5202a28[id=2, flags=0]
+11-20 11:52:09.284  1783  2107 I A       : NGA disabled due to not being eligible.
+11-20 11:52:09.420  3325  6111 I YouPub  : Secours : 13 serveurs Piped à jour
+11-20 11:52:09.461   321  6460 D resolv  : GetAddrInfoHandler::run: {101 101 101 983141 10145 0}
+11-20 11:52:09.461   321  6460 D resolv  : resolv_getaddrinfo: explore_fqdn(): ai_family=0 ai_socktype=1 ai_protocol=6
+11-20 11:52:09.461   321  6461 D resolv  : doQuery: (1, 28)
+11-20 11:52:09.461   321  6461 D resolv  : res_nmkquery: (QUERY, IN, AAAA)
+11-20 11:52:09.461   321  6461 D resolv  : res_nsend
+11-20 11:52:09.461   321  6461 I resolv  : resolv_cache_lookup: lookup
+11-20 11:52:09.461   321  6461 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0x72bbe4c68690
+11-20 11:52:09.461   321  6461 D resolv  : doQuery: rcode=0, ancount=2
+11-20 11:52:09.462   321  6462 D resolv  : doQuery: (1, 1)
+11-20 11:52:09.462   321  6462 D resolv  : res_nmkquery: (QUERY, IN, A)
+11-20 11:52:09.462   321  6462 D resolv  : res_nsend
+11-20 11:52:09.462   321  6462 I resolv  : resolv_cache_lookup: lookup
+11-20 11:52:09.462   321  6462 I resolv  : resolv_cache_lookup: FOUND IN CACHE entry=0x72bbe4c675f0
+11-20 11:52:09.462   321  6462 D resolv  : doQuery: rcode=0, ancount=2
+11-20 11:52:10.194   321  6463 D resolv  : GetAddrInfoHandler::run: {101 101 101 983141 10145 0}
+11-20 11:52:10.194   321  6463 D resolv  : resolv_getaddrinfo: explore_fqdn(): ai_family=0 ai_socktype=1 ai_protocol=6
+11-20 11:52:10.195   321  6465 D resolv  : doQuery: (1, 1)
+11-20 11:52:10.195   321  6464 D resolv  : doQuery: (1, 28)
+11-20 11:52:10.195   321  6464 D resolv  : res_nmkquery: (QUERY, IN, AAAA)
+11-20 11:52:10.195   321  6464 D resolv  : res_nsend
+11-20 11:52:10.195   321  6464 I resolv  : resolv_cache_lookup: lookup
+11-20 11:52:10.195   321  6464 I resolv  : resolv_cache_lookup: NOT IN CACHE
+11-20 11:52:10.195   321  6465 D resolv  : res_nmkquery: (QUERY, IN, A)
+11-20 11:52:10.195   321  6465 D resolv  : res_nsend
+11-20 11:52:10.195   321  6465 I resolv  : resolv_cache_lookup: lookup
+11-20 11:52:10.195   321  6464 I resolv  : resolv_populate_res_for_net: netid=101
+--
+11-20 11:52:10.310  6443  6443 D AndroidRuntime: Shutting down VM
+11-20 11:52:10.311  1783  2106 I A       : NGA disabled due to not being eligible.
+11-20 11:52:10.325   521   557 D CompatibilityChangeReporter: Compat change id reported: 158002302; UID 10145; state: ENABLED
+11-20 11:52:11.342     0     0 I binder  : undelivered transaction 508871, process died.
+11-20 11:52:11.292  3325  3380 D EGL_emulation: app_time_stats: avg=2795.89ms min=2795.89ms max=2795.89ms count=1
+11-20 11:52:11.304   402   501 D AudioFlinger: mixer(0x7430feb9fa70) throttle end: throttle time(34)
+11-20 11:52:11.387  3325  6108 I YouPub  : Traduction : 1 sous-titres (de.ttml), langue parlée en
+11-20 11:52:11.413   521  1953 W InputManager-JNI: Input channel object '4812494 fr.hadesdray.youpub/fr.hadesdray.youpub.ui.VideoActivity (client)' was disposed without first being removed with the input manager!
+11-20 11:52:11.444  3325  6108 I YouPub  : Sous-titres d'origine : 59 phrases
+11-20 11:52:11.618   348   429 D goldfish-address-space: claimShared: Ask to claim region [0x3e9c29000 0x3e9c5b000]
+11-20 11:52:11.636  3325  3380 D EGL_emulation: app_time_stats: avg=4824.47ms min=4824.47ms max=4824.47ms count=1
+11-20 11:52:11.666   348   429 D goldfish-address-space: claimShared: Ask to claim region [0x3e9c5b000 0x3e9c8d000]
+11-20 11:52:11.731  3325  6108 I YouPub  : Sous-titres refusés : 429
+11-20 11:52:11.737   327  6472 E android.hardware.audio@6.0-impl.ranchu: pcmWrite:203 pcm_write failed with  (-5)
+11-20 11:52:11.737   327  6472 E android.hardware.audio@6.0-impl.ranchu: device/generic/goldfish/audio/talsa.cpp:pcmWrite:204 failure: false
+11-20 11:52:11.741   348   429 D goldfish-address-space: claimShared: Ask to claim region [0x3e9c8d000 0x3e9cbf000]
+11-20 11:52:11.783  1452  1452 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():3420 
+11-20 11:52:11.784  1452  1452 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():2002 

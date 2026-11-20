@@ -1,0 +1,25 @@
+11-20 11:50:39.902  3325  3325 I YouPub  : —— Démarrage YouPub 1.0.117 · Android 12 (API 31) · Google sdk_gphone64_x86_64
+11-20 11:50:40.338  3325  3325 I YouPub  : Ouverture SimpleActivity
+11-20 11:50:49.950  3325  3325 I YouPub  : Démarrage réussi
+11-20 11:51:19.237  3325  3325 I YouPub  : Ouverture LibraryActivity
+11-20 11:51:19.863  3325  3325 I YouPub  : Arrière-plan SimpleActivity
+11-20 11:51:26.147  3325  3325 I YouPub  : Ouverture CarActivity
+11-20 11:51:27.360  3325  3325 I YouPub  : Arrière-plan LibraryActivity
+11-20 11:51:35.618  3325  3325 I YouPub  : Ouverture VideoActivity
+11-20 11:51:36.846  3325  3325 I YouPub  : Arrière-plan CarActivity
+11-20 11:51:43.591  3325  3325 I YouPub  : Lecteur : ERROR_CODE_IO_NETWORK_CONNECTION_FAILED Source error
+11-20 11:51:49.137  3325  3325 I YouPub  : Lecteur : ERROR_CODE_IO_NETWORK_CONNECTION_FAILED Source error
+11-20 11:51:54.670  3325  3325 I YouPub  : Lecteur : ERROR_CODE_IO_NETWORK_CONNECTION_FAILED Source error
+11-20 11:52:00.215  3325  3325 I YouPub  : Lecteur : ERROR_CODE_IO_NETWORK_CONNECTION_FAILED Source error
+11-20 11:52:04.482  3325  3325 I YouPub  : Lecteur : ERROR_CODE_IO_NETWORK_CONNECTION_FAILED Source error
+11-20 11:52:06.908  3325  6111 I YouPub  : poToken : générateur prêt
+11-20 11:52:08.799  3325  6111 I YouPub  : Voie web : signature indéchiffrable ParsingException
+11-20 11:52:08.809  3325  6111 I YouPub  : Voie web : aucun flux
+11-20 11:52:09.420  3325  6111 I YouPub  : Secours : 13 serveurs Piped à jour
+11-20 11:52:11.387  3325  6108 I YouPub  : Traduction : 1 sous-titres (de.ttml), langue parlée en
+11-20 11:52:11.444  3325  6108 I YouPub  : Sous-titres d'origine : 59 phrases
+11-20 11:52:11.731  3325  6108 I YouPub  : Sous-titres refusés : 429
+11-20 11:52:12.226  3325  6108 I YouPub  : Sous-titres refusés : 429
+11-20 11:52:12.226  3325  6108 I YouPub  : Traduction YouTube : 0 phrases
+11-20 11:52:18.729  3325  6111 I YouPub  : Secours https://pipedapi.kavin.rocks : SocketTimeoutException timeout
+11-20 11:52:19.414  3325  6111 I YouPub  : Secours https://pipedapi.nosebs.ru : UnknownHostException Unable to resolve host "pipedapi.nosebs.ru": No address associated with hostname
