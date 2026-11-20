@@ -26,12 +26,13 @@ jobs:
       - name: Fabrication et signature (clé fixe du dépôt)
         working-directory: appli
         run: gradle assembleDebug --no-daemon --console=plain -q
-      - name: Déposer les APK (un par processeur) en version publiée de test-fabrication
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Déposer les APK (un par processeur) sur la branche apk-ma-maison
         run: |
           ls -la appli/app/build/outputs/apk/debug/
-          cp appli/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk ma-maison-arm64.apk
-          cp appli/app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk ma-maison-arm32.apk
-          gh release delete ma-maison-apk --repo ${{ github.repository }} --yes --cleanup-tag || true
-          gh release create ma-maison-apk ma-maison-arm64.apk ma-maison-arm32.apk --repo ${{ github.repository }} --title "Ma Maison (fabrication)" --notes "Fichiers de passage, effacés à la fabrication suivante."
+          mkdir sortie
+          cp appli/app/build/outputs/apk/debug/app-arm64-v8a-debug.apk sortie/ma-maison-arm64.apk
+          cp appli/app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk sortie/ma-maison-arm32.apk
+          cd sortie && git init -q && git checkout -q -b apk-ma-maison
+          git config user.name "usine" && git config user.email "usine@users.noreply.github.com"
+          git add -A && git commit -qm "APK Ma Maison"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" apk-ma-maison
