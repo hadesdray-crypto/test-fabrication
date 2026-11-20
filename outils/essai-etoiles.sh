@@ -7,10 +7,11 @@ find() { dump; python3 $O/trouver.py u.xml texte "$1" 2>/dev/null; }
 adb shell settings put secure immersive_mode_confirmations confirmed
 adb shell am start -n fr.hadesdray.youpub/.ui.VideoActivity --es url "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 sleep 25; cap 5-lecteur.png
+R=$(find 'Enchaîner'); Y=${R#* }; echo "rangée $R"
 XY=""; for n in 1 2 3 4 5 6; do
   XY=$(find 'text="Traduire"'); [ -n "$XY" ] && break
-  R=$(find 'Enchaîner'); Y=${R#* }; echo "rangée $R"; [ -n "$R" ] && adb shell input swipe 900 $Y 150 $Y 400; sleep 1
+  [ -n "$Y" ] && adb shell input swipe 700 $Y 200 $Y 500; sleep 2
 done
 echo "traduire -> $XY"; [ -n "$XY" ] && adb shell input tap $XY; sleep 2; cap 6-traduire.png
 XY=$(find 'text="Sous-titres en français"'); echo "choix -> $XY"; [ -n "$XY" ] && adb shell input tap $XY
-sleep 12; cap 7-sous-titres.png; sleep 8; cap 8-sous-titres.png
+sleep 1; cap 6b-message.png; sleep 12; cap 7-sous-titres.png; sleep 15; cap 8-sous-titres.png
