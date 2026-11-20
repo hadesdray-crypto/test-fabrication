@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   fabriquer:
@@ -26,8 +26,10 @@ jobs:
       - name: Fabrication et signature (clé fixe du dépôt)
         working-directory: appli
         run: gradle assembleDebug --no-daemon --console=plain -q
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ma-maison-apk
-          path: appli/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 3
+      - name: Déposer l'APK sur la branche apk-ma-maison (Ma Maison est déjà publique)
+        run: |
+          mkdir sortie && cp appli/app/build/outputs/apk/debug/app-debug.apk sortie/ma-maison.apk
+          cd sortie && git init -q && git checkout -q -b apk-ma-maison
+          git config user.name "usine" && git config user.email "usine@users.noreply.github.com"
+          git add ma-maison.apk && git commit -qm "APK Ma Maison"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" apk-ma-maison
