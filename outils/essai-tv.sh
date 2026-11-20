@@ -6,6 +6,8 @@ dump() { rm -f u.xml; adb shell uiautomator dump /sdcard/u.xml >/dev/null 2>&1; 
 key() { adb shell input keyevent "KEYCODE_$1"; sleep 1; }
 adb install -r ma-maison.apk; adb install -r YouPub-TV.apk
 adb shell pm list packages | grep hadesdray
+for p in fr.hadesdray.mamaison fr.hadesdray.youpub.tv; do for q in RECORD_AUDIO POST_NOTIFICATIONS; do adb shell pm grant $p android.permission.$q 2>/dev/null; done; done
+adb shell wm size
 key HOME; sleep 6; cap 1-accueil-tele.png
 adb shell monkey -p fr.hadesdray.mamaison -c android.intent.category.LEANBACK_LAUNCHER 1; sleep 10; cap 2-ma-maison.png
 key DPAD_DOWN; cap 3-cadre.png
