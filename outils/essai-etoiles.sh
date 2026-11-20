@@ -11,7 +11,7 @@ adb shell input tap $((LW/2)) 200; sleep 0.5; cap 5-etoiles-image.png
 R=$(find 'Enchaîner'); Y=${R#* }
 XY=""; for n in 1 2 3 4 5 6; do XY=$(find 'text="Traduire"'); [ -n "$XY" ] && break; [ -n "$Y" ] && adb shell input swipe 700 $Y 200 $Y 500; sleep 2; done
 echo "traduire -> $XY"; [ -n "$XY" ] && adb shell input tap $XY; sleep 2
-XY=$(find 'text="Sous-titres en français"'); echo "choix -> $XY"; [ -n "$XY" ] && adb shell input tap $XY
+XY=$(find 'text="Voix française seule (comme un reportage)"'); echo "choix -> $XY"; [ -n "$XY" ] && adb shell input tap $XY
 sleep 2; XY=$(find 'Sous-titres : '); echo "pastille -> $XY"; cap 6-sous-titres.png
 [ -n "$XY" ] && adb shell input tap $XY; sleep 2; cap 7-mode2.png
 sleep 4
