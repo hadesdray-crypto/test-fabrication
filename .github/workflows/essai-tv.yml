@@ -16,7 +16,6 @@ jobs:
         run: |
           git fetch -q --depth 1 origin essai-tv
           git show origin/essai-tv:ma-maison.apk > ma-maison.apk
-          git show origin/essai-tv:YouPub-TV.apk > YouPub-TV.apk
           ls -la *.apk
       - name: Activer KVM
         run: |
